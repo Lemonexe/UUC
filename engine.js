@@ -1,119 +1,11 @@
 /*
-UUC engine
-
-Units object is the database of all known units.
-	v: [m,kg,s,A,K,mol,cd]	represents the vector of powers of basic units, for example N=kg*m/s^2, therefore v = [1,1,-2,0,0,0,0]
-	SI: true/false			self-explanatory. This attribute doesn't really do anything, it's merely informational. Perhaps it's redundant, since all SI derived units have k = 1
-	basic: true/false		whether it's basic SI unit or derived SI. Basic SI units are of utmost importance to the code, don't ever change them!
-	prefix: all/+/-/0		it means: all prefixes allowed / only bigger than one allowed / lesser than one / prefixes disabled. It's not really a restriction, just a recommendation.
-	k: number				this coeficient equates value of the unit in basic units. For example minute = 60 seconds, therefore min.k = 60
+	UUC engine
 */
 
 window.onload = function() {
 	view('intro');
 	help();
 };
-
-const Units = [
-	{v: [1,0,0,0,0,0,0], id: 'm', name: 'metre', k:1, SI: true, basic: true, prefix: 'all'},
-	{v: [0,1,0,0,0,0,0], id: 'kg', name: 'kilogram', k:1, SI: true, basic: true, prefix: '0',
-		note: 'That\'s because kilogram is problematic to code, since the "kilo" itself is a prefix... Therefore I have also defined gram as a derived SI unit, which can have all prefixes.'},
-	{v: [0,0,1,0,0,0,0], id: 's', name: 'second', k:1, SI: true, basic: true, prefix: '-'},
-	{v: [0,0,0,1,0,0,0], id: 'A', name: 'ampere', k:1, SI: true, basic: true, prefix: 'all'},
-	{v: [0,0,0,0,1,0,0], id: 'K', name: 'kelvin', k:1, SI: true, basic: true, prefix: '-'},
-	{v: [0,0,0,0,0,1,0], id: 'mol', name: 'mole', k:1, SI: true, basic: true, prefix: 'all'},
-	{v: [0,0,0,0,0,0,1], id: 'cd', name: 'candela', k:1, SI: true, basic: true, prefix: 'all'},
-	//{id: '',v: [0,0,0,0,0,0,0], name: '', k:1, SI: true, prefix: 'all'},
-	{v: [0,0,-1,0,0,0,0], id: 'Hz', name: 'hertz', k:1, SI: true, prefix: 'all'},
-	{v: [1,1,-2,0,0,0,0], id: 'N', name: 'newton', k:1, SI: true, prefix: 'all'},
-	{v: [-1,1,-2,0,0,0,0], id: 'Pa', name: 'pascal', k:1, SI: true, prefix: 'all'},
-	{v: [2,1,-2,0,0,0,0], id: 'J', name: 'joule', k:1, SI: true, prefix: 'all'},
-	{v: [2,1,-3,0,0,0,0], id: 'W', name: 'watt', k:1, SI: true, prefix: 'all'},
-	{v: [0,0,1,1,0,0,0], id: 'C', name: 'coulomb', k:1, SI: true, prefix: 'all'},
-	{v: [2,1,-3,-1,0,0,0], id: 'V', name: 'volt', k:1, SI: true, prefix: 'all'},
-	{v: [-2,-1,4,2,0,0,0], id: 'F', name: 'farad', k:1, SI: true, prefix: 'all'},
-	{v: [2,1,-3,-2,0,0,0], id: 'ohm', name: 'ohm', k:1, SI: true, prefix: 'all'},
-	{v: [-2,-1,3,2,0,0,0], id: 'S', name: 'siemens', k:1, SI: true, prefix: 'all'},
-	{v: [2,1,-2,-1,0,0,0], id: 'Wb', name: 'weber', k:1, SI: true, prefix: 'all'},
-	{v: [0,1,-2,-1,0,0,0], id: 'T', name: 'tesla', k:1, SI: true, prefix: 'all'},
-	{v: [2,1,-2,-2,0,0,0], id: 'H', name: 'henry', k:1, SI: true, prefix: 'all'},
-	{v: [0,0,0,0,1,0,0], id: '°C', name: 'degree Celsius', k:1, SI: true, prefix: '0',
-		note: 'Degree Celsius is considered to be a unit of temperature <b>difference</b> (ΔT), not temperature (T)! It doesn\'t make any sense to combine T in °C with other units or raise it to power, and the program cannot possibly tell whether the input is T or ΔT, so it\'s always considered to be ΔT. Try google for simple temperature conversion...'},
-	{v: [0,0,0,0,0,0,1], id: 'lm', name: 'lumen', k:1, SI: true, prefix: 'all'},
-	{v: [-2,0,0,0,0,0,1], id: 'lx', name: 'lux', k:1, SI: true, prefix: 'all'},
-	{v: [0,0,-1,0,0,0,0], id: 'Bq', name: 'becquerel', k:1, SI: true, prefix: 'all'},
-	{v: [2,0,-2,0,0,0,0], id: 'Gy', name: 'gray', k:1, SI: true, prefix: 'all'},
-	{v: [2,0,-2,0,0,0,0], id: 'Sv', name: 'sievert', k:1, SI: true, prefix: 'all'},
-
-	{v: [0,0,1,0,0,0,0], id: 'min', name: 'minute', k:60, SI: false, prefix: '0'},
-	{v: [0,0,1,0,0,0,0], id: 'h', name: 'hour', k:3600, SI: false, prefix: '0'},
-	{v: [0,0,1,0,0,0,0], id: 'd', name: 'day', k:3600*24, SI: false, prefix: '0'},
-	{v: [0,0,1,0,0,0,0], id: 'yr', name: 'gregorian year', k:3600*24*365.2425, SI: false, prefix: '0'},
-
-	{v: [0,0,0,0,1,0,0], id: '°F', name: 'degree Fahrenheit', k:5/9, SI: false, prefix: '0', note: 'See °C for an important note.'},
-	{v: [0,0,0,0,1,0,0], id: '°R', name: 'degree Réaumur', k:5/4, SI: false, prefix: '0', note: 'See °C for an important note.'},
-
-	{v: [1,0,0,0,0,0,0], id: 'th', name: 'thou', k:2.54e-5, SI: false, prefix: '0'},
-	{v: [1,0,0,0,0,0,0], id: 'in', name: 'inch', k:2.54e-2, SI: false, prefix: '0'},
-	{v: [1,0,0,0,0,0,0], id: 'ft', name: 'foot', k:0.3048, SI: false, prefix: '0'},
-	{v: [1,0,0,0,0,0,0], id: 'yd', name: 'yard', k:0.9144, SI: false, prefix: '0'},
-	{v: [1,0,0,0,0,0,0], id: 'mi', name: 'mile', k:1609.344, SI: false, prefix: '0'},
-	{v: [1,0,0,0,0,0,0], id: 'nmi', name: 'nautical mile', k:1852, SI: false, prefix: '0'},
-	{v: [1,0,0,0,0,0,0], id: 'au', name: 'astronomical unit', k:149597870700, SI: false, prefix: '+'},
-	{v: [1,0,0,0,0,0,0], id: 'pc', name: 'parsec', k:3.08567758149137e16, SI: false, prefix: '+'},
-	{v: [1,0,0,0,0,0,0], id: 'ly', name: 'light-year', k:9460730472580800, SI: false, prefix: '+'},
-
-	{v: [2,0,0,0,0,0,0], id: 'a', name: 'ar', k:100, SI: true, prefix: '+'},
-	{v: [2,0,0,0,0,0,0], id: 'ac', name: 'acre', k:4046.872, SI: false, prefix: '0'},
-
-	{v: [3,0,0,0,0,0,0], id: 'l', name: 'litre', k:1e-3, SI: true, prefix: 'all'},
-	{v: [3,0,0,0,0,0,0], id: 'pt', name: 'pint', k:568.261e-6, SI: false, prefix: '0'},
-	{v: [3,0,0,0,0,0,0], id: 'gal', name: 'gallon', k:4.54609e-3, SI: false, prefix: '0'},
-
-	{v: [0,1,0,0,0,0,0], id: 'g', name: 'gram', k:1e-3, SI: true, prefix: 'all'},
-	{v: [0,1,0,0,0,0,0], id: 't', name: 'tonne', k:1000, SI: false, prefix: '+'},
-	{v: [0,1,0,0,0,0,0], id: 'gr', name: 'grain', k:64.79891e-6, SI: false, prefix: '0'},
-	{v: [0,1,0,0,0,0,0], id: 'oz', name: 'ounce', k:28.349523e-3, SI: false, prefix: '0'},
-	{v: [0,1,0,0,0,0,0], id: 'lb', name: 'pound', k:0.45359237, SI: false, prefix: '0'},
-	{v: [0,1,0,0,0,0,0], id: 'slug', name: 'slug', k:14.593903, SI: false, prefix: '0'},
-	{v: [0,1,0,0,0,0,0], id: 'ts', name: 'short ton', k:907.18474, SI: false, prefix: '0'},
-	{v: [0,1,0,0,0,0,0], id: 'tl', name: 'long ton', k:1016, SI: false, prefix: '0'},
-	{v: [0,1,0,0,0,0,0], id: 'u', name: 'unified atomic mass unit', k:1.660539040e-27, SI: false, prefix: '0', note: 'Same as dalton (Da)'},
-	{v: [0,1,0,0,0,0,0], id: 'Da', name: 'dalton', k:1.660539040e-27, SI: false, prefix: '0', note: 'Same as unified atomic mass unit (u)'},
-
-	{v: [1,0,-1,0,0,0,0], id: 'mph', name: 'mile per hour', k:1609.344/3600, SI: false, prefix: '0'},
-	{v: [1,0,-1,0,0,0,0], id: 'kn', name: 'knot', k:1852/3600, SI: false, prefix: '0'},
-
-	{v: [1,0,-2,0,0,0,0], id: 'gn', name: 'standard gravity', k:9.80665, SI: false, prefix: '0'},
-
-	{v: [2,1,-2,0,0,0,0], id: 'eV', name: 'electronvolt', k:1.60217653e-19, SI: false, prefix: 'all'},
-
-	{v: [-1,1,-2,0,0,0,0], id: 'bar', name: 'bar', k:1e5, SI: true, prefix: 'all'},
-	{v: [-1,1,-2,0,0,0,0], id: 'atm', name: 'atmospehre', k:101325, SI: false, prefix: '0'},
-	{v: [-1,1,-2,0,0,0,0], id: 'mmHg', name: 'milimetre of mercury', k:133.322387415, SI: false, prefix: '0', note: 'There is a negligible difference between mmHg and torr.'},
-	{v: [-1,1,-2,0,0,0,0], id: 'Torr', name: 'torr', k:101325/760, SI: false, prefix: 'all', note: 'There is a negligible difference between mmHg and torr.'},
-	{v: [-1,1,-2,0,0,0,0], id: 'psi', name: 'pound per square inch', k:6894.757, SI: false, prefix: 'all'},
-
-	{v: [0,1,-2,-1,0,0,0], id: 'G', name: 'gauss', k:0.0001, SI: false, prefix: 'all'},
-];
-
-//standard SI prefixes
-const Prefixes = [
-	{id: 'a', v: -18},
-	{id: 'f', v: -15},
-	{id: 'p', v: -12},
-	{id: 'n', v: -9},
-	{id: 'u', v: -6},
-	{id: 'm', v: -3},
-	{id: 'c', v: -2},
-	{id: 'd', v: -1},
-	{id: 'h', v: 2},
-	{id: 'k', v: 3},
-	{id: 'M', v: 6},
-	{id: 'G', v: 9},
-	{id: 'T', v: 12},
-	{id: 'P', v: 15}
-];
 
 //utility to access DOM easier.
 function geto(id){
@@ -140,21 +32,32 @@ function help() {
 	}
 	text = text.replace(/, $/ , '');
 	text += '<hr><h2>Units</h2>';
+	text += 'There are ' + Units.filter(item => !item.constant).length + ' units and ' + Units.filter(item => item.constant).length + ' constants in database!<br><br>';
+
+	//callback used to filter units. The filter function will check all dimensions of unit (item) and if they all agree with filterVector, it is a related unit and it will pass the filter.
+	let filterVector;
+	let filterFunction = function(item) {
+		for(let i in item.v) {
+			if(item.v[i] !== filterVector[i]) {return false;}
+		}
+		return true;
+	};
 
 	//filter for units - it gets the value of filter textfield and checks it. If there isn't any filter unit, else executes - all units will be listed.
 	let filter = geto('filter').value.trim();
-	if(filter !== '') {
-		//it parses the filter unit into detailed unit object and then into aggregate vector. See convert.init() of explanation
+	if(filter === '1') {
+		//Filters all dimensionless units using filterFunction
+		filterVector = [0,0,0,0,0,0,0];
+		unitList = Units.filter(filterFunction);
+	}
+	else if(filter === '$') {
+		unitList = Units.filter(item => item.constant);
+	}
+	else if(filter !== '') {
+		//it parses the filter unit into detailed unit object and then into aggregate vector. See convert.init() of explanation. Then it filters all units using filterFunction
 		convert.parseField(filter);
-		let filterVector = convert.SI();
-
-		//it filters all units. The filter function will check all dimensions and if they all agree, it is a related unit and it will pass the filter.
-		unitList = Units.filter(function(item) {
-			for(let i in item.v) {
-				if(item.v[i] !== filterVector[i]) {return false;}
-			}
-			return true;
-		});
+		filterVector = convert.SI();
+		unitList = Units.filter(filterFunction);
 	}
 	else {
 		unitList = Units;
@@ -164,21 +67,27 @@ function help() {
 	for(let o of unitList) {
 		text += '<b>' + o.name + '</b> (' + o.id + ')';
 		//vector2text will be important later. It converts vector to text representation, like [1,1,-2] to m*kg*s^-2
-		text += o.basic ? ' ' : ' = ' + o.k + '*' + convert.vector2text(o.v) + '<br>';
-		text += o.basic ? 'Basic ' : '';
-		text += o.SI ? 'SI, ' : '';
+		text += o.basic ? ' ' : ' = ' + o.k + ' ' + convert.vector2text(o.v) + '<br>';
 
-		if(o.prefix === 'all') {
-			text += 'all prefixes can be used.';
-		}
-		else if(o.prefix === '+') {
-			text += 'usually only increasing prefixes are used.';
-		}
-		else if(o.prefix === '-') {
-			text += 'usually only decreasing prefixes are used.';
+		if(o.constant) {
+			text += 'Constant.';
 		}
 		else {
-			text += 'prefixes are not used.';
+			text += o.basic ? 'Basic ' : '';
+			text += o.SI ? 'SI, ' : '';
+
+			if(o.prefix === 'all') {
+				text += 'all prefixes can be used.';
+			}
+			else if(o.prefix === '+') {
+				text += 'usually only increasing prefixes are used.';
+			}
+			else if(o.prefix === '-') {
+				text += 'usually only decreasing prefixes are used.';
+			}
+			else {
+				text += 'prefixes are not used.';
+			}
 		}
 
 		text += o.note ? (' ' + o.note) : '';
@@ -313,7 +222,6 @@ let convert = {
 		}
 
 		if(text.length === 0) {
-			this.warn('WARNING: There is no unit detected. I don\'t know what do you expect from the program...');
 			this.units = [];return;
 		}
 
@@ -383,7 +291,7 @@ let convert = {
 
 	//checkPrefix accepts pair [prefix object, unit object] and gives warnings if they are not appropriately used.
 	checkPrefix: function(arg) {
-		if(arg[1].prefix === '0') {
+		if(!arg[1].prefix || arg[1].prefix === '0') {
 			this.warn('WARNING: Unit ' + arg[1].id + ' (' + arg[1].name + ') doesn\'t usually have any prefixes, yet ' + arg[0].id + ' identified!')
 		}
 		else if(arg[1].prefix === '+' && arg[0].v < 0) {
