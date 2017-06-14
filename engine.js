@@ -5,7 +5,18 @@
 window.onload = function() {
 	view('intro');
 	help();
+	ECMA6test();
 };
+
+//test availability of ECMA6 with a sample code
+function ECMA6test() {
+	try {
+		eval('const a=[1,2];for(let i of a){};a.map(i => i);');
+	}
+	catch(err) {
+		alert('ERROR:\n Sorry, but unfortunately you seem to be using a very old browser which doesn\'t support ECMA6 javascript.\n The application will not work at all!');
+	}
+}
 
 //utility to access DOM easier.
 function geto(id){
@@ -14,7 +25,8 @@ function geto(id){
 
 //GUI function to switch tabs
 function view(what) {
-	for(let t of document.getElementsByClassName('tab')) {
+	let tabs = document.getElementsByClassName('tab');
+	for(let t of tabs) {
 		t.style.display = (t.id === what) ? 'block' : 'none';
 	}
 }
@@ -96,15 +108,62 @@ function help() {
 	geto('helpContents').innerHTML = text;
 }
 
-//this listens to onkeyup in text fields and executes the program if the key is an Enter
+//these functions listens to onkeyup in text fields and executes the program if the key is an Enter
+//input & target
 function listen(event) {
 	if(event.keyCode !== 13) {return;}
 	convert.init();
 }
 
+//filter input
 function listenFilter(event) {
 	if(event.keyCode !== 13) {return;}
 	help();
+}
+
+//Submit suggestion
+function submit() {
+	let texts = ['name', 'id', 'v', 'k', 'note'];
+	let selects = ['prefix']
+	let checks = ['SI', 'constant'];
+
+	//get a concetenated field of text input values and checkbox checked values
+	let values = texts.map(item => geto(item).value.trim())
+		.concat(checks.map(item => geto(item).value))
+		.concat(checks.map(item => geto(item).checked));
+
+	if(values[0] === '') {alert('Sorry, but you have to fill out the name field.');return;}
+
+	AJAX('save.php', values)
+		.then(function(result) {
+			if(result === 200) {
+				alert('Thank you, your suggestion has been saved.');
+				texts.forEach(item => geto(item).value = '');
+				checks.forEach(item => geto(item).checked = '');
+				geto('prefix').value = 'all';
+			}
+			else if(result === 429) {
+				alert('Too many sugestions for today! Sorry, but as an attempt to limit spam, only 50 per day are allowed.');
+			}
+			else {
+				alert('Some error has occured and server has refused to save the suggestion.');
+			}
+		});
+}
+
+//POST data by ajax. Returns a thenable promise
+function AJAX(url, values) {
+	return new Promise(function(resolve) {
+		let xobj = new XMLHttpRequest();
+		xobj.open('POST', url, true);
+		xobj.setRequestHeader("Content-type", "application/json");
+		xobj.send(JSON.stringify(values));
+		xobj.onreadystatechange = function() {
+			if(xobj.readyState === 4) {
+				resolve(xobj.status);
+			}
+		};
+	});
 }
 
 

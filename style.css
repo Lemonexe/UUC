@@ -1,0 +1,35 @@
+.ok {
+	display: inline;
+	color: green;
+}
+.warn {
+	display: inline;
+	color: darkorange;
+}
+.err {
+	display: inline;
+	font-weight: bold;
+	color: red;
+}
+#output {
+	height: 19px;
+	border: 1px solid #A9A9A9;
+}
+#input {
+	width: 300px;
+}
+#target {
+	width: 300px;
+}
+#help {
+	display: none;
+}
+#footer {
+	position: fixed;
+	bottom: 0px;
+	background-color: #FFFFFF;
+	border-top: 1px solid #A9A9A9;
+}
+select, input[type="text"], input[type="checkbox"] {
+	padding: 0;
+}
