@@ -166,6 +166,59 @@ function AJAX(url, values) {
 	});
 }
 
+//Maintenance function that cannot be accessed by GUI. Conflicts are written in debug div. Quadratic time complexity (in relation to Units)
+function unitConflicts() {
+
+	//determine whether there is conflict between two given unit objects
+	let determineConflict = function(u, i) {
+
+		//same ID, that's the worst that can happen
+		if(u.id === i.id) {
+			conflicts.unshift(`HARD CONFLICT: ${u.id} (${u.name}) = ${i.id} (${i.name})`);
+			return;
+		}
+
+		//conflict of a unit with prefix with another unit. IF u.id is at the end of i.id
+		let index = i.id.search(u.id);
+		if(
+			index > -1 &&
+			(index + u.id.length) === i.id.length
+		) {
+			let id = i.id.replace(u.id, '');
+			for(let p of Prefixes) {
+				if(p.id === id) {
+					if(
+						u.prefix === 'all' ||
+						(u.prefix === '+' && p.v > 0) ||
+						(u.prefix === '-' && p.v < 0)
+					) {
+						conflicts.unshift(`CONFLICT OF A PREFIX: ${p.id}${u.id} (${p.id} ${u.name}) = ${i.id} (${i.name})`);
+						break;
+					}
+					else {
+						conflicts.push(`conflict of a deprecated prefix: ${p.id}${u.id} (${p.id} ${u.name}) = ${i.id} (${i.name})`);
+						break;
+					}
+					break;
+				}
+			}
+		}
+	};
+
+	//two for cycles through Units, determineConflict is applied to each pair (pair of a unit with itself is excluded)
+	let conflicts = [];
+	for(let u in Units) {
+		if(Units.hasOwnProperty(u)) {
+			for(let i in Units) {
+				if(Units.hasOwnProperty(i) && i !== u) {
+					determineConflict(Units[u], Units[i]);
+				}
+			}
+		}
+	}
+	geto('debug').innerHTML = conflicts.length + ' conflicts<br>' + conflicts.join('<br>');
+}
+
 
 
 
@@ -177,7 +230,6 @@ function AJAX(url, values) {
 	It contains functions and state variables
 */
 let convert = {
-
 	//status means 0 = OK, 1 = warnings, 2 = fatal error. Status text will contain error or warning messages.
 	status: 0,
 	statusText: '',

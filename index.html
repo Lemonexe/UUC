@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
+		<meta name="description" content="A useful tool for unit conversion.">
 		<title>Ultimate Unit Converter</title>
 		<script src="engine.js" type="text/javascript"></script>
 		<script src="data.js" type="text/javascript"></script>
@@ -24,7 +25,7 @@
 	Because of floating-point arithmetics, you might encounter rounding bugs: e.g you expect 10000 but get 9999.99996 or 10000.0000004. Sorry, it's a very fundamental thing and would be difficult to circumvent.
 </p><p>
 	Note 1: The prefix "micro" is u, not μ, since it's easier to type...<br>
-	Note 2: If you miss your favorite unit or constant and would like to see it here, click on the Suggestions button.<br>
+	Note 2: If you miss your favorite unit or constant and would like to see it here, click on the Suggestion button.<br>
 	Note 3: If you have an idea how to enhance the application, you can <a href="mailto:zbytek@gmail.com">contact me</a>.<br>
 	Note 4: If you are a programmer interested in the source code, see the <a href="https://github.com/Lemonexe/UUC">Github repository</a>.<br>
 	Continue by clicking on the CONVERTER button to get started or the Reference button to see what's supported.
@@ -85,12 +86,16 @@
 
 <div id="suggestion" class="tab">
 	<h2>Unit suggestion</h2>
-	Is your favourite unit or constant missing? Don't worry, you can send a suggestion through this form.<br>
-	I will check them time from time (you can also <a href="mailto:zbytek@gmail.com">email me</a>) and I will implement them.<br>
-	The only mandatory field is the name of the unit (or a short description), but it will be very helpful if you fill out as much as possible.<br>
-	Please, suggest only units that you need to use here or use on daily basis. Not just because they exist - this application doesn't aim to offer as much units as possible, because there are hundreds of different units from different cultures of human history and this application should contain only the useful ones.<br><br>
-	<div>
-		<div style="float: left; font-weight: bold;">
+	<p>
+		Is your favourite unit or constant missing? Don't worry, you can send a suggestion through this form.<br>
+		I will check them time from time (you can also <a href="mailto:zbytek@gmail.com">email me</a>) and I will implement them.<br>
+		The only mandatory field is the name of the unit (or a short description), but it will be very helpful if you fill out as much as possible.
+	</p>
+	<p>
+		Please, suggest only units that you need to use here or use on daily basis. Not just because they exist - this application doesn't aim to offer as much units as possible, because there are hundreds of different units from different cultures of human history and this application should contain only the useful ones.
+	</p>
+	<div style="margin-bottom: 10px;">
+		<div style="float: left; font-weight: bold; width: 150px; line-height: 20px">
 			Name:<br>
 			Identifier:<br>
 			Conversion ratio:<br>
@@ -101,19 +106,19 @@
 			Note:
 		</div>
 		<div style="float: left;">
-			<input type="text" id="name" size="50" maxlength="200"> Name or a short description, max 200 characters<br>
-			<input type="text" id="id" size="25" maxlength="10"> Symbol of the unit as it will be used in the app<br>
-			<input type="text" id="k" size="25" maxlength="30"> conversion ration to basic SI units. e.g. hour has 3600 seconds and that's the ratio<br>
-			<input type="text" id="v" size="25" maxlength="30"> Vector of powers of basic SI units in the format <code>m,kg,s,A,K,mol,cd</code> e.g. dimension of Newton is m*kg/s2, therefore its the vector is <code>1,1,-2,0,0,0,0</code><br>
+			<input type="text" id="name" size="100" maxlength="80" placeholder="Name or a short description. Max 200 characters"><br>
+			<input type="text" id="id" size="15" maxlength="10"> Symbol of the unit as it will be used in the app<br>
+			<input type="text" id="k" size="15" maxlength="30"> conversion ration to basic SI units. e.g. hour has 3600 seconds and that's the ratio<br>
+			<input type="text" id="v" size="15" maxlength="30"> Vector of powers of basic SI units in the format <code>m,kg,s,A,K,mol,cd</code> e.g. dimension of Newton is m*kg/s2, therefore its the vector is <code>1,1,-2,0,0,0,0</code><br>
 			<select id="prefix">
 				<option value="all">All</option>
-				<option value="+">Increasing only</option>
-				<option value="-">Decreasing only</option>
+				<option value="+">Increasing</option>
+				<option value="-">Decreasing</option>
 				<option value="0">None</option>
 			</select> Which prefixes will be allowed?<br>
 			<input type="checkbox" id="SI"><br>
 			<input type="checkbox" id="constant"><br>
-			<input type="text" id="note" size="25" maxlength="400"> Anything noteworthy or weird about this unit. It will appear in the reference. Max 400 characters.
+			<input type="text" id="note" size="80" maxlength="400" placeholder="Anything noteworthy or weird about this unit. Max 400 characters.">
 		</div>
 		<div style="clear: both;"></div>
 	</div>
