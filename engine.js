@@ -6,6 +6,7 @@ window.onload = function() {
 	view('intro');
 	help();
 	ECMA6test();
+	loadCurrencies();
 };
 
 //test availability of ECMA6 with a sample code
@@ -44,7 +45,7 @@ function help() {
 	}
 	text = text.replace(/, $/ , '');
 	text += '<hr><h2>Units</h2>';
-	text += 'There are ' + Units.filter(item => !item.constant).length + ' units and ' + Units.filter(item => item.constant).length + ' constants in database!<br><br>';
+	text += 'There are ' + Units.filter(item => !item.constant).length + ' units and ' + Units.filter(item => item.constant).length + ' constants in database!<br>';
 
 	//callback used to filter units. The filter function will check all dimensions of unit (item) and if they all agree with filterVector, it is a related unit and it will pass the filter.
 	let filterVector;
@@ -59,21 +60,24 @@ function help() {
 	let filter = geto('filter').value.trim();
 	if(filter === '1') {
 		//Filters all dimensionless units using filterFunction
-		filterVector = [0,0,0,0,0,0,0];
+		filterVector = new Array(8).fill(0);
 		unitList = Units.filter(filterFunction);
 	}
-	else if(filter === '$') {
+	else if(filter === '_') {
 		unitList = Units.filter(item => item.constant);
 	}
 	else if(filter !== '') {
 		//it parses the filter unit into detailed unit object and then into aggregate vector. See convert.init() of explanation. Then it filters all units using filterFunction
+		convert.status = 0;
 		convert.parseField(filter);
 		filterVector = convert.SI();
-		unitList = Units.filter(filterFunction);
+		unitList = (convert.status === 2) ? Units : Units.filter(filterFunction);
 	}
 	else {
 		unitList = Units;
 	}
+
+	text += unitList.length + ' items are listed.<br><br>';
 
 	//now we have the list of units we want to write
 	for(let o of unitList) {
@@ -85,7 +89,7 @@ function help() {
 			text += 'Constant.';
 		}
 		else {
-			text += o.basic ? 'Basic ' : '';
+			text += o.basic ? 'Basic, ' : '';
 			text += o.SI ? 'SI, ' : '';
 
 			if(o.prefix === 'all') {
@@ -164,6 +168,30 @@ function AJAX(url, values) {
 			}
 		};
 	});
+}
+
+//load currency exchange rates from a public API, fill the results in Currency array and concatenate Currency onto Units.
+//http://api.fixer.io/latest?base=USD
+function loadCurrencies() {
+	let url = 'http://api.fixer.io/latest?base=USD';
+	let xobj = new XMLHttpRequest();
+	xobj.open('GET', url, true);
+	xobj.overrideMimeType('application/json');
+	xobj.send(null);
+	xobj.onreadystatechange = function() {
+		if(xobj.readyState === 4 && xobj.status === 200) {
+			let res = JSON.parse(xobj.responseText);
+			for(let c of Currency) {
+				if(res.rates.hasOwnProperty(c.id)) {
+					c.k = 1/res.rates[c.id];
+					c.v = [0,0,0,0,0,0,0,1];
+				}
+			}
+			Currency = Currency.filter(item => item.k);
+			Units = Units.concat(Currency);
+			help();
+		}
+	};
 }
 
 //Maintenance function that cannot be accessed by GUI. Conflicts are written in debug div. Quadratic time complexity (in relation to Units)
@@ -432,7 +460,7 @@ let convert = {
 
 	//SI reads the detailed unit object from this.units and enumerates the aggregate vector.
 	SI: function() {
-		let aggregateVector = [0,0,0,0,0,0,0];
+		let aggregateVector = new Array(8).fill(0);;
 		
 		//foreach unit we add vector of its units multiplied by power
 		for(let u of this.units) {
@@ -470,7 +498,7 @@ let convert = {
 
 	//DimAnalysis will take vector of input and target. OK represents whether everything is ok. Faults is array of id of dimensions that don't fit. Corr is the correction vector - power of basic units we have to add.
 	DimAnalysis: function(source, target) {
-		let corr = [0,0,0,0,0,0,0];
+		let corr = new Array(8).fill(0);
 		let OK = true;
 		let basic = Units.filter(item => item.basic);
 		let faults = [];

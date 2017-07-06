@@ -33,7 +33,7 @@
 </div>
 
 <div id="help" class="tab">
-	You can write a unit here to filter the ones with same dimension (1 for dimensionless), or write $ to list constants: 
+	You can write a unit here to filter the ones with same dimension (1 for dimensionless), or write _ to list constants: 
 	<input type="text" id="filter" onkeyup="listenFilter(event);"><input type="button" value="Filter" onclick="help();"><hr>
 	<div id="helpContents">
 		<!-- Help will be generated here -->
@@ -59,7 +59,8 @@
 		6.2 kJ <i>or</i> 6,2 kJ<br>
 		12 ug*Hz/Pa<br>
 		-0.007 cm^7*mV^-3/s0.5*A0,333333<br>
-		2e-12 kg
+		2e-12 kg<br>
+		2.99 EUR/kg
 	</div>
 	<div style="float: left;font-style: italic;">
 		you don't have to type any number before units and it's regarded as 1. Here it converts 1 minute (to seconds by default)<br>
@@ -67,17 +68,18 @@
 		comma also works as a decimal point<br>
 		you can multiply using <b>*</b>, divide using <b>/</b><br>
 		you can raise to power by simply writing number after the unit or by using <b>^</b>. Cube root can only be aproximate, sorry...<br>
-		you can use e... to express "times 10 to the ..."
+		you can use e... to express "times 10 to the ..."<br>
+		currency conversion works too (basic unit is USD), exchange rates are obtained from this public <a href="http://fixer.io/">API</a>
 	</div>
 	<div style="clear: both;"></div>
 	<h2>Useful examples:</h2>
 	<div style="float: left; width: 300px;">
-		3 $g*lb*ft &rarr; J<br>
+		3 _g*lb*ft &rarr; J<br>
 		lb*ft/s2 &rarr; N<br>
 		3500 min-1 &rarr; Hz<br>
 	</div>
 	<div style="float: left;font-style: italic;">
-		conversion of foot-pound force to joule, $g is standard gravity. All constants here are marked by $<br>
+		conversion of foot-pound force to joule, _g is standard gravity. All constants here are marked by _<br>
 		conversion of poundal to newton<br>
 		conversion of RPM to Hz<br>
 	</div>
