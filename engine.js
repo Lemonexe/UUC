@@ -173,7 +173,7 @@ function AJAX(url, values) {
 //load currency exchange rates from a public API, fill the results in Currency array and concatenate Currency onto Units.
 //http://api.fixer.io/latest?base=USD
 function loadCurrencies() {
-	let url = 'http://api.fixer.io/latest?base=USD';
+	let url = 'currencies.php';
 	let xobj = new XMLHttpRequest();
 	xobj.open('GET', url, true);
 	xobj.overrideMimeType('application/json');
@@ -342,7 +342,7 @@ let convert = {
 		}
 
 		//bad things must go away
-		text = text.replace(/,/g , '.').replace(/  /g , ' ');
+		text = text.replace(/,/g , '.').replace(/\s+/g , '');
 
 		//it will try to match numerical part. If it exists, it is stored in this.num and removed from text. Else it is one
 		let numStr = text.match(/^[\d\.\-\+e]+/);
@@ -360,15 +360,16 @@ let convert = {
 			this.num = 1;
 		}
 
+		//dimensionless units
 		if(text.length === 0) {
 			this.units = [];return;
 		}
 
-		//all parts of text that might mean something are divided by either space, * or /. But unlike regular split, the delimiters are kept in the array (because we need to distinguish between * and /)
-		let members = text.split(/([*/ ])/);
+		//all parts of text that might mean something are divided by * or /. But unlike regular split, the delimiters are kept in the array (because we need to distinguish between * and /)
+		let members = text.split(/([*/])/);
 
 		//all delimiters at the beginning are removed. A slash shouldn't be found there!
-		while(['',' ','*','/'].indexOf(members[0]) > -1) {
+		while(['','*','/'].indexOf(members[0]) > -1) {
 			if(members[0] === '/') {
 				this.warn('WARNING: Unexpected slash sign after numerical part, it is regarded as a space.');
 			}
@@ -515,7 +516,7 @@ let convert = {
 		}
 		//nicely written warning
 		if(faults.length > 0) {
-			this.warn('WARNING: Units from input and target don\'t match. These basic units have been added: ' + faults.join(', ') + '.');
+			this.warn('WARNING: Dimensions of units from input and target don\'t match. These basic units have been added: ' + faults.join(', ') + '.');
 		}
 		
 		return [OK, corr];
