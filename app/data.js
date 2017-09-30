@@ -20,6 +20,7 @@ let Units = [
 	{v: [0,0,0,0,1,0,0,0], id: 'K', name: 'kelvin', k:1, SI: true, basic: true, prefix: '-'},
 	{v: [0,0,0,0,0,1,0,0], id: 'mol', name: 'mole', k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,0,0,0,0,0,1,0], id: 'cd', name: 'candela', k:1, SI: true, basic: true, prefix: 'all'},
+	//USD is important - reference to USD is hardcoded in currency loading
 	{v: [0,0,0,0,0,0,0,1], id: 'USD', name: 'American dollar', k:1, basic: true,
 		note: 'Other currencies are loaded from external website and therefore don\'t appear instantly. But usually it takes no more than a few miliseconds...'},
 
@@ -99,7 +100,11 @@ let Units = [
 	{v: [2,1,-2,0,0,0,0,0], id: 'cal', name: 'calorie', k:4.184, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'TNT', name: 'ton of TNT equivalent', k:4.184e9, prefix: 'all'},
 
+	{v: [-1,0,0,1,0,0,0,0], id: 'Oe', name: 'oersted', k:1000/(4*Math.PI), prefix: 'all'},
+
 	{v: [2,1,-3,0,0,0,0,0], id: 'hp', name: 'imperial horsepower', k:745.69987158227022},
+
+	{v: [-1,1,-1,0,0,0,0,0], id: 'P', name: 'poise', k:0.1, SI: true, prefix: 'all'},
 
 	{v: [-1,1,-2,0,0,0,0,0], id: 'bar', name: 'bar', k:1e5, SI: true, prefix: 'all'},
 	{v: [-1,1,-2,0,0,0,0,0], id: 'atm', name: 'atmospehre', k:101325, note: 'Also serves as standard pressure.'},
@@ -115,7 +120,7 @@ let Units = [
 	{v: [2,1,-1,0,0,0,0,0], id: '_h', name: 'Planck constant', k:6.626070040e-34, constant: true},
 	{v: [2,1,-2,0,-1,0,0,0], id: '_k', name: 'Boltzman constant', k:1.38064852e-23, constant: true},
 	{v: [2,1,-2,0,-1,-1,0,0], id: '_R', name: 'gas constant', k:8.3144598, constant: true},
-	{v: [1,1,-2,-2,0,0,0,0], id: '_my', name: 'vacuum permeability', k:1.2566370614e-6, constant: true},
+	{v: [1,1,-2,-2,0,0,0,0], id: '_mu', name: 'vacuum permeability', k:1.2566370614e-6, constant: true},
 	{v: [-3,-1,4,2,0,0,0,0], id: '_E', name: 'vacuum permittivity', k:8.854187817e-12, constant: true},
 	{v: [0,0,1,1,0,0,0,0], id: '_q', name: 'elementary charge', k:1.6021766208e-19, constant: true},
 	{v: [0,0,0,0,0,-1,0,0], id: '_NA', name: 'Avogadro constant', k:6.02214085e23, constant: true},
