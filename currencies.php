@@ -18,6 +18,6 @@ else {
 	$data = file_get_contents('http://api.fixer.io/latest?base=USD');
 	file_put_contents('currencies.json', $data);
 	//counter of requests:
-	touch('foobar');file_put_contents('foobar', (int)file_get_contents('foobar') + 1);
+	//touch('foobar');file_put_contents('foobar', (int)file_get_contents('foobar') + 1);
 	echo $data;
 }

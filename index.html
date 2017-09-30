@@ -15,25 +15,31 @@
 <input type="button" value="CONVERTER" onclick="view('converter');">
 <input type="button" value="Reference" onclick="view('help');">
 <input type="button" value="Examples" onclick="view('examples');">
-<input type="button" value="Suggestion" onclick="view('suggestion');">
 <hr>
 
 <div id="intro" class="tab">
 <p>
-	Write your expression (see examples button!) into the input text field and press enter to perform the conversion, which is into basic SI by default. You can modify the units in the "target units" field to customize your output unit (e.g. Torr into mbar). Case sensitive!<br>
-	If you decide to change the target units, the program will perform dimensional analysis and if it doesn't match the input, it will add necessary basic SI units to the output to make the conversion possible (e.g. Pa to W fails, correcting to W*s/m^3).<br>
-	Because of floating-point arithmetics, you might encounter rounding bugs: e.g you expect 10000 but get 9999.99996 or 10000.0000004. Sorry, it's a very fundamental thing and would be difficult to circumvent.
+	Write your expression (see the <b>Examples</b> button!) into the <b>Input</b> text field and press enter to perform the conversion, which is into basic SI by default, but you can fill the <b>Target units</b> field to specify an output unit (e.g. Torr into mbar).<br>
+	Units are case sensitive! In the <b>Reference</b> you will find a comprehensive list.
+</p><p>
+	UUC will perform dimensional analysis for you and if the Input &amp; Target units are mismatched, you will get a warning.<br>
+	This is often caused by a misunderstood unit symbol and collision with a different unit (e.g. you expect C to be degree Celsius, but C is reserved for coulomb, degree celsius is °C).<br>
+	It can also be caused by wrong syntax (e.g. you expect mK to be metre times kelvin, but it's actually milikelvin, the correct syntax is m*K)
+</p><p>
+	You might sometimes encounter rounding bugs, e.g. you expect 10000 but get something like 9999.99996 or 10000.0000004. It's caused by floating-point arithmetics, which is a fundamental principle of all electronic computations and it would be very difficult to circumvent. Sorry!
 </p><p>
 	Note 1: The prefix "micro" is u, not μ, since it's easier to type...<br>
-	Note 2: If you miss your favorite unit or constant and would like to see it here, click on the Suggestion button.<br>
+	Note 2: If you miss your favorite unit or constant and would like to see it here, you can <a href="mailto:zbytek@gmail.com">contact me</a>.<br>
 	Note 3: If you have an idea how to enhance the application, you can <a href="mailto:zbytek@gmail.com">contact me</a>.<br>
 	Note 4: If you are a programmer interested in the source code, see the <a href="https://github.com/Lemonexe/UUC">Github repository</a>.<br>
-	Continue by clicking on the CONVERTER button to get started or the Reference button to see what's supported.
+	Note 5: UUC handles temperature units as temperature difference, not absolute temperature. See °C in the Reference for details.
+</p><p>
+	Continue by clicking on the <b>CONVERTER</b> button to get started or the Reference button to see what's supported.
 </p>
 </div>
 
 <div id="help" class="tab">
-	You can write a unit here to filter the ones with same dimension (1 for dimensionless), or write _ to list constants: 
+	You can write a unit here to filter the ones with same dimension (1 for dimensionless), or write _ to list constants:<br>
 	<input type="text" id="filter" onkeyup="listenFilter(event);"><input type="button" value="Filter" onclick="help();"><hr>
 	<div id="helpContents">
 		<!-- Help will be generated here -->
@@ -53,78 +59,37 @@
 
 <div id="examples" class="tab">
 	<h2>Basic examples:</h2>
-	<div style="float: left; width: 300px;">
-		min<br>
-		6 kPa <i>or</i> 6kPa<br>
-		6.2 kJ <i>or</i> 6,2 kJ<br>
-		12 ug*Hz / Pa<br>
-		-0.007 cm^7 * mV^-3/s0.5* A0,333333<br>
-		2e-12 kg<br>
+		min
+		<span class="example">you don't have to type any number before units and it's regarded as 1. Here it converts 1 minute (to seconds by default)</span><br>
+		6 kPa <i>or</i> 6kPa
+		<span class="example">you can use standard SI prefixes before units. Spaces are entirely optional, all spaces are ignored</span><br>
+		6.2 kJ <i>or</i> 6,2 kJ
+		<span class="example">comma also works as a decimal point</span><br>
+		12 ug*Hz / Pa
+		<span class="example">you can multiply using <b>*</b>, divide using <b>/</b>. Using a space won't work!</span><br>
+		-0.007 cm^7 * mV^-3/s0.5
+		<span class="example">you can raise to power by simply writing number after the unit or by using <b>^</b></span><br>
+		l^0,333333
+		<span class="example">cube root can be only aproximate, sorry...</span><br>
+		2e-12 kg
+		<span class="example">you can use e... to express "times 10 to the ..."</span><br>
 		2.99 EUR/kg
-	</div>
-	<div style="float: left;font-style: italic;">
-		you don't have to type any number before units and it's regarded as 1. Here it converts 1 minute (to seconds by default)<br>
-		space is optional. You can use standard prefixes before units<br>
-		comma also works as a decimal point<br>
-		you can multiply using <b>*</b>, divide using <b>/</b>. All spaces are ignored and therefore allowed.<br>
-		you can raise to power by simply writing number after the unit or by using <b>^</b>. Cube root can only be aproximate, sorry...<br>
-		you can use e... to express "times 10 to the ..."<br>
-		currency conversion works too (basic unit is USD), exchange rates are obtained from this public <a href="http://fixer.io/">API</a>
-	</div>
-	<div style="clear: both;"></div>
+		<span class="example">currency conversion works too (basic unit is USD), exchange rates are downloaded every day from ECB using this public <a href="http://fixer.io/">API</a>.</span>
 	<h2>Useful examples:</h2>
-	<div style="float: left; width: 300px;">
-		3 _g*lb*ft &rarr; J<br>
-		lb*ft/s2 &rarr; N<br>
-		3500 min-1 &rarr; Hz<br>
-	</div>
-	<div style="float: left;font-style: italic;">
-		conversion of foot-pound force to joule, _g is standard gravity. All constants here are marked by _<br>
-		conversion of poundal to newton<br>
-		conversion of RPM to Hz<br>
-	</div>
-	<div style="clear: both;"></div>
-</div>
-
-<div id="suggestion" class="tab">
-	<h2>Unit suggestion</h2>
-	<p>
-		Is your favourite unit or constant missing? Don't worry, you can send a suggestion through this form.<br>
-		I will check them time from time (you can also <a href="mailto:zbytek@gmail.com">email me</a>) and I will implement them.<br>
-		The only mandatory field is the name of the unit (or a short description), but it will be very helpful if you fill out as much as possible.
-	</p>
-	<p>
-		Please, suggest only units that you need to use here or use on daily basis. Not just because they exist - this application doesn't aim to offer as much units as possible, because there are hundreds of different units from different cultures of human history and this application should contain only the useful ones.
-	</p>
-	<div style="margin-bottom: 10px;">
-		<div style="float: left; font-weight: bold; width: 150px; line-height: 20px">
-			Name:<br>
-			Identifier:<br>
-			Conversion ratio:<br>
-			Dimensions:<br>
-			Prefixes allowed:<br>
-			Is it SI?<br>
-			Is it a constant?<br>
-			Note:
-		</div>
-		<div style="float: left;">
-			<input type="text" id="name" size="100" maxlength="80" placeholder="Name or a short description. Max 200 characters"><br>
-			<input type="text" id="id" size="15" maxlength="10"> Symbol of the unit as it will be used in the app<br>
-			<input type="text" id="k" size="15" maxlength="30"> conversion ration to basic SI units. e.g. hour has 3600 seconds and that's the ratio<br>
-			<input type="text" id="v" size="15" maxlength="30"> Vector of powers of basic SI units in the format <code>m,kg,s,A,K,mol,cd</code> e.g. dimension of Newton is m*kg/s2, therefore its the vector is <code>1,1,-2,0,0,0,0</code><br>
-			<select id="prefix">
-				<option value="all">All</option>
-				<option value="+">Increasing</option>
-				<option value="-">Decreasing</option>
-				<option value="0">None</option>
-			</select> Which prefixes will be allowed?<br>
-			<input type="checkbox" id="SI"><br>
-			<input type="checkbox" id="constant"><br>
-			<input type="text" id="note" size="80" maxlength="400" placeholder="Anything noteworthy or weird about this unit. Max 400 characters.">
-		</div>
-		<div style="clear: both;"></div>
-	</div>
-	<input type="button" value="Submit!" onclick="submit();">
+		3500 min-1 &rarr; Hz
+		<span class="example">conversion of RPM to Hz</span><br>
+		3 _g*lb*ft &rarr; J
+		<span class="example">foot-pound force to joule, _g is standard gravity. All constants in UUC are marked by _</span><br>
+		kg*_g/cm^2 &rarr; psi
+		<span class="example">kilogram force per square cm to psi (psi could also be written as lb*_g/in2 by the same logic)</span><br>
+		lb*ft/s2 &rarr; N
+		<span class="example">poundal to newton</span>
+	<h2>Peculiar features:</h2>
+		<p>UUC can be used for more than just conversion of units within the same dimension. Using built-in universal constants, it can perform simple calculations where one physical quantity is another one multiplied by one or several universal constants, e.g.:</p>
+		yr*_c &rarr; m
+		<span class="example">year times speed of light = lightyear (in metres). Although this is pointless, since lightyear itself is implemented as ly</span><br>
+		T/_mu &rarr; Oe
+		<span class="example">magnetic flux (B) in tesla to magnetic field (H) in oersted</span>
 </div>
 
 <div id="debug"></div>

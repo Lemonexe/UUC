@@ -39,7 +39,7 @@ function view(what) {
 */
 function help() {
 	//list of all prefixes
-	let text = '<h2>Prefixes</h2> prefix (exponent):<br>';
+	let text = '<h2>Prefixes (exponents):</h2>';
 	for(let o of Prefixes) {
 		text += o.id + ' (' + o.v + '), ';
 	}
@@ -123,51 +123,6 @@ function listen(event) {
 function listenFilter(event) {
 	if(event.keyCode !== 13) {return;}
 	help();
-}
-
-//Submit suggestion
-function submit() {
-	let texts = ['name', 'id', 'v', 'k', 'note'];
-	let selects = ['prefix']
-	let checks = ['SI', 'constant'];
-
-	//get a concetenated field of text input values and checkbox checked values
-	let values = texts.map(item => geto(item).value.trim())
-		.concat(checks.map(item => geto(item).value))
-		.concat(checks.map(item => geto(item).checked));
-
-	if(values[0] === '') {alert('Sorry, but you have to fill out the name field.');return;}
-
-	AJAX('save.php', values)
-		.then(function(result) {
-			if(result === 200) {
-				alert('Thank you, your suggestion has been saved.');
-				texts.forEach(item => geto(item).value = '');
-				checks.forEach(item => geto(item).checked = '');
-				geto('prefix').value = 'all';
-			}
-			else if(result === 429) {
-				alert('Too many sugestions for today! Sorry, but as an attempt to limit spam, only 50 per day are allowed.');
-			}
-			else {
-				alert('Some error has occured and server has refused to save the suggestion.');
-			}
-		});
-}
-
-//POST data by ajax. Returns a thenable promise
-function AJAX(url, values) {
-	return new Promise(function(resolve) {
-		let xobj = new XMLHttpRequest();
-		xobj.open('POST', url, true);
-		xobj.setRequestHeader("Content-type", "application/json");
-		xobj.send(JSON.stringify(values));
-		xobj.onreadystatechange = function() {
-			if(xobj.readyState === 4) {
-				resolve(xobj.status);
-			}
-		};
-	});
 }
 
 //load currency exchange rates from a public API, fill the results in Currency array and concatenate Currency onto Units.
@@ -267,6 +222,7 @@ let convert = {
 	err: function(text) {
 		this.status = 2;
 		this.statusText = '<div class="err">' + text + '</div><br>';
+		geto('output').innerHTML = '';
 	},
 	warn: function(text) {
 		this.status = (this.status === 0) ? 1 : this.status;
@@ -345,9 +301,12 @@ let convert = {
 		text = text.replace(/,/g , '.').replace(/\s+/g , '');
 
 		//it will try to match numerical part. If it exists, it is stored in this.num and removed from text. Else it is one
-		let numStr = text.match(/^[\d\.\-\+e]+/);
+		let numStr = text.match(/^-?[\d\.]+e?[\-\d]*/);
 		if(numStr) {
 			numStr = numStr[0];
+			if(numStr[numStr.length - 1] === 'e') {
+				numStr = numStr.slice(0,-1);
+			}
 			this.num = Number(numStr);
 			text = text.slice(numStr.length);
 
