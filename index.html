@@ -4,6 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="description" content="A useful tool for unit conversion.">
 		<title>Ultimate Unit Converter</title>
+		<!--<script src="libs/angular.min.js"></script>-->
 		<script src="app/core.js" type="text/javascript"></script>
 		<script src="app/middle.js" type="text/javascript"></script>
 		<script src="app/convert.js" type="text/javascript"></script>
@@ -22,7 +23,7 @@
 <div id="intro" class="tab">
 <p>
 	Write your expression (see the <b>Examples</b> button!) into the <b>Input</b> text field and press enter to perform the conversion, which is into basic SI by default, but you can fill the <b>Target units</b> field to specify an output unit (e.g. Torr into mbar).<br>
-	Units are case sensitive! In the <b>Reference</b> you will find a comprehensive list.
+	Units are case sensitive (and for a good reason). In the <b>Reference</b> you will find a comprehensive list.
 </p><p>
 	UUC will perform dimensional analysis for you and if the Input &amp; Target units are mismatched, you will get a warning.<br>
 	This is often caused by a misunderstood unit symbol and collision with a different unit (e.g. you expect C to be degree Celsius, but C is reserved for coulomb, degree celsius is °C).<br>
@@ -31,7 +32,7 @@
 	You might sometimes encounter rounding bugs, e.g. you expect 10000 but get something like 9999.99996 or 10000.0000004. It's caused by floating-point arithmetics, which is a fundamental principle of all electronic computations and it would be very difficult to circumvent. Sorry!
 </p><p>
 	Note 1: The prefix "micro" is u, not μ, since it's easier to type...<br>
-	Note 2: If you miss your favorite unit or constant and would like to see it here, you can <a href="mailto:zbytek@gmail.com">contact me</a>.<br>
+	Note 2: If you are missing your favorite unit or constant and would like to see it here, you can <a href="mailto:zbytek@gmail.com">contact me</a>.<br>
 	Note 3: If you have an idea how to enhance the application, you can <a href="mailto:zbytek@gmail.com">contact me</a>.<br>
 	Note 4: If you are a programmer interested in the source code, see the <a href="https://github.com/Lemonexe/UUC">Github repository</a>.<br>
 	Note 5: UUC handles temperature units as temperature difference, not absolute temperature. See °C in the Reference for details.
@@ -74,13 +75,13 @@
 		12 ug*Hz / Pa
 		<span class="example">you can multiply using <b>*</b>, divide using <b>/</b>. Using a space won't work!</span><br>
 
-		-0.007 cm^7*mV^-3/s0.5
+		-0.007 cm^7*mV-3/s0.5
 		<span class="example">you can raise to power by simply writing number after the unit or by using <b>^</b></span><br>
 
 		23 s-1, <i>not</i> <s>23 1/s</s> 
 		<span class="example">if you want to use a reciprocal unit, don't write 1/unit (won't work), use power to the -1</span><br>
 
-		l^0,333333
+		l0,333333
 		<span class="example">cube root can be only aproximate, sorry...</span><br>
 
 		2e-12 kg
@@ -95,16 +96,16 @@
 		<span class="example">conversion of RPM to Hz</span><br>
 
 		3 _g*lb*ft &rarr; J
-		<span class="example">foot-pound force to joule, _g is standard gravity. All constants in UUC are marked by _</span><br>
+		<span class="example">foot-pound force to joule, _g is standard gravity. All constants available in UUC are marked by _</span><br>
 
-		kg*_g/cm^2 &rarr; psi
+		kg*_g/cm2 &rarr; psi
 		<span class="example">kilogram force per square cm to psi (psi could also be written as lb*_g/in2 by the same logic)</span><br>
 
 		lb*ft/s2 &rarr; N
 		<span class="example">poundal to newton</span>
 
 	<h2>Peculiar features:</h2>
-		<p>UUC can be used for more than just conversion of units within the same dimension. Using built-in universal constants, it can perform simple calculations where one physical quantity is another one multiplied by one or several universal constants, e.g.:</p>
+		<p>UUC can be used for more than just conversion of units within the same dimension. Using built-in universal constants, it can perform simple calculations where a physical quantity is multiplied by one or several universal constants, e.g.:</p>
 
 		yr*_c &rarr; m
 		<span class="example">year times speed of light = lightyear (in metres). Although this is pointless, since lightyear itself is implemented as ly</span><br>

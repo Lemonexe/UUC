@@ -25,8 +25,7 @@ function geto(id){
 	return document.getElementById(id);
 }
 
-//load currency exchange rates from a public API, fill the results in Currency array and concatenate Currency onto Units.
-//http://api.fixer.io/latest?base=USD
+//load currency exchange rates from a public API (see currencies.php), fill the results in Currency array and concatenate Currency onto Units.
 function loadCurrencies() {
 	let url = 'app/currencies.php';
 	let xobj = new XMLHttpRequest();
@@ -36,9 +35,17 @@ function loadCurrencies() {
 	xobj.onreadystatechange = function() {
 		if(xobj.readyState === 4 && xobj.status === 200) {
 			let res = JSON.parse(xobj.responseText);
+			let USD = res.rates['USD'];//because default base is EUR while UUC is USD-centric
+			
+			//add a timestamp to USD description
+			let timestamp = new Date(res.timestamp*1000);
+			let USDobj = Units.filter(item => item.id === 'USD')[0];
+			USDobj.note = 'Other currencies have been loaded from external website at ' + timestamp.toLocaleDateString() + ' ' + timestamp.toLocaleTimeString();
+
+			//fill values for all currencies
 			for(let c of Currency) {
 				if(res.rates.hasOwnProperty(c.id)) {
-					c.k = 1 / res.rates[c.id];
+					c.k = 1 / res.rates[c.id] * USD;
 					c.v = [0,0,0,0,0,0,0,1];
 				}
 			}

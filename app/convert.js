@@ -199,9 +199,9 @@ let convert = {
 		for (u of obj.units) {
 			current = 1;
 			if(typeof u[0] === 'object') {
-				current *= Math.pow(10 , u[0].v*u[2]);
+				current *= 10 ** (u[0].v*u[2]);
 			}
-			current *= Math.pow(u[1].k, u[2]);
+			current *= u[1].k ** u[2];
 			aggregateUnit *= current;
 		}
 		obj.aggregateUnit = aggregateUnit;

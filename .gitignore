@@ -1,2 +1,5 @@
 _dev/
+libs/
 app/currencies.json
+app/API_key
+app/.htaccess
