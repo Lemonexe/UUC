@@ -1,89 +1,81 @@
 /*
 	middle.js
-	contains functions related to view & controller, which are not present in convert object anymore
+	contains the Angular module and controller, which serves as view & controller for the application
 */
 
-let middle = {
-	err: function(text) {
-		convert.status = 2;
-		convert.statusText = '<div class="err">' + text + '</div><br>';
-		geto('output').innerHTML = '';
-	},
-	warn: function(text) {
-		convert.status = (convert.status === 0) ? 1 : convert.status;
-		convert.statusText += '<div class="warn">' + text + '</div><br>';
-	},
-	//this function will check if everything is ok or not and write the final message about status
-	finish: function() {
-		if(convert.status === 0) {
-			convert.statusText += '<div class="ok">OK</div>';
+angular.module('UUC', [])
+.controller('middle', function($scope, $http) {
+	
+	//initialize language from localstorage or estimate it from window.navigator
+	let localLang = localStorage.getItem('lang');
+	if(localLang) {
+		$scope.lang = localLang;
+	}
+	else if((window.navigator.userLanguage || window.navigator.language).slice(0,2) === 'cs') {
+		$scope.lang = 'CZ';
+	}
+	else {
+		$scope.lang = 'EN';
+	}
+	
+	//user switches language by link
+	$scope.updateLang = function(newLang) {
+		$scope.lang = newLang;
+		localStorage.setItem('lang', newLang);
+	};
+
+	//important variables to control the application: which tab is in view & three text fields
+	//they are in object to ensure proper inheritance to children scopes
+	$scope.controls = {
+		tab: 'converter',
+		input: '',
+		target: '',
+		filter: ''
+	};
+
+	//process string input (so it can be fed to convert)
+	let processInput = string => string.replace(/,/g , '.').replace(/\s+/g , '');
+
+	//initialize conversion
+	$scope.init = function() {
+		let i = processInput($scope.controls.input);
+		let t = processInput($scope.controls.target);
+
+		let c = new Convert();
+		$scope.result = c.init(i, t);
+		/* TODO :)
+		if($scope.result.output) {
+			$scope.result.output.num = $scope.result.output.num.toFixed(2);
 		}
-		geto('status').innerHTML = '<br><b>Status:</b><br>' + convert.statusText;
-	},
+		*/
+		$scope.statusClass = ['ok', 'warn', 'err'][$scope.result.status];
+	};
 
-	//process input (so it can be fed to convert)
-	processInput: function(arg) {
-		let input = geto(arg).value
-			.trim()
-			.replace(/,/g , '.')
-			.replace(/\s+/g , '');
-		return input;
-	},
-
-	//simply write the result of conversion
-	writeResult: function(result) {geto('output').innerHTML = result;},
-
-	//these functions listens to onkeyup in text fields and executes the program if the key is an Enter
-	//input & target
-	listen: function(event) {
+	//this function listens to onkeyup in input & target text fields and executes conversion if the key is an Enter
+	$scope.listenForConvert = function(event) {
 		if(event.keyCode === 13 || event.key === 'Enter') {
-			convert.init();
+			$scope.init();
 		}
-	},
-
-	//filter input
-	listenFilter: function(event) {
-		if(event.keyCode === 13 || event.key === 'Enter') {
-			this.help();
-		}
-	},
-
-	//GUI function to switch tabs
-	view: function(what) {
-		let tabs = document.getElementsByClassName('tab');
-		for(let t of tabs) {
-			t.style.display = (t.id === what) ? 'block' : 'none';
-		}
-	},
+	};
 
 	/*
-		HELP function. First it lists all prefixes.
-		Then it lists all units: name, code, their dimension represented by basic SI and info: whether they are SI, basic SI, what prefixes are recommended and a note (for the ambiguous cases).
-		Then it shows the help section.
+		HELP, this section of code is dedicated to Reference!
 	*/
-	help: function() {
-		let unitList = this.getUnitList();
-		//statistics
-		let constantCount = Units.filter(item => !item.constant).length;
-		let unitCount = Units.filter(item => item.constant).length;
-		//list of all prefixes
-		let prefixesText = Prefixes.map(o => `${o.id} (${o.v})`).join(', ');
 
-		let text = `<h2>Prefixes (exponents):</h2>
-			${prefixesText}<hr>
-			<h2>Units</h2>
-			<p>There are ${unitCount} units and ${constantCount} constants in database!<br>
-			${unitList.length} items are listed.</p>`;
+	//current unit list view to be displayed
+	$scope.Units = Units;
+	//constant statistics or strings to be statically displayed
+	$scope.databaseCount = Units.length;
+	$scope.constantCount = Units.filter(item => item.constant).length;
+	$scope.prefixText = Prefixes.map(o => `${o.id} (${o.v})`).join(', ');
 
-		//now we have the list of units we want to write
-		for(let unit of unitList) {
-			text += this.buildUnitEntry(unit);
-		}
-		geto('helpContents').innerHTML = text;
-	},
+	//detect change in filter text field
+	$scope.listenForHelp = function() {
+		$scope.Units = $scope.getUnitList();
+	}
 
-	//get a list of units filtered using the filter field
-	getUnitList: function() {
+	//get a list of units filtered using the filter text field
+	$scope.getUnitList = function() {
 		//callback fed to Array.filter, it will check all dimensions of unit (item) and if they all agree with filterVector, it is a related unit and it will pass the filter.
 		let filterFunction = function(item) {
 			for(let i in item.v) {
@@ -92,61 +84,95 @@ let middle = {
 			return true;
 		};
 
-		//filter for units - it gets the value of filter textfield and checks it. If there isn't any filter unit, else executes - all units will be listed.
+		//filter for units - it gets the value of filter textfield and checks it by several conditions
 		let filterVector;
-		let filter = this.processInput('filter');
+		let filterString = $scope.controls.filter;
 		//dimensionless units
-		if(filter === '1') {
+		if(filterString === '1') {
 			filterVector = new Array(8).fill(0);
 			return Units.filter(filterFunction);
 		}
 		//constants
-		else if(filter === '_') {
+		else if(filterString === '_') {
 			return Units.filter(item => item.constant);
 		}
 		//specific dimension
-		else if(filter !== '') {
+		else if(filterString !== '') {
 			//it parses the filter unit into detailed unit object and then into aggregate vector. See convert.init() of explanation. Then it filters all units using filterFunction
 			convert.status = 0;
-			let obj = convert.parseField(filter);
+			let obj = convert.parseField(processInput(filterString));
 			convert.SI(obj);
+
+			//if unit wasn't successfully parsed, program tries to find unit by name using the literal value of filter text field, if it is longer than three characters
+			if(convert.status === 2) {
+				let nameSearch = Units.find(item => item.name[lang()].toLowerCase().indexOf(filterString.toLowerCase()) > -1);
+				if(nameSearch && filterString.length >= 3) {
+					filterVector = nameSearch.v;
+					return Units.filter(filterFunction);
+				}
+				//attempt to find unit by name failed, collection will be empty
+				return [];
+			}
+			//if successfully parsed
 			filterVector = obj.aggregateVector;
-			return ((convert.status === 2) ? [] : Units.filter(filterFunction));
+			return Units.filter(filterFunction);
 		}
+		//no filter criterion specified, so all units will be listed
 		else {
 			return Units;
 		}
-	},
+	};
 
-	buildUnitEntry: function(unit) {
-		let text = `<p><b>${unit.name}</b> (${unit.id})`;
+	//redirect unit name by language
+	$scope.getUnitName = unit => unit.name[lang()];
 
+	//each unit is described by dimension represented by basic SI and info:
+	//whether it is a constant,  SI, basic SI, what prefixes are recommended and possibly a note
+	$scope.buildUnitEntry = function(unit) {
+		let text = ' (' + unit.id + ') ';
 		//vector2text converts vector to text representation, like [1,1,-2] to m*kg*s^-2
-		text += unit.basic ? ' ' : ' = ' + unit.k + ' ' + convert.vector2text(unit.v) + '<br>';
+		text += unit.basic ? '' : ' = ' + unit.k + ' ' + convert.vector2text(unit.v) + '\n';
 
 		if(unit.constant) {
-			text += 'Constant.';
+			text += ['Constant.', 'Konstanta.'][lang()];
 		}
 		else {
-			text += unit.basic ? 'Basic, ' : '';
+			text += unit.basic ? ['Basic, ', 'Základní, '][lang()] : '';
 			text += unit.SI ? 'SI, ' : '';
-
-			if(unit.prefix === 'all') {
-				text += 'all prefixes can be used.';
-			}
-			else if(unit.prefix === '+') {
-				text += 'usually only increasing prefixes are used.';
-			}
-			else if(unit.prefix === '-') {
-				text += 'usually only decreasing prefixes are used.';
-			}
-			else {
-				text += 'prefixes are not used.';
+			switch(unit.prefix) {
+				case 'all': text += ['all prefixes can be used.', 'všechny předpony mohou být použity.'][lang()]; break;
+				case '+': text += ['usually only increasing prefixes are used.', 'většinou se používají jen zvětšující předpony.'][lang()]; break;
+				case '-': text += ['usually only decreasing prefixes are used.', 'většinou se používají jen zmenšující předpony.'][lang()]; break;
+				default: text += ['prefixes are not used.', 'předpony se nepoužívají.'][lang()];
 			}
 		}
 
-		text += unit.note ? (' ' + unit.note) : '';
-		text += '</p>';
+		text += unit.note ? (' ' + unit.note[lang()]) : '';
 		return text;
-	}
-};
+	};
+
+	//load currency exchange rates from a public API (see currencies.php), fill the results in Currency array and concatenate Currency onto Units.
+	let loadCurrencies = function () {
+		$http.get('app/currencies.php').then(function(res) {
+			if(res.status !== 200) {return;}
+
+			let USDk = res.data.rates['USD'];//because default base is EUR while UUC is USD-centric
+
+			let timestamp = new Date(res.data.timestamp*1000);
+			$scope.currencyTimestamp = timestamp.toLocaleDateString() + ' ' + timestamp.toLocaleTimeString();
+
+			//fill values for all currencies
+			for(let c of Currency) {
+				if(res.data.rates.hasOwnProperty(c.id)) {
+					c.k = USDk / res.data.rates[c.id];
+					c.v = [0,0,0,0,0,0,0,1];
+				}
+			}
+			Currency = Currency.filter(item => item.k);
+			Units = Units.concat(Currency);
+			$scope.databaseCount = Units.length;
+			$scope.listenForHelp();
+		});
+	};
+	loadCurrencies();
+});

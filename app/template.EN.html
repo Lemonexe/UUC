@@ -1,0 +1,126 @@
+<h1>Ultimate Unit Converter</h1>
+
+<input type="button" value="CONVERTER" ng-click="controls.tab = 'converter'">
+<input type="button" value="Introduction" ng-click="controls.tab = 'intro'">
+<input type="button" value="Reference" ng-click="controls.tab = 'help'">
+<input type="button" value="Examples" ng-click="controls.tab = 'examples'">
+<hr>
+
+<div ng-switch="controls.tab">
+	<div ng-switch-when="intro">
+	<p>
+		Write your expression into the <b>Input</b> text field (see the <b>Examples</b> button) and press Enter to perform the conversion, which is into basic SI by default, but you can fill the <b>Target units</b> field to specify an output unit (e.g. Torr into mbar).<br>
+		Units are case sensitive (and for a good reason). In the <b>Reference</b> you will find a comprehensive list.
+	</p><p>
+		UUC will perform dimensional analysis for you and if the Input &amp; Target units are mismatched, you will get a warning.<br>
+		This is often caused by a misunderstood unit symbol and subsequent collision with another unit (e.g. you expect C to be degree Celsius, but that's °C, while C is reserved for coulomb).<br>
+		It can also be caused by wrong syntax (e.g. you expect mK to be metre times kelvin, but it's actually milikelvin, the correct syntax is m*K).
+	</p><p>
+		<b>Notes:</b>
+		<ol>
+			<li>The prefix "micro" is u, not μ, since it's more convenient to type.</li>
+			<li>Temperature units are handled as temperature difference, not temperature value. See °C in the Reference for details.</li>
+			<li>If you are missing your favorite unit or constant and would like to see it here, you can <a href="mailto:zbytek@gmail.com">contact me</a>.</li>
+			<li>If you have an idea how to enhance the application, you can <a href="mailto:zbytek@gmail.com">contact me</a>.</li>
+			<li>If you are a programmer interested in the source code, see the <a href="https://github.com/Lemonexe/UUC">Github repository</a>.</li>
+		</ol>
+	</p>
+	</div>
+
+	<div ng-switch-when="help">
+		You can write a unit (or its name) here to filter the ones with same dimension (1 for dimensionless), or write _ to list constants:<br>
+		<input type="text" ng-model="controls.filter" ng-change="listenForHelp()">
+		<h2>Prefixes (exponents):</h2>
+		{{prefixText}}
+		<h2>Units</h2>
+		<p>There are {{databaseCount}} items in database (including {{constantCount}} constants) while {{Units.length}} items are currently listed.<br>
+		Currency units have been loaded from external website at {{currencyTimestamp}}.</p>
+		<p ng-repeat="u in Units">
+			<span class="reference"><b>{{getUnitName(u)}}</b>{{buildUnitEntry(u)}}</span>
+		</p>
+
+	</div>
+
+	<div ng-switch-when="converter">
+		<b>Input:</b><br>
+		<input type="text" ng-model="controls.input" ng-keyup="listenForConvert($event)" autofocus><br><br>
+
+		<b>Target units:</b><br>
+		<input type="text" ng-model="controls.target" ng-keyup="listenForConvert($event)"><br><br>
+
+		<input type="button" value="Convert" ng-click="init()"><br><br>
+
+		<b>Output:</b><br>
+		<div id="output">
+			<span ng-if="result && result.output">{{result.output.num}} {{result.output.dim}}</span>
+		</div>
+		<br>
+
+		<b>Status:</b><br>
+		<div id="status" ng-if="result" ng-class="statusClass">
+			<span ng-repeat="m in result.messages">{{m}}<br></span>
+		</div><br>
+	</div>
+
+	<div ng-switch-when="examples">
+		<h2>Basic examples:</h2>
+
+			min
+			<span class="example">you don't have to type any number before units and it's regarded as one. Here it converts one minute (to seconds by default)</span><br>
+
+			6 kPa <i>or</i> 6kPa
+			<span class="example">you can use standard SI prefixes before units. Spaces are entirely optional, all spaces are ignored</span><br>
+
+			6.2 kJ <i>or</i> 6,2 kJ
+			<span class="example">comma also works as a decimal point</span><br>
+
+			12 ug*Hz / Pa
+			<span class="example">you can multiply using <b>*</b> and divide using <b>/</b>. Using a space won't work!</span><br>
+
+			-0.007 cm^7*mV-3/s0.5
+			<span class="example">you can raise to power by simply writing number after the unit or by using <b>^</b></span><br>
+
+			23 s-1, <i>not</i> <s>23 1/s</s> 
+			<span class="example">if you just want to use a reciprocal unit, don't write 1/unit (won't work), use power to the -1</span><br>
+
+			l0,333333
+			<span class="example">cube root can be only aproximate, sorry...</span><br>
+
+			2e-12 kg
+			<span class="example">you can use e... to express "times 10 to the ..."</span><br>
+
+			2.99 EUR/kg
+			<span class="example">currency conversion works too (basic unit is USD), exchange rates are downloaded every day using this <a href="http://fixer.io/">API</a>.</span>
+
+		<h2>Useful examples:</h2>
+
+			3500 min-1 &rarr; Hz
+			<span class="example">conversion of RPM to Hz</span><br>
+
+			3 _g*lb*ft &rarr; J
+			<span class="example">foot pound-force to joule, _g is standard gravity. All constants available in UUC are marked by _</span><br>
+
+			kg*_g/cm2 &rarr; psi
+			<span class="example">kilogram force per square cm to psi (psi could also be written as lb*_g/in2 by the same logic)</span><br>
+
+			lb*ft/s2 &rarr; N
+			<span class="example">poundal to newton</span>
+
+		<h2>Peculiar features:</h2>
+			<p>UUC can be used for more than just conversion of units within the same dimension. Using built-in universal constants, it can perform simple calculations where a physical quantity is multiplied by one or several universal constants, e.g.:</p>
+
+			yr*_c &rarr; m
+			<span class="example">year times speed of light = lightyear (in metres). Although this is pointless, since lightyear itself is implemented as ly</span><br>
+
+			T/_mu &rarr; Oe
+			<span class="example">magnetic flux (B) in tesla to magnetic field (H) in oersted</span><br>
+
+			g*_c2 &rarr; GJ
+			<span class="example">mass in gram to energy in gigajoule</span>
+	</div>
+</div>
+
+<div id="debug"></div>
+<div id="footer">
+	Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in 2017 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a> using <a href="https://angularjs.org/">AngularJS</a>
+</div>

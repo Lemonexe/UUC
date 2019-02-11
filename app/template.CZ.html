@@ -1,0 +1,125 @@
+<h1>Ultimate Unit Converter</h1>
+
+<input type="button" value="PŘEVODNÍK" ng-click="controls.tab = 'converter'">
+<input type="button" value="Úvod" ng-click="controls.tab = 'intro'">
+<input type="button" value="Reference" ng-click="controls.tab = 'help'">
+<input type="button" value="Příklady" ng-click="controls.tab = 'examples'">
+<hr>
+
+<div ng-switch="controls.tab">
+	<div ng-switch-when="intro">
+	<p>
+		Napište výraz do textového pole <b>Vstup</b> (viz tlačítko <b>Příklady</b>) a stiskněte Enter pro provedení převodu, který je normálně do základních jednotek SI, ovšem můžete vyplnit textové pole <b>Cílové jednotky</b> pro určení výstupních jednotek (např. Torr na mbar).<br>
+		Jednotky jsou citlivé na velikost písmen (z dobrého důvodu). V <b>Referenci</b> naleznete vyčerpávající seznam.
+	</p><p>
+		UUC pro vás provede rozměrovou analýzu a pokud Vstup &amp; Cílové jednotky nesouhlasí, dostanete varování.<br>
+		To je často způsobeno nesprávně pochopeným symbolem jednotky a následnou kolizí s jinou jednotkou (např. považujete C za stupeň Celsia, ovšem ten je °C, zatímco C je vyhrazeno pro coulomb).<br>
+		Také to může být způsobeno syntaktickou chybou (např. považujete mK za metr krát kelvin, ale je to ve skutečnosti milikelvin, zatímco správný zápis je m*k).
+	</p><p>
+		<b>Poznámky:</b>
+		<ol>
+			<li>Předpona "mikro" je u, nikoliv μ, poněvadž se to snáze píše.</li>
+			<li>Teplotní jednotky jsou zpracovávány jako jednotky rozdílu teploty, nikoliv teploty. Viz °C v Referenci pro více informací.</li>
+			<li>Pokud vám zde chybí vaše oblíbená jednotky či konstanta a rádi byste ji zde viděli, <a href="mailto:zbytek@gmail.com">kontaktujte mě</a>.</li>
+			<li>Pokud máte nápad na vylepšení této aplikace, neváhejte <a href="mailto:zbytek@gmail.com">mě kontaktovat</a>.</li>
+			<li>Pokud sami programujete a máte zájem o zdrojový kód, navštivte <a href="https://github.com/Lemonexe/UUC">Github repoztiář</a>.</li>
+		</ol>
+	</p>
+	</div>
+
+	<div ng-switch-when="help">
+		Zde můžete napsat jednotku (či její název), aby byl seznam omezen na jednotky se stejným rozměrem (1 pro bezrozměrné), nebo zadejte _ pro seznam konstant:<br>
+		<input type="text" ng-model="controls.filter" ng-change="listenForHelp()">
+		<h2>Předpony (mocniny):</h2>
+		{{prefixText}}
+		<h2>Jednotky</h2>
+		<p>V databázi je {{databaseCount}} položek (včetně {{constantCount}} konstant), přičemž {{Units.length}} je právě zobrazeno.<br>
+		Jednotky měn byly načteny z externí stránky v {{currencyTimestamp}}.</p>
+		<p ng-repeat="u in Units">
+			<span class="reference"><b>{{getUnitName(u)}}</b>{{buildUnitEntry(u)}}</span>
+		</p>
+
+	</div>
+
+	<div ng-switch-when="converter">
+		<b>Vstup:</b><br>
+		<input type="text" ng-model="controls.input" ng-keyup="listenForConvert($event)" autofocus><br><br>
+
+		<b>Cílové jednotky:</b><br>
+		<input type="text" ng-model="controls.target" ng-keyup="listenForConvert($event)"><br><br>
+
+		<input type="button" value="Convert" ng-click="init()"><br><br>
+
+		<b>Výstup:</b><br>
+		<div id="output">
+			<span ng-if="result && result.output">{{result.output.num}} {{result.output.dim}}</span>
+		</div>
+		<br>
+
+		<b>Stav:</b><br>
+		<div id="status" ng-if="result" ng-class="statusClass">
+			<span ng-repeat="m in result.messages">{{m}}<br></span>
+		</div><br>
+	</div>
+
+	<div ng-switch-when="examples">
+		<h2>Základní příklady:</h2>
+
+			min
+			<span class="example">před jednotku není třeba psát číslo a bude doplněna jednička. Zde proběhne převod jedné minuty (ve výchozím stavu na sekundy)</span><br>
+
+			6 kPa <i>nebo</i> 6kPa
+			<span class="example">před jednotkami můžete používat standardní SI předpony. Mezery jsou zcela volitelné, všechny mezery jsou ignorovány</span><br>
+
+			6.2 kJ <i>nebo</i> 6,2 kJ
+			<span class="example">desetinná čárka platí stejně jako desetinná tečka</span><br>
+
+			12 ug*Hz / Pa
+			<span class="example">můžete násobit pomocí <b>*</b> a dělit pomocí <b>/</b>. Vložení mezery ovšem nebude fungovat!</span><br>
+
+			-0.007 cm^7*mV-3/s0.5
+			<span class="example">umocňovat lze jednoduše napsáním mocniny za jednotku, případně použitím <b>^</b></span><br>
+
+			23 s-1, <i>nikoliv</i> <s>23 1/s</s> 
+			<span class="example">pokud chcete napsat reciprokou jednotku, nepište 1/jednotka (nebude to fungovat), raději umocněte na -1</span><br>
+
+			l0,333333
+			<span class="example">třetí odmocnina může být pouze přibližná, je mi líto...</span><br>
+
+			2e-12 kg
+			<span class="example">můžete použít zápis e... pro vyjádření "krát deset na ..."</span><br>
+
+			2.99 EUR/kg
+			<span class="example">funguje i převod měn (základní jednotkou je USD), směnné kurzy jsou každý den stahovány pomocí tohoto <a href="http://fixer.io/">API</a>.</span>
+
+		<h2>Užitečné příklady:</h2>
+
+			3500 min-1 &rarr; Hz
+			<span class="example">převod RPM (otáčky za minutu) na Hz</span><br>
+
+			3 _g*lb*ft &rarr; J
+			<span class="example">librostopa na joule, _g je normální tíhové zrychlení. Všechny konstanty v UUC jsou označeny znakem _</span><br>
+
+			kg*_g/cm2 &rarr; psi
+			<span class="example">tíha kilogramu na centimetr čtvereční na psi (psi by stejnou logikou mohlo být zapsáno i jako lb*_g/in2)</span><br>
+
+			lb*ft/s2 &rarr; N
+			<span class="example">poundal na newton</span>
+
+		<h2>Podivné využití:</h2>
+			<p>UUC může být použit nejen na převod jednotek stejného rozměru. Za pomoci vestavěných univerzálních konstant lze i provádět jednoduché výpočty, kde je jedna fyzikální veličina násobena jednou či více konstantami, např.:</p>
+			yr*_c &rarr; m
+			<span class="example">rok krát rychlost světla = světelný rok (v metrech). Toto je však zbytečné, neboť světelný rok je již implementován jako ly</span><br>
+
+			T/_mu &rarr; Oe
+			<span class="example">magnetická indukce (B) v tesla na magnetickou intenzitu (H) v oersted</span><br>
+
+			g*_c2 &rarr; GJ
+			<span class="example">hmotnost v gramech na energii gigajoule</span>
+	</div>
+</div>
+
+<div id="debug"></div>
+<div id="footer">
+	Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v roce 2017 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a> za použití <a href="https://angularjs.org/">AngularJS</a>
+</div>

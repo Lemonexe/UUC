@@ -1,9 +1,16 @@
+body {
+	padding-bottom: 10px;
+}
 p {
 	max-width: 1200px;
 }
 h2 {
 	margin: 10px;
 }
+input[type="text"] {
+	width: 300px;
+}
+
 .ok {
 	display: inline;
 	color: green;
@@ -22,22 +29,26 @@ h2 {
 	left: 230px;
 	font-style: italic;
 }
+.reference {
+	white-space: pre-wrap;
+}
+
 #output {
 	height: 19px;
 	border: 1px solid #A9A9A9;
-}
-#input {
-	width: 300px;
-}
-#target {
-	width: 300px;
-}
-#help {
-	display: none;
 }
 #footer {
 	position: fixed;
 	bottom: 0px;
 	background-color: #FFFFFF;
 	border-top: 1px solid #A9A9A9;
+}
+#lang{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    font-size: 28px;
+    padding: 10px;
+    color: #551A8B;
+    text-decoration: underline;
 }

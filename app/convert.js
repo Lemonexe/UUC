@@ -1,27 +1,37 @@
 /*
 	convert.js
-	contains the CONVERT OBJECT
+	contains the CONVERT OBJECT CONSTRUCTOR
 	that does all of the heavy lifting.
 	It contains functions and state variables concerning the conversion itself
 */
 
-let convert = {
+let Convert = function() {
 	//status means 0 = OK, 1 = warnings, 2 = fatal error. Status text will contain error or warning messages.
-	status: 0,
-	statusText: '',
+	this.status = 0;
+	this.messages = [];
 
-	//err and warn are for writing messages to statusText. Err works only for one message, warn will concatenate them.
-	//That's because when an error occurs, it might trigger another, so user is only informed about the first error encountered.
-	
+	//err and warn functions fill messages. Err() will display only the first error, warn() will concatenate all warnings.
+	//That's because when an error occurs, it might trigger another, and it would be useless to display the whole cascade of errors
+	this.err = function(text) {
+		this.status = 2;
+		this.messages = [text]
+	};
+	this.warn = function(text) {
+		this.status = (this.status < 1) ? 1 : this.status;
+		this.messages.push(text);
+	};
 
-	//this is the central function that determines the program flow. It uses many other functions, they will be properly described later
-	init: function() {
-		this.status = 0;
-		this.statusText = '';
+	//factory for result object returned by init()
+	this.result = function(num, dim) {
+		return {
+			output: num ? {num: num, dim: dim} : false,
+			status: this.status,
+			messages: this.messages
+		};
+	};
 
-		let input = middle.processInput('input');
-		let target = middle.processInput('target');
-		
+	//this is the central function that determines the program flow. It uses many other functions, which will be properly described later. Returns an object from result() factory
+	this.init = function(input, target) {
 		/*
 		unit is represented by four kinds of data type:
 			1. text representation is parsed from input and then recreated in the end (vars target, SIunit)
@@ -36,17 +46,24 @@ let convert = {
 		if(target !== '' && target !== '1') {
 			//these lines are the core of conversion, now executed on target unit field
 			objT = this.parseField(target);
-			if(this.status === 2) {middle.finish();return;}
+			//throw error if it has occured
+			if(this.status === 2) {return this.result();}
+			//continue
 			this.enumerate(objT);
 			this.SI(objT);
 			if(objT.numStr) {
-				middle.warn('WARNING: Unexpected number in the target field, it has been ignored.');
+				this.warn([
+					'WARNING: Unexpected number in the target field, it has been ignored.',
+					'VAROVÁNÍ: Neočekáváné číslo v cílovém poli, bylo ignorováno.'
+				][lang()]);
 			}
 		}
 
 		//same operations as before, this time done with input
 		let obj = this.parseField(input);
-		if(this.status === 2) {middle.finish();return;}
+		//throw error if it has occured
+		if(this.status === 2) {return this.result();}
+		//continue
 		this.enumerate(obj);
 		this.SI(obj);
 
@@ -58,25 +75,26 @@ let convert = {
 		}
 
 		//enumerate the output numerical value (input numerical value times its aggregate unit divided by target aggregate unit (is 1 if there is no target unit)).
-		let result = obj.numVal * obj.aggregateUnit;
-		result /= objT ? objT.aggregateUnit : 1;
-
-		result += ' ';
+		let num = obj.numVal * obj.aggregateUnit;
+		num /= objT ? objT.aggregateUnit : 1;
 
 		//add the corrected target unit, or the original unit converted to basic SI using vector2text (if no target unit)
-		result += (objT ? objT.unitStr : this.vector2text(obj.aggregateVector));
+		let dim = (objT ? objT.unitStr : this.vector2text(obj.aggregateVector));
 
 		//finally finish
-		middle.writeResult(result);
-		middle.finish();
-	},
+		if(this.status === 0) {this.messages = ['OK'];}
+		return this.result(num, dim);
+	};
 
 /*MAIN CONVERSION FUNCTIONS - they all work with state object (defined in parseField) and have to be executed in strict order*/
 
 	//the largest function, parses the text. It parses the numerical value and stores it in this.num. Then it parses text representation of unit to detailed object and stores it in this.units
-	parseField: function(text) {
+	this.parseField = function(text) {
 		if(text === '') {
-			middle.err('ERROR: No input detected!');return;
+			this.err([
+				'ERROR: No input detected!',
+				'CHYBA: Nenalezen žádný vstup!'
+			][lang()]);return;
 		}
 
 		//obj is the object which contains state of one input field conversion
@@ -91,10 +109,10 @@ let convert = {
 		this.parseUnits(obj);
 
 		return obj;
-	},
+	};
 
 	//parse the numerical part of raw text input and store extracted data in obj
-	parseNumerical: function(obj) {
+	this.parseNumerical = function(obj) {
 		//try to match numerical part
 		let numStr = obj.input.match(/^-?[\d\.]+e?[\-\d]*/);
 
@@ -110,12 +128,15 @@ let convert = {
 
 			//is the numerical part a sensible number?
 			if(isNaN(obj.numVal)) {
-				middle.err('ERROR: Numerical part identified but cannot be parsed!');return;
+				this.err([
+					'ERROR: Numerical part identified but cannot be parsed!',
+					'CHYBA: Nalezena numerická část, ovšem nelze ji zpracovat!'
+				][lang()]);return;
 			}
 		}
-	},
+	};
 
-	parseUnits: function(obj) {
+	this.parseUnits = function(obj) {
 		//dimensionless units
 		if(obj.unitStr.length === 0) {return;}
 
@@ -125,7 +146,10 @@ let convert = {
 		//all delimiters at the beginning are removed. A slash shouldn't be found there!
 		while(['', '*', '/'].indexOf(members[0]) > -1) {
 			if(members[0] === '/') {
-				middle.warn('WARNING: Unexpected slash sign after numerical part, it is regarded as a space.');
+				this.warn([
+					'WARNING: Unexpected slash sign after numerical part, it is regarded as a space. Consider using the form: unit -exponent.',
+					'VAROVÁNÍ: Neočekáváné lomítko po numerické části, bude považováno za mezeru. Používejte raději tvar: jednotka -exponent.'
+				][lang()]);
 			}
 			members.shift();
 		}
@@ -147,7 +171,10 @@ let convert = {
 			if(powIndex > -1) {
 				let pow2 = Number(m.slice(powIndex).replace(/^\^/ , ''));
 				if(isNaN(pow2)) {
-					middle.err('ERROR: Cannot parse unit power (' + m.slice(powIndex) + ')!');return;
+					this.err([
+						'ERROR: Cannot parse unit power (' + m.slice(powIndex) + ')!',
+						'CHYBA: Nelze zpracovat mocninu jednotky (' + m.slice(powIndex) + ')!'
+					][lang()]);return;
 				}
 				power *= pow2;
 				m = m.slice(0, powIndex);
@@ -162,7 +189,10 @@ let convert = {
 
 				//if we find both, we add the unit with its prefix and check whether its appropriately used. If we didn't find i or j, the unit is unknown.
 				if(i === -1 || j === -1) {
-					middle.err('ERROR: Unit ' + m + ' not identified!');return;
+					this.err([
+						'ERROR: Unknown unit ' + m + '!',
+						'CHYBA: Nenalezena jednotka ' + m + '!'
+					][lang()]);return;
 				}
 				else {
 					obj.units.push([Prefixes[j], Units[i], power]);
@@ -175,23 +205,32 @@ let convert = {
 			}
 
 		}
-	},
+	};
 
 	//checkPrefix accepts pair [prefix object, unit object] and gives warnings if they are not appropriately used.
-	checkPrefix: function(arg) {
+	this.checkPrefix = function(arg) {
 		if(!arg[1].prefix || arg[1].prefix === '0') {
-			middle.warn('WARNING: Unit ' + arg[1].id + ' (' + arg[1].name + ') doesn\'t usually have any prefixes, yet ' + arg[0].id + ' identified!')
+			this.warn([
+				'WARNING: Unit ' + arg[1].id + ' (' + arg[1].name[lang()] + ') doesn\'t usually have any prefixes, yet ' + arg[0].id + ' identified!',
+				'VAROVÁNÍ: Jednotka ' + arg[1].id + ' (' + arg[1].name[lang()] + ') většinou nemívá žádné předpony, avšak nalezeno ' + arg[0].id + '!',
+			][lang()]);
 		}
 		else if(arg[1].prefix === '+' && arg[0].v < 0) {
-			middle.warn('WARNING: Unit ' + arg[1].id + ' (' + arg[1].name + ') doesn\'t usually have decreasing prefixes, yet ' + arg[0].id + ' identified!')
+			this.warn([
+				'WARNING: Unit ' + arg[1].id + ' (' + arg[1].name[lang()] + ') doesn\'t usually have decreasing prefixes, yet ' + arg[0].id + ' identified!',
+				'VAROVÁNÍ: Jednotka ' + arg[1].id + ' (' + arg[1].name[lang()] + ') většinou nemívá zmenšující předpony, avšak nalezeno ' + arg[0].id + '!',
+			][lang()]);
 		}
 		else if(arg[1].prefix === '-' && arg[0].v > 0) {
-			middle.warn('WARNING: Unit ' + arg[1].id + ' (' + arg[1].name + ') doesn\'t usually have increasing prefixes, yet ' + arg[0].id + ' identified!')
+			this.warn([
+				'WARNING: Unit ' + arg[1].id + ' (' + arg[1].name[lang()] + ') doesn\'t usually have increasing prefixes, yet ' + arg[0].id + ' identified!',
+				'VAROVÁNÍ: Jednotka ' + arg[1].id + ' (' + arg[1].name[lang()] + ') většinou nemívá zvětšující předpony, avšak nalezeno ' + arg[0].id + '!',
+			][lang()]);
 		}
-	},
+	};
 
 	//enumerate reads the detailed unit object from obj.units and enumerates the aggregate unit.
-	enumerate: function(obj) {
+	this.enumerate = function(obj) {
 		let aggregateUnit = 1;
 		let current = 1;
 
@@ -205,10 +244,10 @@ let convert = {
 			aggregateUnit *= current;
 		}
 		obj.aggregateUnit = aggregateUnit;
-	},
+	};
 
 	//SI reads the detailed unit object from this.units and enumerates the aggregate vector.
-	SI: function(obj) {
+	this.SI = function(obj) {
 		let aggregateVector = new Array(8).fill(0);;
 		
 		//foreach unit we add vector of its units multiplied by power
@@ -220,12 +259,12 @@ let convert = {
 			}
 		}
 		obj.aggregateVector = aggregateVector;
-	},
+	};
 
 /*AUXILIARY FUNCTIONS, can be fired at will*/
 
 	//vector2text will convert unit vector into text representation. 
-	vector2text: function(vect) {
+	this.vector2text = function(vect) {
 		//first we filter all basic units, they are important
 		let text = '';
 		let basic = Units.filter(item => item.basic);
@@ -234,7 +273,7 @@ let convert = {
 		for(let i in vect) {
 			if(vect.hasOwnProperty(i)) {
 				if(vect[i] !== 0){
-					text += basic.filter(item => item.v[i] === 1)[0].id;
+					text += basic.find(item => item.v[i] === 1).id;
 					if(vect[i] !== 1) {
 						text += vect[i];
 					}
@@ -245,10 +284,10 @@ let convert = {
 		//the last asterisk gets removed
 		text = text.replace(/\*$/, '');
 		return text;
-	},
+	};
 
 	//DimAnalysis will take vector of input and target. Returns true if ok, or the correction vector - power of basic units we have to add.
-	DimAnalysis: function(source, target) {
+	this.DimAnalysis = function(source, target) {
 		let corr = new Array(8).fill(0);
 		let OK = true;
 		let basic = Units.filter(item => item.basic);
@@ -260,16 +299,19 @@ let convert = {
 			if(corr.hasOwnProperty(i)) {
 				if(source[i] !== target[i]) {
 					corr[i] = source[i] - target[i];
-					faults.push(basic.filter(item => item.v[i] === 1)[0].id);
+					faults.push(basic.find(item => item.v[i] === 1).id);
 					OK = false;
 				}
 			}
 		}
 		//nicely written warning
 		if(faults.length > 0) {
-			middle.warn('WARNING: Dimensions of units from input and target don\'t match. These basic units have been added: ' + faults.join(', ') + '.');
+			this.warn([
+				'WARNING: Dimensions of units from input and target don\'t match. These basic units have been added: ' + faults.join(', ') + '.',
+				'VAROVÁNÍ: Rozměry jednotek ze vstupu a cíle nesouhlasí. Tyto základní jednotky byly přidány: ' + faults.join(', ') + '.'
+			][lang()]);
 		}
 		
 		return ((OK === true) ? OK : corr);
-	}
+	};
 };
