@@ -141,7 +141,10 @@ let Convert = function() {
 		if(obj.unitStr.length === 0) {return;}
 
 		//all parts of text that might mean something are divided by * or /. But unlike regular split, the delimiters are kept in the array (because we need to distinguish between * and /)
-		let members = obj.unitStr.split(/([*/])/);
+		//before splitting it, parenthesis must be evaluated - and replaced by their numeric value
+		let members = obj.unitStr
+			.replace(/(\([\d\-\./\*]+\))/g, m => eval(m))
+			.split(/([*/])/);
 
 		//all delimiters at the beginning are removed. A slash shouldn't be found there!
 		while(['', '*', '/'].indexOf(members[0]) > -1) {

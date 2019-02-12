@@ -5,14 +5,14 @@ While the core features of the app are performed on the front-end using only HTM
 The front-end is written in ECMA6 Javascript and uses [AngularJS](https://angularjs.org/) framework.
 
 ## Code Structure
-Basic outline of HTML GUI is in **index.html**, but most of the page is defined in language-dependent templates, **app/template.EN.html** or **app/template.CZ.html**.
+Basic outline of HTML GUI is in **index.html**, but most of the page is defined in language-dependent templates: _app/template.EN.html_ or _app/template.CZ.html_.  
 All CSS is stored in **app/style.css**.
 
 ### Javascript
 
 **app/core.js** initializes the program and contains some generic-purpose global functions.
 
-**app/convert.js** defines the `convert` object, the application Model. It contains all code related to the unit conversion itself.
+**app/convert.js** defines the `Convert` object constructor, the application Model. It contains all code related to the unit conversion itself.
 
 **app/middle.js** defines the Angular module and controller.
 All functionality related to View and Controller is defined in the Angular controller function.
