@@ -1,14 +1,14 @@
 /*
 Units object is the database of all known units.
-	v: [m,kg,s,A,K,mol,cd,$]	represents the vector of powers of basic units, for example N=kg*m/s^2, therefore v = [1,1,-2,0,0,0,0]
-	id: something unique
-	name: full name or even a short description 
-	k: number						this coeficient equates value of the unit in basic units. For example minute = 60 seconds, therefore min.k = 60
-	SI: true/false					self-explanatory. This attribute doesn't really do anything, it's merely informational. Perhaps it's redundant, since all SI derived units have k = 1
-	basic: true/false				whether it's basic SI unit or derived SI. Basic SI units are of utmost importance to the code, don't ever change them!
-	prefix: all/+/-/undefined		it means: all prefixes allowed / only bigger than one allowed / lesser than one / prefixes disallowed. It's not really a restriction, just a recommendation.
-	constant: true/undefined		whether it is a constant. If true, attributes SI, basic and prefix are ignored. Prefix is disallowed.
-	note: a note that conveys anything important beyond description - what is noteworthy or weird about this unit or its usage
+	v: [m,kg,s,A,K,mol,cd,$]      represents the vector of powers of basic units, for example N=kg*m/s^2, therefore v = [1,1,-2,0,0,0,0]
+	id: string                    something unique. You can use the UnitConflicts() global function to detect possible id conflicts
+	name: array                   defines full name or even a short description for every language mutation
+	k: number                     this coeficient equates value of the unit in basic units. For example minute = 60 seconds, therefore min.k = 60
+	SI: true/false                self-explanatory. This attribute doesn't really do anything, it's merely informational. Perhaps it's redundant, since all SI derived units have k = 1
+	basic: true/false             whether it's basic SI unit or derived SI. Basic SI units are of utmost importance to the code, don't ever change them!
+	prefix: all/+/-/undefined     it means: all prefixes allowed / only bigger than one allowed / lesser than one / prefixes disallowed. It's not really a restriction, just a recommendation.
+	constant: true/undefined      whether it is a constant. If true, attributes SI, basic and prefix are ignored. Prefix is disallowed.
+	note: a note that conveys anything important beyond description - what is noteworthy or weird about this unit or its usage. Implemented as an array of strings for all language mutations.
 */
 
 let Units = [

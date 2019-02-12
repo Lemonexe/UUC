@@ -30,7 +30,10 @@ angular.module('UUC', [])
 		tab: 'converter',
 		input: '',
 		target: '',
-		filter: ''
+		filter: '',
+		parameters: false,
+		digits: 4,
+		expForm: false
 	};
 
 	//process string input (so it can be fed to convert)
@@ -43,11 +46,14 @@ angular.module('UUC', [])
 
 		let c = new Convert();
 		$scope.result = c.init(i, t);
-		/* TODO :)
-		if($scope.result.output) {
-			$scope.result.output.num = $scope.result.output.num.toFixed(2);
+
+		//format of output number
+		if($scope.result.output && $scope.controls.parameters) {
+			//number of digits
+			let d = $scope.controls.digits ? $scope.controls.digits : 2;
+			$scope.result.output.num = $scope.controls.expForm ? $scope.result.output.num.toExponential(d-1) : $scope.result.output.num.toPrecision(d);
 		}
-		*/
+
 		$scope.statusClass = ['ok', 'warn', 'err'][$scope.result.status];
 	};
 

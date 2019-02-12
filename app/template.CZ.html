@@ -30,7 +30,7 @@
 	<div ng-switch-when="help">
 		Zde můžete napsat jednotku (či její název), aby byl seznam omezen na jednotky se stejným rozměrem (1 pro bezrozměrné), nebo zadejte _ pro seznam konstant:<br>
 		<input type="text" ng-model="controls.filter" ng-change="listenForHelp()">
-		<h2>Předpony (mocniny):</h2>
+		<h2>Předpony (mocniny)</h2>
 		{{prefixText}}
 		<h2>Jednotky</h2>
 		<p>V databázi je {{databaseCount}} položek (včetně {{constantCount}} konstant), přičemž {{Units.length}} je právě zobrazeno.<br>
@@ -48,7 +48,13 @@
 		<b>Cílové jednotky:</b><br>
 		<input type="text" ng-model="controls.target" ng-keyup="listenForConvert($event)"><br><br>
 
-		<input type="button" value="Convert" ng-click="init()"><br><br>
+		<input type="button" value="Převést" ng-click="init()"><br>
+		<label><input type="checkbox" ng-model="controls.parameters">výstupní formát</label><br>
+		<div ng-show="controls.parameters">
+			<label><input type="checkbox" ng-model="controls.expForm">vědecký zápis</label><br>
+			omezit počet cifer <input type="number" ng-model="controls.digits" min="1" max="20">
+		</div>
+		<br>
 
 		<b>Výstup:</b><br>
 		<div id="output">

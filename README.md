@@ -1,10 +1,12 @@
 # UUC
 Ultimate Unit Converter, a useful tool for science and engineering
 
-While the core features of the app are performed on the front-end using only HTML/JS (with ECMAscript 6), its functionality is extended by a PHP script running on server.
+While the core features of the app are performed on the front-end using only HTML/JS, its functionality is extended by a PHP script running on server.
+The front-end is written in ECMA6 Javascript and uses [AngularJS](https://angularjs.org/) framework.
 
 ## Code Structure
-All static HTML GUI is in **index.html**, CSS in **app/style.css**.
+Basic outline of HTML GUI is in **index.html**, but most of the page is defined in language-dependent templates, **app/template.EN.html** or **app/template.CZ.html**.
+All CSS is stored in **app/style.css**.
 
 ### Javascript
 
@@ -12,7 +14,8 @@ All static HTML GUI is in **index.html**, CSS in **app/style.css**.
 
 **app/convert.js** defines the `convert` object, the application Model. It contains all code related to the unit conversion itself.
 
-**app/middle.js** defines the `middle` object, which contains View and Controller functions
+**app/middle.js** defines the Angular module and controller.
+All functionality related to View and Controller is defined in the Angular controller function.
 
 **data.js** contains all program data, which are divided in three objects:  
 `Units` is the unit database itself  

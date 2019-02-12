@@ -30,7 +30,7 @@
 	<div ng-switch-when="help">
 		You can write a unit (or its name) here to filter the ones with same dimension (1 for dimensionless), or write _ to list constants:<br>
 		<input type="text" ng-model="controls.filter" ng-change="listenForHelp()">
-		<h2>Prefixes (exponents):</h2>
+		<h2>Prefixes (exponents)</h2>
 		{{prefixText}}
 		<h2>Units</h2>
 		<p>There are {{databaseCount}} items in database (including {{constantCount}} constants) while {{Units.length}} items are currently listed.<br>
@@ -48,7 +48,13 @@
 		<b>Target units:</b><br>
 		<input type="text" ng-model="controls.target" ng-keyup="listenForConvert($event)"><br><br>
 
-		<input type="button" value="Convert" ng-click="init()"><br><br>
+		<input type="button" value="Convert" ng-click="init()"><br>
+		<label><input type="checkbox" ng-model="controls.parameters">output format</label><br>
+		<div ng-show="controls.parameters">
+			<label><input type="checkbox" ng-model="controls.expForm">scientific notation</label><br>
+			limit digits to <input type="number" ng-model="controls.digits" min="1" max="20">
+		</div>
+		<br>
 
 		<b>Output:</b><br>
 		<div id="output">
