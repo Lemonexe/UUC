@@ -49,10 +49,13 @@
 		<input type="text" ng-model="controls.target" ng-keyup="listenForConvert($event)"><br><br>
 
 		<input type="button" value="Convert" ng-click="init()"><br>
-		<label><input type="checkbox" ng-model="controls.parameters">output format</label><br>
-		<div ng-show="controls.parameters">
-			<label><input type="checkbox" ng-model="controls.expForm">scientific notation</label><br>
-			limit digits to <input type="number" ng-model="controls.digits" min="1" max="20">
+		<label><input type="checkbox" ng-model="controls.parameters" ng-change="init()">output format</label><br>
+		<div id="paramsContainer">
+			<div ng-show="controls.parameters">
+				<label><input type="checkbox" ng-model="controls.expForm" ng-change="init()">scientific notation</label><br>
+				limit digits to 
+				<input type="number" ng-model="controls.digits" min="1" max="20" ng-change="init()">
+			</div>
 		</div>
 		<br>
 
