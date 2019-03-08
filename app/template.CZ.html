@@ -13,12 +13,12 @@
 		Jednotky jsou citlivé na velikost písmen (z dobrého důvodu). V <b>Referenci</b> naleznete vyčerpávající seznam.
 	</p><p>
 		UUC pro vás provede rozměrovou analýzu a pokud Vstup &amp; Cílové jednotky nesouhlasí, dostanete varování.<br>
-		To je často způsobeno nesprávně pochopeným symbolem jednotky a následnou kolizí s jinou jednotkou (např. považujete C za stupeň Celsia, ovšem ten je °C, zatímco C je vyhrazeno pro coulomb).<br>
+		To je často způsobeno nesprávně pochopeným symbolem jednotky a následnou kolizí s jinou jednotkou (např. považujete C za stupeň Celsia, ovšem ten je °C, zatímco C je coulomb).<br>
 		Také to může být způsobeno syntaktickou chybou (např. považujete mK za metr krát kelvin, ale je to ve skutečnosti milikelvin, zatímco správný zápis je m*k).
 	</p><p>
 		<b>Poznámky:</b>
 		<ol>
-			<li>Předpona "mikro" je u, nikoliv μ, poněvadž se to snáze píše.</li>
+			<li>Nově je možné UUC přidat do prohlížeče jako vyhledávač a mít jej tak rychle po ruce! <a class="fakeLink" ng-click="controls.tab = 'searchEngine'">Návod</a></li>
 			<li>Teplotní jednotky jsou zpracovávány jako jednotky rozdílu teploty, nikoliv teploty. Viz °C v Referenci pro více informací.</li>
 			<li>Pokud vám zde chybí vaše oblíbená jednotky či konstanta a rádi byste ji zde viděli, <a href="mailto:zbytek@gmail.com">kontaktujte mě</a>.</li>
 			<li>Pokud máte nápad na vylepšení této aplikace, neváhejte <a href="mailto:zbytek@gmail.com">mě kontaktovat</a>.</li>
@@ -52,7 +52,7 @@
 		<label><input type="checkbox" ng-model="controls.parameters" ng-change="init()">výstupní formát</label><br>
 		<div id="paramsContainer">
 			<div ng-show="controls.parameters">
-				<label><input type="checkbox" ng-model="controls.expForm" ng-change="init()">vědecký zápis</label><br>
+				<label><input type="checkbox" ng-model="controls.expForm" ng-change="init()">vždy vědecký zápis</label><br>
 				omezit počet cifer 
 				<input type="number" ng-model="controls.digits" min="1" max="20" ng-change="init()">
 			</div>
@@ -63,11 +63,10 @@
 		<div id="output">
 			<span ng-if="result && result.output">{{result.output.num}} {{result.output.dim}}</span>
 		</div>
-		<br>
 
-		<b>Stav:</b><br>
-		<div id="status" ng-if="result" ng-class="statusClass">
-			<span ng-repeat="m in result.messages">{{m}}<br></span>
+		<div id="status" ng-if="result">
+			<br><b>Stav:</b><br>
+			<span ng-repeat="m in result.messages" ng-class="statusClass">{{m}}<br></span>
 		</div><br>
 	</div>
 
@@ -127,9 +126,27 @@
 			g*_c2 &rarr; GJ
 			<span class="example">hmotnost v gramech na energii gigajoule</span>
 	</div>
+
+	<div ng-switch-when="searchEngine">
+		<h2>Chrome</h2>
+		<ol>
+			<li>Otevřete tuto adresu: <span class="code">chrome://settings/searchEngines</span></li>
+			<li>Klepněte na tlačítko Přidat</li>
+			<li>Do prvních dvou polí vyplňte <span class="code">uuc</span>, do třetího <span class="code">http://jira.zby.cz/content/UUC/#%s</span></li>
+			<li>Dialog potvrďte tlačítkem Přidat</li>
+		</ol>
+		<p>
+			Hotovo - právě jste definovali klíčové slovo <i>uuc</i> :-)<br>
+			Stačí otevřít nový panel, napsat uuc <i>mezera</i>, pokračovat psaním zadání a stisknutím Enter.<br>
+			Cílové jednotky se zde specifikují znakem &gt; nebo slovy <i>to</i> či <i>into</i><br>
+			např. 3.7 kPa > Torr
+		</p>
+		<h2>Firefox, Edge, Safari</h2>
+		<p>Bohužel, tyto prohlížeče neumožňují uživatelům definovat nový vyhledávač (pouze pomocí instalace určitých doplňků).</p>
+	</div>
 </div>
 
 <div id="debug"></div>
 <div id="footer">
-	Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v roce 2017 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a> za použití <a href="https://angularjs.org/">AngularJS</a>
+	Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2019 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a> za použití <a href="https://angularjs.org/">AngularJS</a>
 </div>

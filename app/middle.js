@@ -17,6 +17,25 @@ angular.module('UUC', [])
 	else {
 		$scope.lang = 'EN';
 	}
+
+	//perform conversion from fragment identifier. Executed upon loading of currencies
+	function execHash() {
+		let hash = decodeURIComponent(window.location.hash).replace(/^.*#/, '');
+		if(!hash) {return;}
+		//'>', 'to' or 'into' is used to delimit input and target
+		hash = hash.replace(/to|into/, '>');
+		hash = hash.split('>');
+		if(hash.length > 2) {return;}
+
+		//detect input & target text, save them into model and initialize conversion
+		let i = processInput(hash[0]);
+		let t = hash[1] ? processInput(hash[1]) : '';
+		$scope.controls.input = i;
+		$scope.controls.target = t;
+		let c = new Convert();
+		$scope.result = c.init(i, t);
+		finish();
+	};
 	
 	//user switches language by link
 	$scope.updateLang = function(newLang) {
@@ -46,7 +65,11 @@ angular.module('UUC', [])
 
 		let c = new Convert();
 		$scope.result = c.init(i, t);
+		finish();
+	};
 
+	//finish conversion by assigning & formatting the result & status
+	function finish() {
 		//format of output number
 		if($scope.result.output && $scope.controls.parameters) {
 			//number of digits
@@ -59,9 +82,7 @@ angular.module('UUC', [])
 
 	//this function listens to onkeyup in input & target text fields and executes conversion if the key is an Enter
 	$scope.listenForConvert = function(event) {
-		if(event.keyCode === 13 || event.key === 'Enter') {
-			$scope.init();
-		}
+		(event.keyCode === 13 || event.key === 'Enter') && $scope.init();
 	};
 
 	/*
@@ -77,11 +98,11 @@ angular.module('UUC', [])
 
 	//detect change in filter text field
 	$scope.listenForHelp = function() {
-		$scope.Units = $scope.getUnitList();
-	}
+		$scope.Units = getUnitList();
+	};
 
 	//get a list of units filtered using the filter text field
-	$scope.getUnitList = function() {
+	function getUnitList() {
 		//callback fed to Array.filter, it will check all dimensions of unit (item) and if they all agree with filterVector, it is a related unit and it will pass the filter.
 		let filterFunction = function(item) {
 			for(let i in item.v) {
@@ -158,7 +179,7 @@ angular.module('UUC', [])
 	};
 
 	//load currency exchange rates from a public API (see currencies.php), fill the results in Currency array and concatenate Currency onto Units.
-	let loadCurrencies = function () {
+	function loadCurrencies () {
 		$http.get('app/currencies.php').then(function(res) {
 			if(res.status !== 200) {return;}
 
@@ -176,9 +197,14 @@ angular.module('UUC', [])
 			}
 			Currency = Currency.filter(item => item.k);
 			Units = Units.concat(Currency);
+
+			//display statistics in help
 			$scope.databaseCount = Units.length;
 			$scope.listenForHelp();
-		});
+
+			//finally try to execute input from fragment identifier
+			execHash();
+		}, () => execHash());
 	};
 	loadCurrencies();
 });

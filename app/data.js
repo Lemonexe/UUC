@@ -12,6 +12,7 @@ Units object is the database of all known units.
 */
 
 let Units = [
+//EIGHT BASIC UNITS
 	{v: [1,0,0,0,0,0,0,0], id: 'm', name: ['metre', 'metr'], k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,1,0,0,0,0,0,0], id: 'kg', name: ['kilogram', 'kilogram'], k:1, SI: true, basic: true, note: [
 		'That\'s because kilogram is problematic to code, since the "kilo" itself is a prefix. Therefore I have also defined gram as a derived SI unit, which can have all prefixes.',
@@ -24,12 +25,13 @@ let Units = [
 	//USD arbitrarily set as basic unit. Reference to this unit is harcoded in currency loading!
 	{v: [0,0,0,0,0,0,0,1], id: 'USD', name: ['US dollar', 'americký dolar'], k:1, basic: true},
 
-	//HERE COME UNITS WITH THIS FORMAT: {id: '',v: [0,0,0,0,0,0,0], name: ['EN', 'CZ'], k:1, SI: true, prefix: 'all'},
+//ALL OTHER UNITS as {id: 'identifier',v: [0,0,0,0,0,0,0], name: ['EN', 'CZ'], k:1, SI: true, prefix: 'all'},
+	{v: [0,0,0,0,0,0,0,0], id: '%', name: ['percent', 'procento'], k:1e-2},
+	{v: [0,0,0,0,0,0,0,0], id: 'ppm', name: ['parts per million', 'dílů na jeden milion'], k:1e-6},
 	{v: [0,0,0,0,0,0,0,0], id: 'rad', name: ['radian', 'radián'], k:1, SI: true, prefix: '-', note: [
 		'I consider angle units to be dimensionless, with radian being identical to number 1.',
 		'Úhel považuji za bezrozměrné číslo, čili radián je identický s číslem 1.']},
 	{v: [0,0,0,0,0,0,0,0], id: '°', name: ['degree', 'stupeň'], k:Math.PI/180},
-	{v: [0,0,0,0,0,0,0,0], id: 'deg', name: ['degree', 'stupeň'], k:Math.PI/180},
 	{v: [0,0,0,0,0,0,0,0], id: 'gon', name: ['gradian', 'gradián'], k:Math.PI/200},
 	{v: [0,0,-1,0,0,0,0,0], id: 'Hz', name: ['hertz', 'hertz'], k:1, SI: true, prefix: 'all'},
 	{v: [1,1,-2,0,0,0,0,0], id: 'N', name: ['newton', 'newton'], k:1, SI: true, prefix: 'all'},
@@ -205,6 +207,7 @@ const Prefixes = [
 	{id: 'p', v: -12},
 	{id: 'n', v: -9},
 	{id: 'u', v: -6},
+	{id: 'μ', v: -6},
 	{id: 'm', v: -3},
 	{id: 'c', v: -2},
 	{id: 'd', v: -1},

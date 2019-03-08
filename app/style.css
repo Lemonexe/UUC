@@ -10,6 +10,9 @@ h2 {
 input[type="text"] {
 	width: 300px;
 }
+li {
+	margin-bottom: 5px;
+}
 
 .ok {
 	display: inline;
@@ -31,6 +34,15 @@ input[type="text"] {
 }
 .reference {
 	white-space: pre-wrap;
+}
+.fakeLink {
+	color: #0000ee;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.code {
+	font-family: 'Courier New', 'Courier', 'Consolas';
+	background-color: #f0f0f0;
 }
 
 #output {

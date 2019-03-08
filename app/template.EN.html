@@ -18,7 +18,7 @@
 	</p><p>
 		<b>Notes:</b>
 		<ol>
-			<li>The prefix "micro" is u, not μ, since it's more convenient to type.</li>
+			<li>Now you can add UUC to your browser as a search engine so as to access it quickly and conveniently! <a class="fakeLink" ng-click="controls.tab = 'searchEngine'">Instructions</a></li>
 			<li>Temperature units are handled as temperature difference, not temperature value. See °C in the Reference for details.</li>
 			<li>If you are missing your favorite unit or constant and would like to see it here, you can <a href="mailto:zbytek@gmail.com">contact me</a>.</li>
 			<li>If you have an idea how to enhance the application, you can <a href="mailto:zbytek@gmail.com">contact me</a>.</li>
@@ -52,7 +52,7 @@
 		<label><input type="checkbox" ng-model="controls.parameters" ng-change="init()">output format</label><br>
 		<div id="paramsContainer">
 			<div ng-show="controls.parameters">
-				<label><input type="checkbox" ng-model="controls.expForm" ng-change="init()">scientific notation</label><br>
+				<label><input type="checkbox" ng-model="controls.expForm" ng-change="init()">always scientific notation</label><br>
 				limit digits to 
 				<input type="number" ng-model="controls.digits" min="1" max="20" ng-change="init()">
 			</div>
@@ -63,11 +63,10 @@
 		<div id="output">
 			<span ng-if="result && result.output">{{result.output.num}} {{result.output.dim}}</span>
 		</div>
-		<br>
 
-		<b>Status:</b><br>
-		<div id="status" ng-if="result" ng-class="statusClass">
-			<span ng-repeat="m in result.messages">{{m}}<br></span>
+		<div id="status" ng-if="result">
+			<br><b>Status:</b><br>
+			<span ng-repeat="m in result.messages" ng-class="statusClass">{{m}}<br></span>
 		</div><br>
 	</div>
 
@@ -127,9 +126,27 @@
 			g*_c2 &rarr; GJ
 			<span class="example">mass in gram to energy in gigajoule</span>
 	</div>
+
+	<div ng-switch-when="searchEngine">
+		<h2>Chrome</h2>
+		<ol>
+			<li>Open this address: <span class="code">chrome://settings/searchEngines</span></li>
+			<li>Click the Add button</li>
+			<li>Insert <span class="code">uuc</span> into the first two fields, into the third insert <span class="code">http://jira.zby.cz/content/UUC/#%s</span></li>
+			<li>Click the Add button to confirm the dialog</li>
+		</ol>
+		<p>
+			Done - you have defined <i>uuc</i> as a keyword :-)<br>
+			Now you can simply open a new tab, write uuc <i>space</i>, and continue by writing the input and pressing Enter.<br>
+			Target units are specified by character &gt; or by words <i>to</i> či <i>into</i><br>
+			e.g. 3.7 kPa > Torr
+		</p>
+		<h2>Firefox, Edge, Safari</h2>
+		<p>Unfortunately, these browsers don't allow users to define a custom search engine (only by installing some addons).</p>
+	</div>
 </div>
 
 <div id="debug"></div>
 <div id="footer">
-	Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in 2017 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a> using <a href="https://angularjs.org/">AngularJS</a>
+	Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2019 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a> using <a href="https://angularjs.org/">AngularJS</a>
 </div>
