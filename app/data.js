@@ -120,9 +120,12 @@ let Units = [
 	{v: [1,0,-1,0,0,0,0,0], id: 'mph', name: ['mile per hour', 'míle za hodinu'], k:1609.344/3600},
 	{v: [1,0,-1,0,0,0,0,0], id: 'kn', name: ['knot', 'uzel'], k:1852/3600},
 
+	{v: [1,1,-2,0,0,0,0,0], id: 'dyn', name: ['dyne', 'dyn'], k:1e-5, prefix: 'all'},
+
 	{v: [2,1,-2,0,0,0,0,0], id: 'eV', name: ['electronvolt', 'elektronvolt'], k:1.60217653e-19, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'erg', name: ['erg', 'erg'], k:1e-7, SI: true, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'Btu', name: ['british thermal unit', 'britská tepelná jednotka'], k:1055.05585, prefix: 'all'},
+	{v: [2,1,-2,0,0,0,0,0], id: 'thm', name: ['therm', 'therm'], k:1055.05585e5, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'cal', name: ['calorie', 'kalorie'], k:4.184, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'TNT', name: ['ton of TNT equivalent', 'tuna ekvivalentu TNT'], k:4.184e9, prefix: 'all'},
 

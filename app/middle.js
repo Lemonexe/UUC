@@ -23,16 +23,22 @@ angular.module('UUC', [])
 		let hash = decodeURIComponent(window.location.hash).replace(/^.*#/, '');
 		if(!hash) {return;}
 		//'>', 'to' or 'into' is used to delimit input and target
-		hash = hash.replace(/to|into/, '>');
-		hash = hash.split('>');
-		if(hash.length > 2) {return;}
+		hash = hash.replace(/to|into/g, '>');
+		hash = hash.split(/>+/);
 
-		//detect input & target text, save them into model and initialize conversion
+		//detect input & target text, save them into model
 		let i = processInput(hash[0]);
 		let t = hash[1] ? processInput(hash[1]) : '';
 		$scope.controls.input = i;
 		$scope.controls.target = t;
+
 		let c = new Convert();
+		//check for wrong input
+		hash.length > 2 && c.warn([
+				'WARNING: Too many target unit separators have been found (>, to or into). Only the first definiton of target units was accepted.',
+				'VAROVÁNÍ: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.'
+			][lang()]);
+		//initialize conversion
 		$scope.result = c.init(i, t);
 		finish();
 	};
