@@ -1,5 +1,5 @@
 # UUC
-Ultimate Unit Converter, a useful tool for science and engineering
+Ultimate Unit Converter, a useful tool for science and engineering. [Live application](http://jira.zby.cz/content/UUC/)
 
 While the core features of the app are performed on the front-end using only HTML/JS, its functionality is extended by a PHP script running on server.
 The front-end is written in ECMA6 Javascript and uses [AngularJS](https://angularjs.org/) framework.

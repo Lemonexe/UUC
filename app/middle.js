@@ -27,10 +27,12 @@ angular.module('UUC', [])
 		hash = hash.split(/>+/);
 
 		//detect input & target text, save them into model
-		let i = processInput(hash[0]);
-		let t = hash[1] ? processInput(hash[1]) : '';
+		let i = hash[0];
+		let t = hash[1] ? hash[1] : '';
 		$scope.controls.input = i;
 		$scope.controls.target = t;
+		i = processInput(i);
+		t = processInput(t);
 
 		let c = new Convert();
 		//check for wrong input
@@ -42,6 +44,9 @@ angular.module('UUC', [])
 		$scope.result = c.init(i, t);
 		finish();
 	};
+
+	//just an informative string to show how to bind UUC as a search engine in Chrome
+	$scope.searchEngineTemplate = window.location.origin + '/#%s';
 	
 	//user switches language by link
 	$scope.updateLang = function(newLang) {

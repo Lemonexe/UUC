@@ -9,7 +9,10 @@
 <div ng-switch="controls.tab">
 	<div ng-switch-when="intro">
 	<p>
-		Write your expression into the <b>Input</b> text field (see the <b>Examples</b> button) and press Enter to perform the conversion, which is into basic SI by default, but you can fill the <b>Target units</b> field to specify an output unit (e.g. Torr into mbar).<br>
+		Write your expression into the <b>Input</b> text field (see the <b>Examples</b> button) and press Enter to perform the conversion.
+	</p><p>
+		Conversion is into basic SI units by default, but you can fill the <b>Target units</b> field to specify an output unit (e.g. Torr into mbar).
+	</p><p>
 		Units are case sensitive (and for a good reason). In the <b>Reference</b> you will find a comprehensive list.
 	</p><p>
 		UUC will perform dimensional analysis for you and if the Input &amp; Target units are mismatched, you will get a warning.<br>
@@ -102,29 +105,29 @@
 
 		<h2>Useful examples:</h2>
 
-			3500 min-1 &rarr; Hz
+			3500 min-1 &nbsp;&gt;&nbsp; Hz
 			<span class="example">conversion of RPM to Hz</span><br>
 
-			3 _g*lb*ft &rarr; J
+			3 _g*lb*ft &nbsp;&gt;&nbsp; J
 			<span class="example">foot pound-force to joule, _g is standard gravity. All constants available in UUC are marked by _</span><br>
 
-			kg*_g/cm2 &rarr; psi
+			kg*_g/cm2 &nbsp;&gt;&nbsp; psi
 			<span class="example">kilogram force per square cm to psi (psi could also be written as lb*_g/in2 by the same logic)</span><br>
 
-			lb*ft/s2 &rarr; N
+			lb*ft/s2 &nbsp;&gt;&nbsp; N
 			<span class="example">poundal to newton</span>
 
 		<h2>Peculiar features:</h2>
 			<p>UUC can be used for more than just conversion of units within the same dimension. Using built-in universal constants, it can perform simple calculations where a physical quantity is multiplied by one or several universal constants, e.g.:</p>
 
-			yr*_c &rarr; m
+			yr*_c &nbsp;&gt;&nbsp; m
 			<span class="example">year times speed of light = lightyear (in metres). Although this is pointless, since lightyear itself is implemented as ly</span><br>
 
-			T/_mu &rarr; Oe
+			T/_mu &nbsp;&gt;&nbsp; Oe
 			<span class="example">magnetic flux (B) in tesla to magnetic field (H) in oersted</span><br>
 
-			g*_c2 &rarr; GJ
-			<span class="example">mass in gram to energy in gigajoule</span>
+			g*_c2 &nbsp;&gt;&nbsp; GJ
+			<span class="example">mass in gram to the equivalent energy in gigajoule</span>
 	</div>
 
 	<div ng-switch-when="searchEngine">
@@ -132,14 +135,14 @@
 		<ol>
 			<li>Open this address: <span class="code">chrome://settings/searchEngines</span></li>
 			<li>Click the Add button</li>
-			<li>Insert <span class="code">uuc</span> into the first two fields, into the third insert <span class="code">http://jira.zby.cz/content/UUC/#%s</span></li>
+			<li>Insert <span class="code">uuc</span> into the first two fields, into the third insert <span class="code">{{searchEngineTemplate}}</span></li>
 			<li>Click the Add button to confirm the dialog</li>
 		</ol>
 		<p>
 			Done - you have defined <i>uuc</i> as a keyword :-)<br>
 			Now you can simply open a new tab, write uuc <i>space</i>, and continue by writing the input and pressing Enter.<br>
-			Target units are specified by character &gt; or by words <i>to</i> či <i>into</i><br>
-			e.g. 3.7 kPa > Torr
+			Target units are specified by character &gt; or by words <i>to</i> or <i>into</i><br>
+			e.g. 3.7 kPa &nbsp;&gt;&nbsp; Torr
 		</p>
 		<h2>Firefox, Edge, Safari</h2>
 		<p>Unfortunately, these browsers don't allow users to define a custom search engine (only by installing some addons).</p>

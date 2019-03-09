@@ -9,7 +9,10 @@
 <div ng-switch="controls.tab">
 	<div ng-switch-when="intro">
 	<p>
-		Napište výraz do textového pole <b>Vstup</b> (viz tlačítko <b>Příklady</b>) a stiskněte Enter pro provedení převodu, který je normálně do základních jednotek SI, ovšem můžete vyplnit textové pole <b>Cílové jednotky</b> pro určení výstupních jednotek (např. Torr na mbar).<br>
+		Napište výraz do textového pole <b>Vstup</b> (viz tlačítko <b>Příklady</b>) a stiskněte Enter pro provedení převodu.
+	</p><p>
+		Převod takto proběhne do základních jednotek SI, můžete však vyplnit textové pole <b>Cílové jednotky</b> pro určení výstupních jednotek (např. Torr na mbar).
+	</p><p>
 		Jednotky jsou citlivé na velikost písmen (z dobrého důvodu). V <b>Referenci</b> naleznete vyčerpávající seznam.
 	</p><p>
 		UUC pro vás provede rozměrovou analýzu a pokud Vstup &amp; Cílové jednotky nesouhlasí, dostanete varování.<br>
@@ -102,29 +105,29 @@
 
 		<h2>Užitečné příklady:</h2>
 
-			3500 min-1 &rarr; Hz
+			3500 min-1 &nbsp;&gt;&nbsp; Hz
 			<span class="example">převod RPM (otáčky za minutu) na Hz</span><br>
 
-			3 _g*lb*ft &rarr; J
+			3 _g*lb*ft &nbsp;&gt;&nbsp; J
 			<span class="example">librostopa na joule, _g je normální tíhové zrychlení. Všechny konstanty v UUC jsou označeny znakem _</span><br>
 
-			kg*_g/cm2 &rarr; psi
+			kg*_g/cm2 &nbsp;&gt;&nbsp; psi
 			<span class="example">tíha kilogramu na centimetr čtvereční na psi (psi by stejnou logikou mohlo být zapsáno i jako lb*_g/in2)</span><br>
 
-			lb*ft/s2 &rarr; N
+			lb*ft/s2 &nbsp;&gt;&nbsp; N
 			<span class="example">poundal na newton</span>
 
 		<h2>Podivné využití:</h2>
 			<p>UUC může být použit nejen na převod jednotek stejného rozměru. Za pomoci vestavěných univerzálních konstant lze i provádět jednoduché výpočty, kde je jedna fyzikální veličina násobena jednou či více konstantami, např.:</p>
 
-			yr*_c &rarr; m
+			yr*_c &nbsp;&gt;&nbsp; m
 			<span class="example">rok krát rychlost světla = světelný rok (v metrech). Toto je však zbytečné, neboť světelný rok je již implementován jako ly</span><br>
 
-			T/_mu &rarr; Oe
+			T/_mu &nbsp;&gt;&nbsp; Oe
 			<span class="example">magnetická indukce (B) v tesla na magnetickou intenzitu (H) v oersted</span><br>
 
-			g*_c2 &rarr; GJ
-			<span class="example">hmotnost v gramech na energii gigajoule</span>
+			g*_c2 &nbsp;&gt;&nbsp; GJ
+			<span class="example">hmotnost v gramech na ekvivalentní energii v gigajoule</span>
 	</div>
 
 	<div ng-switch-when="searchEngine">
@@ -132,14 +135,14 @@
 		<ol>
 			<li>Otevřete tuto adresu: <span class="code">chrome://settings/searchEngines</span></li>
 			<li>Klepněte na tlačítko Přidat</li>
-			<li>Do prvních dvou polí vyplňte <span class="code">uuc</span>, do třetího <span class="code">http://jira.zby.cz/content/UUC/#%s</span></li>
+			<li>Do prvních dvou polí vyplňte <span class="code">uuc</span>, do třetího vyplňte <span class="code">{{searchEngineTemplate}}</span></li>
 			<li>Dialog potvrďte tlačítkem Přidat</li>
 		</ol>
 		<p>
 			Hotovo - právě jste definovali klíčové slovo <i>uuc</i> :-)<br>
 			Stačí otevřít nový panel, napsat uuc <i>mezera</i>, pokračovat psaním zadání a stisknutím Enter.<br>
 			Cílové jednotky se zde specifikují znakem &gt; nebo slovy <i>to</i> či <i>into</i><br>
-			např. 3.7 kPa > Torr
+			např. 3.7 kPa &nbsp;&gt;&nbsp; Torr
 		</p>
 		<h2>Firefox, Edge, Safari</h2>
 		<p>Bohužel, tyto prohlížeče neumožňují uživatelům definovat nový vyhledávač (pouze pomocí instalace určitých doplňků).</p>
