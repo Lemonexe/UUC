@@ -35,6 +35,9 @@ li {
 .reference {
 	white-space: pre-wrap;
 }
+.highlight {
+	background-color: #ffffbb;
+}
 .fakeLink {
 	color: #0000ee;
     cursor: pointer;

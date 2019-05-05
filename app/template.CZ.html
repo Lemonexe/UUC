@@ -39,7 +39,7 @@
 		<p>V databázi je {{databaseCount}} položek (včetně {{constantCount}} konstant), přičemž {{Units.length}} je právě zobrazeno.<br>
 		Jednotky měn byly načteny z externí stránky v {{currencyTimestamp}}.</p>
 		<p ng-repeat="u in Units">
-			<span class="reference"><b>{{getUnitName(u)}}</b>{{buildUnitEntry(u)}}</span>
+			<span class="reference" ng-class="{highlight: $index === 0 && highlightFirst}"><b>{{getUnitName(u)}}</b>{{buildUnitEntry(u)}}</span>
 		</p>
 
 	</div>

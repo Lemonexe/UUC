@@ -39,7 +39,7 @@
 		<p>There are {{databaseCount}} items in database (including {{constantCount}} constants) while {{Units.length}} items are currently listed.<br>
 		Currency units have been loaded from external website at {{currencyTimestamp}}.</p>
 		<p ng-repeat="u in Units">
-			<span class="reference"><b>{{getUnitName(u)}}</b>{{buildUnitEntry(u)}}</span>
+			<span class="reference" ng-class="{highlight: $index === 0 && highlightFirst}"><b>{{getUnitName(u)}}</b>{{buildUnitEntry(u)}}</span>
 		</p>
 
 	</div>

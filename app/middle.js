@@ -27,8 +27,8 @@ angular.module('UUC', [])
 		hash = hash.split(/>+/);
 
 		//detect input & target text, save them into model
-		let i = hash[0];
-		let t = hash[1] ? hash[1] : '';
+		let i = hash[0].trim();
+		let t = hash[1] ? hash[1].trim() : '';
 		$scope.controls.input = i;
 		$scope.controls.target = t;
 		i = processInput(i);
@@ -43,7 +43,7 @@ angular.module('UUC', [])
 		//initialize conversion
 		$scope.result = c.init(i, t);
 		finish();
-	};
+	}
 
 	//just an informative string to show how to bind UUC as a search engine in Chrome
 	$scope.searchEngineTemplate = window.location.origin + '/#%s';
@@ -89,7 +89,7 @@ angular.module('UUC', [])
 		}
 
 		$scope.statusClass = ['ok', 'warn', 'err'][$scope.result.status];
-	};
+	}
 
 	//this function listens to onkeyup in input & target text fields and executes conversion if the key is an Enter
 	$scope.listenForConvert = function(event) {
@@ -102,6 +102,7 @@ angular.module('UUC', [])
 
 	//current unit list view to be displayed
 	$scope.Units = Units;
+	$scope.highlightFirst = false;
 	//constant statistics or strings to be statically displayed
 	$scope.databaseCount = Units.length;
 	$scope.constantCount = Units.filter(item => item.constant).length;
@@ -114,27 +115,37 @@ angular.module('UUC', [])
 
 	//get a list of units filtered using the filter text field
 	function getUnitList() {
+		$scope.highlightFirst = false;
+
 		//callback fed to Array.filter, it will check all dimensions of unit (item) and if they all agree with filterVector, it is a related unit and it will pass the filter.
-		let filterFunction = function(item) {
+		function filterFunction(item) {
 			for(let i in item.v) {
 				if(item.v[i] !== filterVector[i]) {return false;}
 			}
 			return true;
-		};
+		}
+
+		//callback fed to Array.sort, it will move matched unit to the top
+		let sortMatchedUnit = (a, b) => (a.id === sortID) ? -1 : (b.id === sortID) ? 1 : 0;
 
 		//filter for units - it gets the value of filter textfield and checks it by several conditions
 		let filterVector;
 		let filterString = $scope.controls.filter;
-		//dimensionless units
+		//ID of matched unit (it will be sorted to the top)
+		let sortID;
+
+		//search for dimensionless units
 		if(filterString === '1') {
 			filterVector = new Array(8).fill(0);
 			return Units.filter(filterFunction);
 		}
-		//constants
+
+		//search for constants
 		else if(filterString === '_') {
 			return Units.filter(item => item.constant);
 		}
-		//specific dimension
+
+		//search for a specific dimension
 		else if(filterString !== '') {
 			//it parses the filter unit into detailed unit object and then into aggregate vector. See convert.init() of explanation. Then it filters all units using filterFunction
 			convert.status = 0;
@@ -144,22 +155,36 @@ angular.module('UUC', [])
 			//if unit wasn't successfully parsed, program tries to find unit by name using the literal value of filter text field, if it is longer than three characters
 			if(convert.status === 2) {
 				let nameSearch = Units.find(item => item.name[lang()].toLowerCase().indexOf(filterString.toLowerCase()) > -1);
+				//unit was found, so filter all units with the same dimension, sort the matched unit to the top and highlight it
 				if(nameSearch && filterString.length >= 3) {
 					filterVector = nameSearch.v;
-					return Units.filter(filterFunction);
+					sortID = nameSearch.id;
+					$scope.highlightFirst = true;
+					return Units.filter(filterFunction).sort(sortMatchedUnit);
 				}
 				//attempt to find unit by name failed, collection will be empty
 				return [];
 			}
-			//if successfully parsed
+
+			//if successfully parsed, filter units by their aggregate vector
 			filterVector = obj.aggregateVector;
-			return Units.filter(filterFunction);
+			let unitList = Units.filter(filterFunction)
+
+			//if the input was exactly one unit, sort it to the top and highlight it
+			if(obj.units.length === 1) {
+				sortID = obj.units[0][1].id;
+				$scope.highlightFirst = true;
+				unitList = unitList.sort(sortMatchedUnit);
+			}
+
+			return unitList;
 		}
+
 		//no filter criterion specified, so all units will be listed
 		else {
 			return Units;
 		}
-	};
+	}
 
 	//redirect unit name by language
 	$scope.getUnitName = unit => unit.name[lang()];
@@ -216,6 +241,6 @@ angular.module('UUC', [])
 			//finally try to execute input from fragment identifier
 			execHash();
 		}, () => execHash());
-	};
+	}
 	loadCurrencies();
 });

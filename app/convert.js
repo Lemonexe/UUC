@@ -251,7 +251,7 @@ let Convert = function() {
 
 	//SI reads the detailed unit object from this.units and enumerates the aggregate vector.
 	this.SI = function(obj) {
-		let aggregateVector = new Array(8).fill(0);;
+		let aggregateVector = new Array(8).fill(0);
 		
 		//foreach unit we add vector of its units multiplied by power
 		for(let u of obj.units) {

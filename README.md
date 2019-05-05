@@ -10,6 +10,9 @@ All CSS is stored in **app/style.css**.
 
 ### Javascript
 
+**libs/angular.min.js** is excluded from git, and as it's the sole dependency of this project, it is placed here manually when building.  
+Application was developed with AngularJS v1.7.6.
+
 **app/core.js** initializes the program and contains some generic-purpose global functions.
 
 **app/convert.js** defines the `Convert` object constructor, the application Model. It contains all code related to the unit conversion itself.

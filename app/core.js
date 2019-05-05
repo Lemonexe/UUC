@@ -11,7 +11,7 @@ window.onload = function() {
 };
 
 //get language from angular scope
-let lang = function() {
+function lang() {
 	let scope = angular.element(document).scope().lang;
 	return {EN: 0, CZ: 1}[scope ? scope : 'EN'];
 }
