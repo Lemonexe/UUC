@@ -69,4 +69,5 @@ li {
     padding: 10px;
     color: #551A8B;
     text-decoration: underline;
+    cursor: pointer;
 }

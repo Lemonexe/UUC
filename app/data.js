@@ -92,6 +92,7 @@ let Units = [
 
 	{v: [2,0,0,0,0,0,0,0], id: 'a', name: ['ar', 'ar'], k:100, SI: true, prefix: '+'},
 	{v: [2,0,0,0,0,0,0,0], id: 'ac', name: ['acre', 'akr'], k:4046.872},
+	{v: [2,0,0,0,0,0,0,0], id: 'darcy', name: ['darcy', 'darcy'], k: 9.869233e-13},
 
 	{v: [3,0,0,0,0,0,0,0], id: 'l', name: ['litre', 'litr'], k:1e-3, SI: true, prefix: 'all'},
 	{v: [3,0,0,0,0,0,0,0], id: 'pt', name: ['pint', 'pinta'], k:568.261e-6},
@@ -125,6 +126,7 @@ let Units = [
 	{v: [2,1,-2,0,0,0,0,0], id: 'eV', name: ['electronvolt', 'elektronvolt'], k:1.60217653e-19, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'erg', name: ['erg', 'erg'], k:1e-7, SI: true, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'Btu', name: ['british thermal unit', 'britská tepelná jednotka'], k:1055.05585, prefix: 'all'},
+	{v: [2,1,-2,0,0,0,0,0], id: 'Chu', name: ['celsius heat unit', 'celsiova jednotka tepla'], k: 1.899101e3, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'thm', name: ['therm', 'therm'], k:1055.05585e5, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'cal', name: ['calorie', 'kalorie'], k:4.184, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'TNT', name: ['ton of TNT equivalent', 'tuna ekvivalentu TNT'], k:4.184e9, prefix: 'all'},
