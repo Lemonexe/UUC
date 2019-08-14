@@ -150,8 +150,8 @@ let Convert = function() {
 		while(['', '*', '/'].indexOf(members[0]) > -1) {
 			if(members[0] === '/') {
 				this.warn([
-					'WARNING: Unexpected slash sign after numerical part, it is regarded as a space. Consider using the form: unit -exponent.',
-					'VAROVÁNÍ: Neočekáváné lomítko po numerické části, bude považováno za mezeru. Používejte raději tvar: jednotka -exponent.'
+					'WARNING: Unexpected slash sign after numerical part, it is regarded as a space. Consider using the form: unit -exponent, e.g. m-2',
+					'VAROVÁNÍ: Neočekáváné lomítko po numerické části, bude považováno za mezeru. Používejte raději tvar: jednotka -exponent, např. m-2'
 				][lang()]);
 			}
 			members.shift();

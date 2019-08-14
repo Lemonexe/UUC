@@ -4,7 +4,7 @@
 */
 
 angular.module('UUC', [])
-.controller('middle', function($scope, $http) {
+.controller('middle', function($scope, $http, $timeout) {
 	
 	//initialize language from localstorage or estimate it from window.navigator
 	let localLang = localStorage.getItem('lang');
@@ -89,6 +89,8 @@ angular.module('UUC', [])
 		}
 
 		$scope.statusClass = ['ok', 'warn', 'err'][$scope.result.status];
+		$scope.statusAppear = 'statusAppear';
+		$timeout(() => ($scope.statusAppear = ''), 500);
 	}
 
 	//this function listens to onkeyup in input & target text fields and executes conversion if the key is an Enter

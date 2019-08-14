@@ -67,7 +67,7 @@
 			<span ng-if="result && result.output">{{result.output.num}} {{result.output.dim}}</span>
 		</div>
 
-		<div id="status" ng-if="result">
+		<div id="status" ng-if="result" ng-class="statusAppear">
 			<br><b>Stav:</b><br>
 			<span ng-repeat="m in result.messages" ng-class="statusClass">{{m}}<br></span>
 		</div><br>

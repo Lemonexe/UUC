@@ -47,6 +47,13 @@ li {
 	font-family: 'Courier New', 'Courier', 'Consolas';
 	background-color: #f0f0f0;
 }
+.statusAppear {
+	animation: appear 0.5s linear forwards;
+}
+@keyframes appear {
+	0%   {opacity: 0;}
+	100% {opacity: 1;}
+}
 
 #output {
 	height: 19px;
