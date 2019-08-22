@@ -1,5 +1,5 @@
 /*
-	core.js
+	misc.js
 	here are auxiliary functions, ubiquitous utils etc.
 */
 
@@ -22,10 +22,8 @@ function ECMA6test() {
 		eval('const a=[1,2];for(let i of a){};a.map(i => i);');
 	}
 	catch(err) {
-		alert([
-			'ERROR:\n\nUnfortunately, your browser is probably outdated and doesn\'t support latest Javascript. The application will not work at all!',
-			'CHYBA:\n\nBohužel, váš prohlížeč je nejspíše zastaralý a nepodporuje aktuální Javascript. Aplikace nebude vůbec fungovat!'
-		][lang()]);
+		alert('ERROR:\nUnfortunately, your browser is probably outdated and doesn\'t support latest Javascript. The application will not work at all!\n\n' +
+			'CHYBA:\nBohužel, váš prohlížeč je nejspíše zastaralý a nepodporuje aktuální Javascript. Aplikace nebude vůbec fungovat!');
 	}
 }
 

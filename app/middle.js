@@ -36,10 +36,7 @@ angular.module('UUC', [])
 
 		let c = new Convert();
 		//check for wrong input
-		hash.length > 2 && c.warn([
-				'WARNING: Too many target unit separators have been found (>, to or into). Only the first definiton of target units was accepted.',
-				'VAROVÁNÍ: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.'
-			][lang()]);
+		hash.length > 2 && c.warn(c.msgs.separators[lang()]);
 		//initialize conversion
 		$scope.result = c.init(i, t);
 		finish();
