@@ -149,13 +149,13 @@ angular.module('UUC', [])
 			//it parses the filter unit into detailed unit object and then into aggregate vector. See convert.init() of explanation. Then it filters all units using filterFunction
 			convert.status = 0;
 			let obj = convert.parseField(processInput(filterString));
-			convert.SI(obj);
 
-			//if unit wasn't successfully parsed, program tries to find unit by name using the literal value of filter text field, if it is longer than three characters
-			if(convert.status === 2) {
-				let nameSearch = Units.find(item => item.name[lang()].toLowerCase().indexOf(filterString.toLowerCase()) > -1);
+			//if unit wasn't successfully parsed, program tries to find unit by name using the literal value of filter text field
+			if(convert.status > 0) {
+				let regex = new RegExp('(^| )' + filterString.toLowerCase()); //search all words of the unitname, whether they begin with the searchphrase
+				let nameSearch = Units.find(item => item.name[lang()].toLowerCase().match(regex));
 				//unit was found, so filter all units with the same dimension, sort the matched unit to the top and highlight it
-				if(nameSearch && filterString.length >= 3) {
+				if(nameSearch) {
 					filterVector = nameSearch.v;
 					sortID = nameSearch.id;
 					$scope.highlightFirst = true;
@@ -166,6 +166,7 @@ angular.module('UUC', [])
 			}
 
 			//if successfully parsed, filter units by their aggregate vector
+			convert.SI(obj);
 			filterVector = obj.aggregateVector;
 			let unitList = Units.filter(filterFunction)
 
