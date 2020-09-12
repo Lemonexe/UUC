@@ -40,8 +40,8 @@ li {
 }
 .fakeLink {
 	color: #0000ee;
-    cursor: pointer;
-    text-decoration: underline;
+	cursor: pointer;
+	text-decoration: underline;
 }
 .code {
 	font-family: 'Courier New', 'Courier', 'Consolas';
@@ -69,12 +69,12 @@ li {
 	border-top: 1px solid #A9A9A9;
 }
 #lang{
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    font-size: 28px;
-    padding: 10px;
-    color: #551A8B;
-    text-decoration: underline;
-    cursor: pointer;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	font-size: 28px;
+	padding: 10px;
+	color: #551A8B;
+	text-decoration: underline;
+	cursor: pointer;
 }

@@ -3,20 +3,9 @@
 	contains the Angular module and controller, which serves as view & controller for the application
 */
 
-angular.module('UUC', [])
-.controller('ctrl', function($scope, $http, $timeout) {
-	
-	//initialize language from localstorage or estimate it from window.navigator
-	let localLang = localStorage.getItem('lang');
-	if(localLang) {
-		$scope.lang = localLang;
-	}
-	else if((window.navigator.userLanguage || window.navigator.language).slice(0,2) === 'cs') {
-		$scope.lang = 'CZ';
-	}
-	else {
-		$scope.lang = 'EN';
-	}
+const app = angular.module('UUC', []);
+app.controller('ctrl', function($scope, $http, $timeout) {
+	$scope.CS = CS;
 
 	//perform conversion from fragment identifier. Executed upon loading of currencies
 	function execHash() {
@@ -29,14 +18,14 @@ angular.module('UUC', [])
 		//detect input & target text, save them into model
 		let i = hash[0].trim();
 		let t = hash[1] ? hash[1].trim() : '';
-		$scope.controls.input = i;
-		$scope.controls.target = t;
+		CS.input = i;
+		CS.target = t;
 		i = processInput(i);
 		t = processInput(t);
 
 		let c = new Convert();
 		//check for wrong input
-		hash.length > 2 && c.warn(c.msgs.separators[lang()]);
+		hash.length > 2 && c.warn('VAROVÁNÍ: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.'.trans('WARN_separators'));
 		//initialize conversion
 		$scope.result = c.init(i, t);
 		finish();
@@ -44,32 +33,14 @@ angular.module('UUC', [])
 
 	//just an informative string to show how to bind UUC as a search engine in Chrome
 	$scope.searchEngineTemplate = window.location.origin.replace(/\/$/, '') + window.location.pathname.replace(/\/$/, '') + '/#%s';
-	
-	//user switches language by link
-	$scope.updateLang = function(newLang) {
-		$scope.lang = newLang;
-		localStorage.setItem('lang', newLang);
-	};
-
-	//important variables to control the application: which tab is in view & three text fields
-	//they are in object to ensure proper inheritance to children scopes
-	$scope.controls = {
-		tab: 'converter',
-		input: '',
-		target: '',
-		filter: '',
-		parameters: false,
-		digits: 4,
-		expForm: false
-	};
 
 	//process string input (so it can be fed to convert)
 	let processInput = string => string.replace(/,/g , '.').replace(/\s+/g , '');
 
 	//initialize conversion
 	$scope.init = function() {
-		let i = processInput($scope.controls.input);
-		let t = processInput($scope.controls.target);
+		let i = processInput(CS.input);
+		let t = processInput(CS.target);
 
 		let c = new Convert();
 		$scope.result = c.init(i, t);
@@ -79,10 +50,10 @@ angular.module('UUC', [])
 	//finish conversion by assigning & formatting the result & status
 	function finish() {
 		//format of output number
-		if($scope.result.output && $scope.controls.parameters) {
+		if($scope.result.output && CS.parameters) {
 			//number of digits
-			let d = $scope.controls.digits ? $scope.controls.digits : 2;
-			$scope.result.output.num = $scope.controls.expForm ? $scope.result.output.num.toExponential(d-1) : $scope.result.output.num.toPrecision(d);
+			let d = CS.digits ? CS.digits : 2;
+			$scope.result.output.num = CS.expForm ? $scope.result.output.num.toExponential(d-1) : $scope.result.output.num.toPrecision(d);
 		}
 
 		$scope.statusClass = ['ok', 'warn', 'err'][$scope.result.status];
@@ -129,7 +100,7 @@ angular.module('UUC', [])
 
 		//filter for units - it gets the value of filter textfield and checks it by several conditions
 		let filterVector;
-		let filterString = $scope.controls.filter;
+		let filterString = CS.filter;
 		//ID of matched unit (it will be sorted to the top)
 		let sortID;
 
@@ -153,7 +124,7 @@ angular.module('UUC', [])
 			//if unit wasn't successfully parsed, program tries to find unit by name using the literal value of filter text field
 			if(convert.status > 0) {
 				let regex = new RegExp('(^| )' + filterString.toLowerCase()); //search all words of the unitname, whether they begin with the searchphrase
-				let nameSearch = Units.find(item => item.name[lang()].toLowerCase().match(regex));
+				let nameSearch = Units.find(item => item.name[CS.lang].toLowerCase().match(regex));
 				//unit was found, so filter all units with the same dimension, sort the matched unit to the top and highlight it
 				if(nameSearch) {
 					filterVector = nameSearch.v;
@@ -186,31 +157,28 @@ angular.module('UUC', [])
 		}
 	}
 
-	//redirect unit name by language
-	$scope.getUnitName = unit => unit.name[lang()];
-
 	//each unit is described by dimension represented by basic SI and info:
-	//whether it is a constant,  SI, basic SI, what prefixes are recommended and possibly a note
+	//whether it is a constant, SI, basic SI, what prefixes are recommended and possibly a note
 	$scope.buildUnitEntry = function(unit) {
 		let text = ' (' + unit.id + ') ';
 		//vector2text converts vector to text representation, like [1,1,-2] to m*kg*s^-2
 		text += unit.basic ? '' : ' = ' + unit.k + ' ' + convert.vector2text(unit.v) + '\n';
 
 		if(unit.constant) {
-			text += ['Constant.', 'Konstanta.'][lang()];
+			text += 'Konstanta.'.trans();
 		}
 		else {
-			text += unit.basic ? ['Basic, ', 'Základní, '][lang()] : '';
+			text += unit.basic ? 'Základní, '.trans() : '';
 			text += unit.SI ? 'SI, ' : '';
 			switch(unit.prefix) {
-				case 'all': text += ['all prefixes can be used.', 'všechny předpony mohou být použity.'][lang()]; break;
-				case '+': text += ['usually only increasing prefixes are used.', 'většinou se používají jen zvětšující předpony.'][lang()]; break;
-				case '-': text += ['usually only decreasing prefixes are used.', 'většinou se používají jen zmenšující předpony.'][lang()]; break;
-				default: text += ['prefixes are not used.', 'předpony se nepoužívají.'][lang()];
+				case 'all': text += 'všechny předpony mohou být použity.'.trans('prefixAll'); break;
+				case '+': text += 'většinou se používají jen zvětšující předpony.'.trans('prefix+'); break;
+				case '-': text += 'většinou se používají jen zmenšující předpony.'.trans('prefix-'); break;
+				default: text += 'předpony se nepoužívají.'.trans('prefix0');
 			}
 		}
 
-		text += unit.note ? (' ' + unit.note[lang()]) : '';
+		text += unit.note ? (' ' + unit.note[CS.lang]) : '';
 		return text;
 	};
 

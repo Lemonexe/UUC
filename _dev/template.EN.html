@@ -1,0 +1,57 @@
+<h2>Basic examples:</h2>
+
+	min
+	<span class="example">you don't have to type any number before units and it's regarded as one. Here it converts one minute (to seconds by default)</span><br>
+
+	6 kPa <i>or</i> 6kPa
+	<span class="example">you can use standard SI prefixes before units. Spaces are entirely optional, all spaces are ignored</span><br>
+
+	6.2 kJ <i>or</i> 6,2 kJ
+	<span class="example">comma also works as a decimal point</span><br>
+
+	12 ug*Hz / Pa
+	<span class="example">you can multiply using <b>*</b> and divide using <b>/</b>. Using a space won't work!</span><br>
+
+	-0.007 cm^7*mV-3/s0.5
+	<span class="example">you can raise to power by simply writing number after the unit or by using <b>^</b></span><br>
+
+	2e-12 kg
+	<span class="example">you can use e... to express "times 10 to the ..."</span><br>
+
+	l(1/3)
+	<span class="example">power of unit can be entered as a fraction in parenthesis, which can be used to define nth root</span><br>
+
+	2.99 EUR/kg
+	<span class="example">currency conversion works too (basic unit is USD), exchange rates are downloaded every day using this <a href="http://fixer.io/">API</a>.</span><br>
+
+	4.5*cm * 90*mm
+	<span class="example">input may contain multiple numerical parts, but don't forget to use operators * or /</span>
+
+<h2>Useful examples:</h2>
+
+	3500 min-1 &nbsp;&gt;&nbsp; Hz
+	<span class="example">conversion of RPM to Hz</span><br>
+
+	3 _g*lb*ft &nbsp;&gt;&nbsp; J
+	<span class="example">foot pound-force to joule, _g is standard gravity. All constants available in UUC are marked by _</span><br>
+
+	kg*_g/cm2 &nbsp;&gt;&nbsp; psi
+	<span class="example">kilogram force per square cm to psi (psi could also be written as lb*_g/in2 by the same logic)</span><br>
+
+	lb*ft/s2 &nbsp;&gt;&nbsp; N
+	<span class="example">poundal to newton</span>
+
+<h2>Peculiar features:</h2>
+	<p>UUC can be used for more than just conversion of units within the same dimension. Using built-in universal constants, it can perform simple calculations where a physical quantity is multiplied by one or several universal constants, e.g.:</p>
+
+	yr*_c &nbsp;&gt;&nbsp; m
+	<span class="example">year times speed of light = lightyear (in metres). Although this is pointless, since lightyear itself is implemented as ly</span><br>
+
+	T/_mu &nbsp;&gt;&nbsp; Oe
+	<span class="example">magnetic flux (B) in tesla to magnetic field (H) in oersted</span><br>
+
+	g*_c2 &nbsp;&gt;&nbsp; GJ
+	<span class="example">mass in gram to the equivalent energy in gigajoule</span>
+
+
+

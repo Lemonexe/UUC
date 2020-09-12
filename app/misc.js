@@ -4,17 +4,36 @@
 */
 
 let convert;
+let CS;
+const CSdefault = {
+	tab: 'converter', //current tab
+	input: '', //content of input text field
+	target: '', //target field
+	filter: '', //filter field
+	parameters: false, //whether to use output format
+	digits: 4, //output format - digits
+	expForm: false //output format - exponential form
+};
+
+const saveService = {
+	save: () => CS && localStorage.setItem('UUC_userdata', JSON.stringify(CS)),
+	load: function() {
+		const data = localStorage.getItem('UUC_userdata');
+		CS = data ? JSON.parse(data) : CSdefault;
+
+		//estimate language from window.navigator
+		!CS.lang && (CS.lang = ((window.navigator.userLanguage || window.navigator.language).slice(0,2) === 'cs') ? 'cz' : 'en');
+	}
+};
+saveService.load()
+
 window.onload = function() {
 	ECMA6test();
 	//this instance serves only to facilitate access to auxiliary functions, not conversion itself - each conversion should get a new instance
 	convert = new Convert();
 };
 
-//get language from angular scope
-function lang() {
-	let scope = angular.element(document).scope().lang;
-	return {EN: 0, CZ: 1}[scope ? scope : 'EN'];
-}
+window.onbeforeunload = saveService.save;
 
 //test availability of ECMA6 with a sample code
 function ECMA6test() {
@@ -52,11 +71,11 @@ function unitConflicts() {
 						(u.prefix === '+' && p.v > 0) ||
 						(u.prefix === '-' && p.v < 0)
 					) {
-						conflicts.unshift(`CONFLICT OF A PREFIX: ${p.id}${u.id} (${p.id} ${u.name[lang()]}) = ${i.id} (${i.name[lang()]})`);
+						conflicts.unshift(`CONFLICT OF A PREFIX: ${p.id}${u.id} (${p.id} ${u.name[CS.lang]}) = ${i.id} (${i.name[CS.lang]})`);
 						break;
 					}
 					else {
-						conflicts.push(`conflict of a deprecated prefix: ${p.id}${u.id} (${p.id} ${u.name[lang()]}) = ${i.id} (${i.name[lang()]})`);
+						conflicts.push(`conflict of a deprecated prefix: ${p.id}${u.id} (${p.id} ${u.name[CS.lang]}) = ${i.id} (${i.name[CS.lang]})`);
 						break;
 					}
 					break;

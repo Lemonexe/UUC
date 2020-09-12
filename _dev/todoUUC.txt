@@ -7,12 +7,12 @@ pokud při psaní input dám > nebo " to ", tak to automaticky přepne na target
 hezčí front page?
 
 examples - při kliknutí vloží. Či spíše rovnou udělat krásný interactive tutorial
+	btw span class example má problém se zalamováním při malé šířce obrazovky
+	přidat Ncm za jiných podmínek
 
 reset button
 
-CS
-	output formatting
-	history
+save history
 
 refactor convert
 	atomizovat convert na samotný core > umožnit rekurzi > perfektní parsování závorek
@@ -24,7 +24,4 @@ refactor convert
 ad sčítání a odčítání - možná by se tam dal udělat "scriptování" že uložím do veličiny proměnných a paxnima počítám
 nemusel bych vymýšlet složitý programovací jazyk, stačila by expanze proměnné jako to dělá .bat
 
-
-<<<DONE>>>
-přejmenovat middle.js na controller.js
-refactor language like Felda/_dev/language_test.html
+znovu zkusit zjistit jestli nejde nějak udělat keyword v IE, chrome, edge

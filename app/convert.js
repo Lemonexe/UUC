@@ -21,30 +21,6 @@ function Convert() {
 		this.messages.push(text);
 	};
 
-	//some warns and errs are stored here to make the code more concise
-	this.msgs = {
-		targetNumber: [
-			'WARNING: Unexpected number in the target field, it has been ignored.',
-			'VAROVÁNÍ: Neočekávané číslo v cílovém poli, bylo ignorováno.'
-		],
-		noInput: [
-			'ERROR: No input detected!',
-			'CHYBA: Nenalezen žádný vstup!'
-		],
-		NaN:[
-			'ERROR: Numerical part identified but cannot be parsed!',
-			'CHYBA: Nalezena numerická část, ovšem nelze ji zpracovat!'
-		],
-		operators: [
-			'ERROR: wrong use of * or / operator',
-			'CHYBA: chybné použití operátoru * nebo /'
-		],
-		separators: [
-			'WARNING: Too many target unit separators have been found (>, to or into). Only the first definiton of target units was accepted.',
-			'VAROVÁNÍ: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.'
-		]
-	};
-
 	//factory for result object returned by init()
 	this.result = function(num, dim) {
 		return {
@@ -75,7 +51,7 @@ function Convert() {
 			//continue
 			this.enumerate(objT);
 			this.SI(objT);
-			(objT.numVal !== 1) && this.warn(this.msgs.targetNumber[lang()]);
+			(objT.numVal !== 1) && this.warn('VAROVÁNÍ: Neočekávané číslo v cílovém poli, bylo ignorováno.'.trans('WARN_targetNumber'));
 		}
 
 		//same operations as before, this time done with input
@@ -110,7 +86,7 @@ function Convert() {
 	//the largest function, parses the text into final numerical value, a detailed unit object and cleaned unit string (see 'obj' definition)
 	this.parseField = function(text) {
 		if(text === '') {
-			this.err(this.msgs.noInput[lang()]); return;
+			this.err('CHYBA: Nenalezen žádný vstup!'.trans('ERR_noInput')); return;
 		}
 
 		//obj is the object which contains state of one input field conversion
@@ -132,7 +108,7 @@ function Convert() {
 			obj.input = obj.input.replace(/(\(.*?\))/g, replaceCallback);
 		}
 		catch(err) {
-			this.err(this.msgs.NaN[lang()]); return;
+			this.err('CHYBA: Nalezena numerická část, ovšem nelze ji zpracovat!'.trans('ERR_NaN')); return;
 		}
 
 		//enable omitting * after first numerical part
@@ -174,7 +150,7 @@ function Convert() {
 				if(
 					(m2 === '/' || m2 === '*') ||       //multiple operators next to each other, or
 					(n === 0 || n === members.length-1) //operator at the beginning or end
-				) {this.err(this.msgs.operators[lang()]); return;}
+				) {this.err('CHYBA: chybné použití operátoru * nebo /'.trans('ERR_operators')); return;}
 
 				obj.unitStr += m;
 				opPower = (m === '*') ? 1 : -1;
@@ -195,10 +171,7 @@ function Convert() {
 			if(powIndex > -1) {
 				let pow2 = Number(m.slice(powIndex).replace('^' , ''));
 				if(isNaN(pow2)) {
-					this.err([
-						`ERROR: Cannot parse unit power (${m.slice(powIndex)})!`,
-						`CHYBA: Nelze zpracovat mocninu jednotky (${m.slice(powIndex)})!`
-					][lang()]); return;
+					this.err(langService.trans('ERR_unitPower')(m, powIndex)); return;
 				}
 				opPower *= pow2;
 				m = m.slice(0, powIndex);
@@ -214,10 +187,7 @@ function Convert() {
 
 				//if we find both, we add the unit with its prefix and check whether its appropriately used. If we didn't find i or j, the unit is unknown.
 				if(i === -1 || j === -1) {
-					this.err([
-						`ERROR: Unknown unit ${m}!`,
-						`CHYBA: Nenalezena jednotka ${m}!`
-					][lang()]); return;
+					this.err(langService.trans('ERR_unknownUnit')(m)); return;
 				}
 				else {
 					obj.units.push([Prefixes[j], Units[i], opPower]);
@@ -244,16 +214,13 @@ function Convert() {
 	this.checkPrefix = function(pref, unit) {
 		//find all possible mismatch situations and fill the appropriate words for warning
 		let words = false;
-		(!unit.prefix || unit.prefix === '0') && (words = ['any', 'žádné']);
-		(unit.prefix === '+' && pref.v < 0)   && (words = ['decreasing', 'zmenšující']);
-		(unit.prefix === '-' && pref.v > 0)   && (words = ['increasing', 'zvětšující']);
+		(!unit.prefix || unit.prefix === '0') && (words = 'WARN_prefixes_words0');
+		(unit.prefix === '+' && pref.v < 0)   && (words = 'WARN_prefixes_words+');
+		(unit.prefix === '-' && pref.v > 0)   && (words = 'WARN_prefixes_words-');
 
 		//do warning
 		if(words !== false) {
-			this.warn([
-				`WARNING: Unit ${unit.id} (${unit.name[lang()]}) doesn\'t usually have ${words[0]} prefixes, yet ${pref.id} identified!`,
-				`VAROVÁNÍ: Jednotka ${unit.id} (${unit.name[lang()]}) většinou nemívá ${words[1]} předpony, avšak nalezeno ${pref.id}!`
-			][lang()]);
+			this.warn(langService.trans('WARN_prefixes')(unit, words, pref));
 		}
 	};
 
@@ -328,10 +295,7 @@ function Convert() {
 		}
 		//nicely written warning
 		if(faults.length > 0) {
-			this.warn([
-				`WARNING: Dimensions of units from input and target don\'t match. These basic units have been added: ${faults.join(', ')}.`,
-				`VAROVÁNÍ: Rozměry jednotek ze vstupu a cíle nesouhlasí. Tyto základní jednotky byly přidány: ${faults.join(', ')}.`
-			][lang()]);
+			this.warn(langService.trans('WARN_dimension')(faults));
 		}
 		
 		return OK || corr;
