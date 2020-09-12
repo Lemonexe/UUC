@@ -1,10 +1,10 @@
 /*
-	middle.js
+	controller.js
 	contains the Angular module and controller, which serves as view & controller for the application
 */
 
 angular.module('UUC', [])
-.controller('middle', function($scope, $http, $timeout) {
+.controller('ctrl', function($scope, $http, $timeout) {
 	
 	//initialize language from localstorage or estimate it from window.navigator
 	let localLang = localStorage.getItem('lang');
@@ -43,7 +43,7 @@ angular.module('UUC', [])
 	}
 
 	//just an informative string to show how to bind UUC as a search engine in Chrome
-	$scope.searchEngineTemplate = window.location.origin + '/#%s';
+	$scope.searchEngineTemplate = window.location.origin.replace(/\/$/, '') + window.location.pathname.replace(/\/$/, '') + '/#%s';
 	
 	//user switches language by link
 	$scope.updateLang = function(newLang) {
@@ -229,6 +229,7 @@ angular.module('UUC', [])
 				if(res.data.rates.hasOwnProperty(c.id)) {
 					c.k = USDk / res.data.rates[c.id];
 					c.v = [0,0,0,0,0,0,0,1];
+					c.prefix = '+';
 				}
 			}
 			Currency = Currency.filter(item => item.k);

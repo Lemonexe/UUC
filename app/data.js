@@ -23,7 +23,7 @@ let Units = [
 	{v: [0,0,0,0,0,1,0,0], id: 'mol', name: ['mole', 'mol'], k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,0,0,0,0,0,1,0], id: 'cd', name: ['candela', 'kandela'], k:1, SI: true, basic: true, prefix: 'all'},
 	//USD arbitrarily set as basic unit. Reference to this unit is harcoded in currency loading!
-	{v: [0,0,0,0,0,0,0,1], id: 'USD', name: ['US dollar', 'americký dolar'], k:1, basic: true},
+	{v: [0,0,0,0,0,0,0,1], id: 'USD', name: ['US dollar', 'americký dolar'], k:1, basic: true, prefix: '+'},
 
 //ALL OTHER UNITS as {id: 'identifier',v: [0,0,0,0,0,0,0], name: ['EN', 'CZ'], k:1, SI: true, prefix: 'all'},
 	{v: [0,0,0,0,0,0,0,0], id: '%', name: ['percent', 'procento'], k:1e-2},

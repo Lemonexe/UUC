@@ -1,0 +1,30 @@
+<<<TODO>>>
+flip input & target
+
+pokud při psaní input dám > nebo " to ", tak to automaticky přepne na target (a smaže tento str)
+	tohle by mělo být v controlleru
+
+hezčí front page?
+
+examples - při kliknutí vloží. Či spíše rovnou udělat krásný interactive tutorial
+
+reset button
+
+CS
+	output formatting
+	history
+
+refactor convert
+	atomizovat convert na samotný core > umožnit rekurzi > perfektní parsování závorek
+	umožnit sčítání a odčítání, a udělat tak z toho nástroj na jednoduché výpočty
+	vytvořit middle, tedy nadstavbu nad core, která bude zajišťovat běh celkové konverze & reference & get data, get currencies
+	v controlleru už jen view/controller, žádný model
+	→ udělat tak core & middle jako standalone aplikaci, zdokumentovat to
+
+ad sčítání a odčítání - možná by se tam dal udělat "scriptování" že uložím do veličiny proměnných a paxnima počítám
+nemusel bych vymýšlet složitý programovací jazyk, stačila by expanze proměnné jako to dělá .bat
+
+
+<<<DONE>>>
+přejmenovat middle.js na controller.js
+refactor language like Felda/_dev/language_test.html
