@@ -2,6 +2,7 @@
 	lang.js
 	here are functions concerning lanugage as well as the whole translate table
 */
+
 const langService = {
 	langs: ['cz', 'en'],
 	alias: ['Česky', 'English'],
@@ -40,7 +41,6 @@ const langService = {
 		return lst[id][curr] || lst[id][langService.default] || null;
 	}
 };
-langService.init();
 
 //the translate table
 langService.table = {
@@ -57,29 +57,64 @@ langService.table = {
 	'prefix-': {en: 'usually only decreasing prefixes are used.'},
 	'prefix0': {en: 'prefixes are not used.'},
 
-
-	'WARN_targetNumber': {en: 'WARNING: Unexpected number in the target field, it has been ignored.'},
-	'ERR_noInput': {en: 'ERROR: No input detected!'},
-	'ERR_NaN': {en: 'ERROR: Numerical part identified but cannot be parsed!'},
-	'ERR_operators': {en: 'ERROR: wrong use of * or / operator'},
-	'WARN_separators': {en: 'WARNING: Too many target unit separators have been found (>, to or into). Only the first definiton of target units was accepted.'},
+	'ERR_brackets_missing': {
+		cz: n => `CHYBA 101: Nevyrovnané závorky, ${n} ( chybí`,
+		en: n => `ERROR 101: Unbalanced brackets, ${n} ( missing`
+	},
+	'ERR_operators': {
+		cz: str => `CHYBA 102: Více operátorů vedle sebe "${str}"`,
+		en: str => `ERROR 102: Several operators next to each other "${str}"`
+	},
+	'ERR_brackets_empty': {
+		cz: 'CHYBA 103: Prázdné závorky ()',
+		en: 'ERROR 103: Empty brackets ()'
+	},
+	'ERR_NaN': {
+		cz: str => `CHYBA 104: Nelze zpracovat číslo "${str}"`,
+		en: str => `ERROR 104: Cannot parse number "${str}"`
+	},
 	'ERR_unitPower': {
-		cz: (m, powIndex) => `CHYBA: Nelze zpracovat mocninu jednotky (${m.slice(powIndex)})!`,
-		en: (m, powIndex) => `ERROR: Cannot parse unit power (${m.slice(powIndex)})!`
+		cz: str => `CHYBA 105: Nelze zpracovat mocninu jednotky "${str}"`,
+		en: str => `ERROR 105: Cannot parse unit power "${str}"`
 	},
 	'ERR_unknownUnit': {
-		cz: m => `CHYBA: Nenalezena jednotka ${m}!`,
-		en: m => `ERROR: Unknown unit ${m}!`
+		cz: str => `CHYBA 106: Neznámá jednotka "${str}"`,
+		en: str => `ERROR 106: Unknown unit "${str}"`
 	},
-	'WARN_dimension': {
-		cz: faults => `VAROVÁNÍ: Rozměry jednotek ze vstupu a cíle nesouhlasí. Tyto základní jednotky byly přidány: ${faults.join(', ')}.`,
-		en: faults => `WARNING: Dimensions of units from input and target don\'t match. These basic units have been added: ${faults.join(', ')}.`
+	'ERR_operator_misplaced': {
+		cz: str => `CHYBA 107: Operátor "${str}" špatně umístěn`,
+		en: str => `ERROR 107: Operator "${str}" misplaced`
+	},
+	'ERR_power_dim': {
+		cz: `CHYBA 108: Mocninou může být pouze bezrozměrné číslo`,
+		en: `ERROR 108: Power has to be a dimensionless number`
+	},
+	'ERR_dim_mismatch': {
+		cz: `CHYBA 109: Nesouhlasí rozměry při sčítání či odčítání`,
+		en: `ERROR 109: Dimension mistmatch while addition or subtraction`
+	},
+	'ERR_special_chars': {
+		cz: 'CHYBA 110: Speciální rezervované znaky # ~ nelze používat',
+		en: 'ERROR 110: Special reserved characters # ~ not allowed'
 	},
 	'WARN_prefixes': {
-		cz: (unit, words, pref) => `VAROVÁNÍ: Jednotka ${unit.id} (${unit.name[CS.lang]}) většinou nemívá ${langService.trans(words)} předpony, avšak nalezeno ${pref.id}!`,
-		en: (unit, words, pref) => `WARNING: Unit ${unit.id} (${unit.name[CS.lang]}) doesn\'t usually have ${langService.trans(words)} prefixes, yet ${pref.id} identified!`
+		cz: (unit, word, pref) => `VAROVÁNÍ 201: Jednotka ${unit.id} (${unit.name[CS.lang]}) většinou nemívá ${word} předpony, avšak nalezeno ${pref.id}`,
+		en: (unit, word, pref) => `WARNING 201: Unit ${unit.id} (${unit.name[CS.lang]}) doesn\'t usually have ${word} prefixes, yet ${pref.id} identified`
 	},
-	'WARN_prefixes_words0': {cz: 'žádné', en: 'any'},
-	'WARN_prefixes_words+': {cz: 'zmenšující', en: 'decreasing'},
-	'WARN_prefixes_words-': {cz: 'zvětšující', en: 'increasing'}
+	'WARN_prefixes_word0': {cz: 'žádné', en: 'any'},
+	'WARN_prefixes_word+': {cz: 'zmenšující', en: 'decreasing'},
+	'WARN_prefixes_word-': {cz: 'zvětšující', en: 'increasing'},
+	'WARN_targetNumber': {
+		cz: 'VAROVÁNÍ 202: Neočekávané číslo v cílovém poli, ale bude s ním tedy počítáno',
+		en: 'WARNING 202: Unexpected number in the target field, but it will included in calculation'
+	},
+	'WARN_target_dim_mismatch': {
+		cz: faults => `VAROVÁNÍ 203: Rozměry jednotek ze vstupu a cíle nesouhlasí. Tyto základní jednotky byly přidány: ${faults.join(', ')}.`,
+		en: faults => `WARNING 203: Dimensions of units from input and target don\'t match. These basic units have been added: ${faults.join(', ')}.`
+	},
+	//TODO implement
+	'WARN_separators': {
+		cz: 'VAROVÁNÍ 204: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.',
+		en: 'WARNING 204: Too many target unit separators have been found (>, to or into). Only the first definiton of target units was accepted.'
+	}
 };

@@ -5,20 +5,25 @@
 		<meta name="description" content="A useful tool for unit conversion.">
 		<title>Ultimate Unit Converter</title>
 		<script src="libs/angular.min.js"></script>
+		<!--these scripts just declare-->
+		<script src="app/convert.js" type="text/javascript"></script>
+		<script src="app/convert_parse.js" type="text/javascript"></script>
+		<script src="app/lang.js" type="text/javascript"></script>
+		<script src="app/data.js" type="text/javascript"></script>
+		<!--these script start doing something-->
 		<script src="app/misc.js" type="text/javascript"></script>
 		<script src="app/controller.js" type="text/javascript"></script>
-		<script src="app/lang.js" type="text/javascript"></script>
-		<script src="app/convert.js" type="text/javascript"></script>
-		<script src="app/data.js" type="text/javascript"></script>
+		<!--utilities-->
+		<script src="app/tests.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="app/style.css">
 	</head>
 	<body>
 <div id="lang" ng-switch="CS.lang">
-	<div ng-switch-when="cz" ng-click="CS.lang = 'en'">English</div>
-	<div ng-switch-when="en" ng-click="CS.lang = 'cz'">Česky</div>
+	<div ng-switch-when="cz" ng-click="changeLang('en')">English</div>
+	<div ng-switch-when="en" ng-click="changeLang('cz')">Česky</div>
 </div>
 
-<h1>Ultimate Unit Converter</h1>
+<h1>Ultimate Unit Converter II</h1>
 
 <input type="button" ng-value="'PŘEVODNÍK'.trans()" ng-click="CS.tab = 'converter'">
 <input type="button" ng-value="'Úvod'.trans()" ng-click="CS.tab = 'intro'">
@@ -107,13 +112,13 @@
 		<b><cz>Cílové jednotky:</cz><en>Target units:</en></b><br>
 		<input type="text" ng-model="CS.target" ng-keyup="listenForConvert($event)"><br><br>
 
-		<input type="button" ng-value="'Převést'.trans()" ng-click="init()"><br>
-		<label><input type="checkbox" ng-model="CS.parameters" ng-change="init()"><cz>výstupní formát</cz><en>output format</en></label><br>
+		<input type="button" ng-value="'Převést'.trans()" ng-click="fullConversion()"><br>
+		<label><input type="checkbox" ng-model="CS.parameters" ng-change="fullConversion()"><cz>výstupní formát</cz><en>output format</en></label><br>
 		<div id="paramsContainer">
 			<div ng-show="CS.parameters">
-				<label><input type="checkbox" ng-model="CS.expForm" ng-change="init()"><cz>vždy vědecký zápis</cz><en>always scientific notation</en></label><br>
-				<cz>omezit počet cifer</cz><en>limit digits to</en> 
-				<input type="number" ng-model="CS.digits" min="1" max="20" ng-change="init()">
+				<label><input type="checkbox" ng-model="CS.expForm" ng-change="fullConversion()"><cz>vždy vědecký zápis</cz><en>always scientific notation</en></label><br>
+				<cz>omezit počet cifer</cz><en>limit digits to</en>
+				<input type="number" ng-model="CS.digits" min="1" max="20" ng-change="fullConversion()">
 			</div>
 		</div>
 		<br>
@@ -211,7 +216,7 @@
 				e.g. 3.7 kPa &nbsp;&gt;&nbsp; Torr
 			</p>
 		</en>
-		
+
 		<cz>
 			<h2>Ostatní prohlížeče</h2>
 			<p>Bohužel, tyto prohlížeče neumožňují uživatelům definovat vlastní vyhledávač, avšak lze toho dosáhnout pomocí určitých doplňků.</p>
@@ -221,14 +226,14 @@
 			<p>Unfortunately, these browsers don't allow users to define a custom search engine, but you can achieve it using certain addons.</p>
 			<p>If you do use such an addon, you will have to figure out by yourself how to define the uuc keyword. Sorry about that!</p>
 		</en>
-			
+
 	</div>
 </div>
 
 <div id="debug"></div>
 <div id="footer">
-	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2019 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a> za použití <a href="https://angularjs.org/">AngularJS</a></cz>
-	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2019 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a> using <a href="https://angularjs.org/">AngularJS</a></en>
+	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2020 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a> za použití <a href="https://angularjs.org/">AngularJS</a></cz>
+	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2020 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a> using <a href="https://angularjs.org/">AngularJS</a></en>
 </div>
 
 	</body>

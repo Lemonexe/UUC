@@ -1,10 +1,17 @@
 <<<TODO>>>
+format
+	omezit počet cifer: 0 znamená neomezeně
+	NEBO omezit počet desetinných míst: radio button
+
 flip input & target
 
-pokud při psaní input dám > nebo " to ", tak to automaticky přepne na target (a smaže tento str)
+pokud při psaní input dám > nebo " to " nebo " into ", tak to automaticky přepne na target (a smaže tento str)
 	tohle by mělo být v controlleru
 
-hezčí front page?
+CSS & view
+	horní tlačítka stylizovat jako záložky
+	vlaječky místo CZ EN
+	output formatting dát vpravo od těch polí
 
 examples - při kliknutí vloží. Či spíše rovnou udělat krásný interactive tutorial
 	btw span class example má problém se zalamováním při malé šířce obrazovky
@@ -14,14 +21,27 @@ reset button
 
 save history
 
-refactor convert
-	atomizovat convert na samotný core > umožnit rekurzi > perfektní parsování závorek
-	umožnit sčítání a odčítání, a udělat tak z toho nástroj na jednoduché výpočty
-	vytvořit middle, tedy nadstavbu nad core, která bude zajišťovat běh celkové konverze & reference & get data, get currencies
-	v controlleru už jen view/controller, žádný model
-	→ udělat tak core & middle jako standalone aplikaci, zdokumentovat to
+TODO TESTS
+	3*(4*5)*2 = 120
+	(3*(4*5)*2) = 120
+	3*(4*(5*2)) = 120
+	3*(4*(5*(2+1)-1)) = 168
+	3*(4*5) / (2*2^3) * 7 = 26.25
+	3m2*(4*5m)*2kPa
+	-3.23e4m2*(42,77e-2*5m)*2kPa
+
+	3*(4*5)*2) = ERR brackets
+	3*(4*(5+2 = 84
+
+	8 Mt/yr /900/kg*m3 = 153 kbbl/d
+	8 Mt/yr / (900 kg/m3) = 153 kbbl/d
+	l^(1/3) = dm
+	_e^(30 kJ/mol / (_R * 298 K)) = 181309
+	1e309 error
 
 ad sčítání a odčítání - možná by se tam dal udělat "scriptování" že uložím do veličiny proměnných a paxnima počítám
 nemusel bych vymýšlet složitý programovací jazyk, stačila by expanze proměnné jako to dělá .bat
 
 znovu zkusit zjistit jestli nejde nějak udělat keyword v IE, chrome, edge
+
+TODO README AGAIN

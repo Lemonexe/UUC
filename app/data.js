@@ -1,4 +1,5 @@
 /*
+	data.js
 Units object is the database of all known units.
 	v: [m,kg,s,A,K,mol,cd,$]      represents the vector of powers of basic units, for example N=kg*m/s^2, therefore v = [1,1,-2,0,0,0,0]
 	id: string                    something unique. You can use the UnitConflicts() global function to detect possible id conflicts
@@ -55,7 +56,7 @@ let Units = [
 	{v: [2,0,-2,0,0,0,0,0], id: 'Gy', name: {cz: 'gray', en: 'gray'}, k:1, SI: true, prefix: 'all'},
 	{v: [2,0,-2,0,0,0,0,0], id: 'Sv', name: {cz: 'sievert', en: 'sievert'}, k:1, SI: true, prefix: 'all'},
 	{v: [-1,0,0,0,0,0,0,0], id: 'dpt', name: {cz: 'dioptrie', en: 'dioptre'}, k:1, SI: true},
-	
+
 	{v: [0,0,0,0,0,1,0,0], id: 'Ncm', name: {cz: 'normální krychlový metr', en: 'normal cubic metre'}, k:(101325)/(273.15*8.3144598), note: {
 		cz: 'Definován při 0°C a 1 atm. Navzdory názvu je Ncm jednotkou látkového množství, nikoliv objemu.',
 		en: 'Defined at 0°C and 1 atm. Despite the name, Ncm is actually amount of substance, not volume.'}},
@@ -98,7 +99,7 @@ let Units = [
 	{v: [3,0,0,0,0,0,0,0], id: 'pt', name: {cz: 'pinta', en: 'pint'}, k:568.261e-6},
 	{v: [3,0,0,0,0,0,0,0], id: 'gal', name: {cz: 'americký galon', en: 'US gallon'}, k:3.785412e-3},
 	{v: [3,0,0,0,0,0,0,0], id: 'bsh', name: {cz: 'americký bušl', en: 'US bushel'}, k:35.2391e-3},
-	{v: [3,0,0,0,0,0,0,0], id: 'bbl', name: {cz: 'barel ropy', en: 'oil barrel'}, k:158.987294928e-3},
+	{v: [3,0,0,0,0,0,0,0], id: 'bbl', name: {cz: 'barel ropy', en: 'oil barrel'}, k:158.987294928e-3, prefix: '+'},
 
 	{v: [0,1,0,0,0,0,0,0], id: 'g', name: {cz: 'gram', en: 'gram'}, k:1e-3, SI: true, prefix: 'all'},
 	{v: [0,1,0,0,0,0,0,0], id: 't', name: {cz: 'tuna', en: 'tonne'}, k:1000, SI: true, prefix: '+'},

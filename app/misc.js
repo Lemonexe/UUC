@@ -3,16 +3,18 @@
 	here are auxiliary functions, ubiquitous utils etc.
 */
 
-let convert;
+ECMA6test();
+let convert = new Convert();
 let CS;
+
 const CSdefault = {
 	tab: 'converter', //current tab
 	input: '', //content of input text field
 	target: '', //target field
 	filter: '', //filter field
-	parameters: false, //whether to use output format
-	digits: 4, //output format - digits
-	expForm: false //output format - exponential form
+	showParams: false, //whether to show output formatting parameters
+	//number of digits, number of decimal places, whether to do those things, whether to do exponential
+	params: {digits: 1, fixed: 0, doDigits: false, doFixed: false, doExp: false},
 };
 
 const saveService = {
@@ -23,16 +25,15 @@ const saveService = {
 
 		//estimate language from window.navigator
 		!CS.lang && (CS.lang = ((window.navigator.userLanguage || window.navigator.language).slice(0,2) === 'cs') ? 'cz' : 'en');
-	}
+		this.save();
+	},
+	purge: function() {
+		window.onbeforeunload = null;
+		localStorage.removeItem('UUC_userdata');
+		location.reload();
+	},
 };
-saveService.load()
-
-window.onload = function() {
-	ECMA6test();
-	//this instance serves only to facilitate access to auxiliary functions, not conversion itself - each conversion should get a new instance
-	convert = new Convert();
-};
-
+saveService.load();
 window.onbeforeunload = saveService.save;
 
 //test availability of ECMA6 with a sample code

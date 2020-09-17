@@ -1,303 +1,274 @@
 /*
 	convert.js
-	contains the CONVERT OBJECT CONSTRUCTOR
-	that does all of the heavy lifting.
-	It contains functions and state variables concerning the conversion itself
+	contains the convert object constructor
+	which does all of the heavy lifting except for parsing input strings (see convert_parse.js)
+
+	an expression can be represented by four kinds of data type:
+		1. text representation that is parsed from input and then recreated in the end
+		2. detailed nested object - an array with numbers, operators, Unit() instances and arrays for bracket expressions
+		3. nested object where all numbers and units were converted into Q() instances
+		4. single Q() instance - enumerated expression with numeric value and dimension
 */
 
 function Convert() {
+	//database of messages (strings or functions)
+	const msgDB = {};
+	//these messages must be supplied before using convert. Some of these are just strings, some are functions with specific arguments. See lang.js
+	['ERR_brackets_missing', 'ERR_operators', 'ERR_brackets_empty', 'ERR_NaN', 'ERR_unitPower', 'ERR_unknownUnit', 'ERR_operator_misplaced', 'ERR_power_dim', 'ERR_dim_mismatch', 'ERR_special_chars', 'WARN_prefixes', 'WARN_prefixes_word0', 'WARN_prefixes_word+', 'WARN_prefixes_word-', 'WARN_targetNumber', 'WARN_target_dim_mismatch']
+		.forEach(o => msgDB[o] = null);
+	this.msgDB = msgDB;
+
 	//status means 0 = OK, 1 = warnings, 2 = fatal error. Status text will contain error or warning messages.
-	this.status = 0;
-	this.messages = [];
+	this.clearStatus = function() {
+		this.status = 0;
+		this.messages = [];
+	}
+	this.clearStatus();
 
 	//err and warn functions fill messages. Err() will display only the first error, warn() will concatenate all warnings.
 	//That's because when an error occurs, it might trigger another, and it would be useless to display the whole cascade of errors
 	this.err = function(text) {
 		this.status = 2;
-		this.messages = [text]
+		this.messages = [text];
 	};
 	this.warn = function(text) {
 		this.status = (this.status < 1) ? 1 : this.status;
 		this.messages.push(text);
 	};
 
-	//factory for result object returned by init()
-	this.result = function(num, dim) {
-		return {
-			output: num ? {num: num, dim: dim} : false,
-			status: this.status,
-			messages: this.messages
-		};
-	};
+	const dimTolerance = 1e-3; //tolerance of dimension mismatch
 
-	//this is the central function that determines the program flow. It uses many other functions, which will be properly described later. Returns an object from result() factory
-	this.init = function(input, target) {
-		/*
-		unit is represented by four kinds of data type:
-			1. text representation is parsed from input and then recreated in the end (vars target, SIunit)
-			2. detailed object, the result of parsing both input and target. It is stored in this.unit.
-				structure: array of all units, each represented by: [{reference to a prefix object or number 1}, {reference to a unit object}, power number]
-			3. aggregate vector. It's like the vector of units, but this is aggregated vector of the whole unit
-			4. aggregate unit - it is the conversion value of the whole unit (its value in basic SI). For example min^-2 = 60^-2 s
-		*/
+	//object representing physical quantity as numerical value 'n' and dimension vector 'v'
+	function Q(n, v) {
+		this.n = typeof n === 'number' ? n : 1;
+		this.v = v || new Array(8).fill(0);
+	}
+	this.Q = Q;
 
-		//target object
-		let objT = false;
-		if(target !== '') {
-			//these lines are the core of conversion, now executed on target unit field
-			objT = this.parseField(target);
-			//throw error if it has occured
-			if(this.status === 2) {return this.result();}
-			//continue
-			this.enumerate(objT);
-			this.SI(objT);
-			(objT.numVal !== 1) && this.warn('VAROVÁNÍ: Neočekávané číslo v cílovém poli, bylo ignorováno.'.trans('WARN_targetNumber'));
-		}
+	//object representing a disassembled unit - its prefix, the unit itself and its power
+	function Unit(pref, unit, power) {this.pref = pref; this.unit = unit; this.power = power;}
+	this.Unit = Unit;
 
-		//same operations as before, this time done with input
-		let obj = this.parseField(input);
-		//throw error if it has occured
-		if(this.status === 2) {return this.result();}
-		//continue
-		this.enumerate(obj);
-		this.SI(obj);
+	//MAIN FUNCTION - do a full conversion between input string and target string, and return an output object
+	this.fullConversion = function(input, target) {
+		input = this.beautify(input); target = this.beautify(target);
+		const isTarget = target.length > 0;
+		this.clearStatus();
 
-		//DimAnalysis will check the vectors of target and input. It will result [ok or not, vector of differences]
-		if(target) {
-			let result = this.DimAnalysis(obj.aggregateVector, objT.aggregateVector);
-			//if there has been a discrepancy (vector of differences will be non-zero), vector of differences will be converted to text and sticked to the target unit
-			objT.unitStr += (result === true) ? '' : ('*' + this.vector2text(result));
-		}
-
-		//enumerate the output numerical value (input numerical value times its aggregate unit divided by target aggregate unit (is 1 if there is no target unit)).
-		let num = obj.numVal * obj.aggregateUnit;
-		num /= objT ? objT.aggregateUnit : 1;
-
-		//add the corrected target unit, or the original unit converted to basic SI using vector2text (if no target unit)
-		let dim = (objT ? objT.unitStr : this.vector2text(obj.aggregateVector));
-
-		//finally finish
-		if(this.status === 0) {this.messages = ['OK'];}
-		return this.result(num, dim);
-	};
-
-/*MAIN CONVERSION FUNCTIONS - they all work with state object (defined in parseField) and have to be executed in strict order*/
-
-	//the largest function, parses the text into final numerical value, a detailed unit object and cleaned unit string (see 'obj' definition)
-	this.parseField = function(text) {
-		if(text === '') {
-			this.err('CHYBA: Nenalezen žádný vstup!'.trans('ERR_noInput')); return;
-		}
-
-		//obj is the object which contains state of one input field conversion
-		let obj = {
-			input: text,
-			numVal: 1, //total numerical value of the input (stripped of units)
-			unitStr: '', //generated string of units (stripped of numbers)
-			units: [] //unit as detailed object
-		};
-
-		//solve simple numerical expressions
-		function replaceCallback(m) {
-			m = eval(m);
-			if(typeof m !== 'number' || isNaN(m) || !isFinite(m)) {throw 'NaN';}
-			return String(m);
-		}
-
+		let iObj, tObj; //input & target object
+		const res = {}; //output object
 		try {
-			obj.input = obj.input.replace(/(\(.*?\))/g, replaceCallback);
+			//parse input & target strings into detailed nested objects
+			iObj = Convert_parse(this, input);
+			tObj = Convert_parse(this, target);
+
+			//perform the calculation
+			iObj = this.reduceField(iObj);
+			tObj = this.reduceField(tObj);
+
+			//then the conversion itself is pretty simple!
+			const num = iObj.n / tObj.n;
+			let dim = isTarget ? target : this.vector2text(iObj.v); //if no target, then SI representation
+
+			//correct dimension mismatch
+			const corr = !isTarget || this.checkDimension(iObj.v, tObj.v);
+			if(corr !== true) {dim += '*' + this.vector2text(corr);}
+			res.output = {num: num, dim: dim};
 		}
-		catch(err) {
-			this.err('CHYBA: Nalezena numerická část, ovšem nelze ji zpracovat!'.trans('ERR_NaN')); return;
-		}
+		catch(err) {this.err(err);}
 
-		//enable omitting * after first numerical part
-		let firstNum = obj.input.match(/^-?[\d\.]+e?[\-\d]*/);
-		if(firstNum) {
-			firstNum = firstNum[0];
-			//solve bug with eV
-			if(firstNum[firstNum.length - 1] === 'e') {
-				firstNum = firstNum.slice(0,-1);
-			}
-			//if there isn't an operator after numerical, add it there
-			let op = obj.input[firstNum.length];
-			if(op && op !== '*' && op !== '/') {
-				obj.input = firstNum + '*' + obj.input.slice(firstNum.length);
-			}
-		}
+		//return the results
+		if(this.status === 0) {this.messages = ['OK'];}
+		res.status = this.status; res.messages = this.messages; this.clearStatus();
+		return res;
+	};
 
-		//all parts of text that might mean something are divided by operators: * / ( )
-		//but unlike regular split, the delimiters are kept in the array because we need to distinguish between operators
-		let members = obj.input
-			.split(/([*/])/)
-			.filter(o => o.length > 0);
-		//now we are getting to parsing units.
-		//ids and prefs are arrays of the abbreviations. We can later search those auxiliary arrays with indexOf and use the index to get the unit or prefix from the original array
-		let ids = Units.map(item => item.id);
-		let prefs = Prefixes.map(item => item.id);
+	//perform calculation of each field - reduce nested object (expression) into one physical quantity
+	this.reduceField = function(obj) {
+		const that = this;
+		//recursively crawl to simplify units into physical quantity objects (we could do it during crawl2, but crawl2 is already quite complicated as it is)
+		obj = crawl1(obj);
+		//recursively crawl to calculate everything into the final physical quantity
+		return crawl2(obj);
 
-		let opPower = 1; //one if last operator was '*', minus one for '/'
-
-		//iterate through all factors and operators
-		for(let n = 0; n < members.length; n++) {
-			let m  = members[n];
-			let m2 = members[n+1]
-			
-		//MEMBER IS AN OPERATOR
-			//save operator power if current member is an operator
-			if(m === '*' || m === '/') {
-				//catch operator errors
-				if(
-					(m2 === '/' || m2 === '*') ||       //multiple operators next to each other, or
-					(n === 0 || n === members.length-1) //operator at the beginning or end
-				) {this.err('CHYBA: chybné použití operátoru * nebo /'.trans('ERR_operators')); return;}
-
-				obj.unitStr += m;
-				opPower = (m === '*') ? 1 : -1;
-				continue;
-			}
-
-		//MEMBER IS A NUMBER
-			let num = Number(m);
-			if(!isNaN(num) && isFinite(num)) {
-				obj.numVal *= num**opPower;
-				opPower = 1;
-				continue;
-			}
-
-		//MEMBER IS A UNIT
-			//the unit consists of unit and its power. It searches for number or ^number at the end and if it exists, ^ is removed and if its number, we multiply power with it and strip it from the text
-			let powIndex = m.search(/\^?[\-\.\d]+$/);
-			if(powIndex > -1) {
-				let pow2 = Number(m.slice(powIndex).replace('^' , ''));
-				if(isNaN(pow2)) {
-					this.err(langService.trans('ERR_unitPower')(m, powIndex)); return;
+		//first crawl converts numbers & [pref, unit, power] objects into Q() instances
+		function crawl1(arr) {
+			for(let i = 0; i < arr.length; i++) {
+				const o = arr[i];
+				//is a number: make it a simple new Q
+				if(typeof o === 'number') {arr[i] = new Q(o);}
+				//is a unit: turn unit into a Q
+				else if(o instanceof that.Unit) {
+					const pref = typeof o.pref === 'object' ? 10**o.pref.v : 1;
+					let obj = {n: pref * o.unit.k, v: o.unit.v};
+					arr[i] = that.power(obj, new Q(o.power));
 				}
-				opPower *= pow2;
-				m = m.slice(0, powIndex);
+				//is an array: recursion further
+				else if(Array.isArray(o)) {crawl1(o);}
+				//else operator ^ * / + -
+			}
+			return arr;
+		}
+
+		//second crawl is quite complicated - it calculates the whole nested object into a single Q
+		//it starts from deepest brackets, solves them and gradually gets higher. That's achieved via recursion
+		//due to operator precedence, first do all power expressions - reduce each into Q
+		//then do the same with multiplication/divison and finally, we can add and subtract everything into the final Q
+		function crawl2(arr) {
+			//first element of section has to be either Q, or bracket expression array
+			if(!(arr[0] instanceof Q) && !Array.isArray(arr[0])) {throw that.msgDB['ERR_operator_misplaced'](arr[0]);}
+			let i, res, arr2;
+
+			//first enter all bracket expression arrays and get result (recursion) before continuing
+			for(i = 0; i < arr.length; i++) {
+				if(Array.isArray(arr[i])) {arr[i] = crawl2(arr[i]);}
 			}
 
-			//first we try to find the unit in ids. If we are successful we go to else.
-			let i = ids.indexOf(m);
-			let j = -1;
-			if(i === -1) {
-				//there might be a prefix. First letter is stripped and we search for units without it. We also search the prefixes for the first letter
-				i = ids.indexOf(m.slice(1))
-				j = prefs.indexOf(m[0]);
+			//then do all powers
+			arr = subcrawl(arr, ['^'], (res, sign, q) => that.power(res, q));
+			//then do all multiplications and divisions
+			arr = subcrawl(arr, ['*', '/'], (res, sign, q) => sign === '*' ? that.multiply(res, q) : that.divide(res, q));
 
-				//if we find both, we add the unit with its prefix and check whether its appropriately used. If we didn't find i or j, the unit is unknown.
-				if(i === -1 || j === -1) {
-					this.err(langService.trans('ERR_unknownUnit')(m)); return;
+			//finally add and subtract everything into the final Q
+			if(!(arr[0] instanceof Q)) {throw that.msgDB['ERR_operator_misplaced'](arr[0]);}
+			res = arr[0];
+			for(i = 0; i < arr.length; i += 2) {
+				if(arr.hasOwnProperty(i+1)) {
+					if     (arr[i+1] === '+' && arr[i+2] instanceof Q) {res = that.add     (res, arr[i+2]);}
+					else if(arr[i+1] === '-' && arr[i+2] instanceof Q) {res = that.subtract(res, arr[i+2]);}
+					else {throw that.msgDB['ERR_operator_misplaced'](arr[i+1]);}
+				}
+			}
+			return res;
+		}
+
+		//similar code structire for ^ as well as * /, so here's another function
+		function subcrawl(arr, signs, callback) {
+			let res = null; let arr2 = [];
+			for(i = 0; i < arr.length; i += 2) {
+				if(!arr.hasOwnProperty(i+1)) {break;}
+				if(signs.indexOf(arr[i+1]) > -1) {
+					if(!res) {res = arr[i];}
+					if(!(arr[i+2] instanceof Q)) {throw that.msgDB['ERR_operator_misplaced'](arr[i+1]);}
+					res = callback(res, arr[i+1], arr[i+2]);
 				}
 				else {
-					obj.units.push([Prefixes[j], Units[i], opPower]);
-					obj.unitStr += members[n];
-					this.checkPrefix(Prefixes[j], Units[i]);
+					if(res) {arr2.push(res); arr2.push(arr[i+1]); res = null;}
+					else {arr2.push(arr[i]); arr2.push(arr[i+1]);}
 				}
 			}
-			//unit is added with prefix equal to 1
-			else {
-				obj.unitStr += members[n];
-				obj.units.push([1, Units[i], opPower]);
-			}
-
-			opPower = 1;
-
+			if(res) {arr2.push(res);}
+			else {arr2.push(arr[i]);}
+			return arr2;
 		}
-
-		obj.unitStr = obj.unitStr.replace(/^[*/]|[*/]$/g, '');
-
-		return obj;
 	};
 
-	//checkPrefix accepts pair [prefix object, unit object] and gives warnings if they are not appropriately used.
+	//raise quantity object 'q1' to the power of 'q2'
+	this.power = function(q1, q2) {
+		//q2 has to be dimensionless
+		const v = this.almostZero(q2.v);
+		for(let o of v) {if(o !== 0) {throw this.msgDB['ERR_power_dim'];}}
+
+		return new Q(q1.n**q2.n, q1.v.map(o => o * q2.n));
+	};
+
+	//multiply, divide, add and subtract a physical quantity 'q1' with 'q2'
+	this.multiply = (q1, q2) => new Q(q1.n * q2.n, q1.v.map((o,i) => o + q2.v[i]));
+	this.divide = (q1, q2) => this.multiply(q1, this.power(q2, new Q(-1)));
+
+	this.add = function(q1, q2) {
+		//check dimension
+		const v = this.almostZero(q1.v.map((o,i) => o - q2.v[i]));
+		for(let o of v) {if(o !== 0) {throw this.msgDB['ERR_dim_mismatch'];}}
+
+		return new Q(q1.n + q2.n, q1.v);
+	};
+	this.subtract = (q1, q2) => this.add(q1, this.multiply(q2, new Q(-1)));
+
+	//checkPrefix accepts pair [prefix object, unit object] and gives warnings if they are not appropriately used
 	this.checkPrefix = function(pref, unit) {
-		//find all possible mismatch situations and fill the appropriate words for warning
-		let words = false;
-		(!unit.prefix || unit.prefix === '0') && (words = 'WARN_prefixes_words0');
-		(unit.prefix === '+' && pref.v < 0)   && (words = 'WARN_prefixes_words+');
-		(unit.prefix === '-' && pref.v > 0)   && (words = 'WARN_prefixes_words-');
+		//find all possible mismatch situations and fill the appropriate word for warning
+		let word = false;
+		(!unit.prefix || unit.prefix === '0') && (word = this.msgDB['WARN_prefixes_word0']);
+		(unit.prefix === '+' && pref.v < 0)   && (word = this.msgDB['WARN_prefixes_word+']);
+		(unit.prefix === '-' && pref.v > 0)   && (word = this.msgDB['WARN_prefixes_word-']);
 
-		//do warning
-		if(words !== false) {
-			this.warn(langService.trans('WARN_prefixes')(unit, words, pref));
+		if(word !== false) {
+			this.warn(this.msgDB['WARN_prefixes'](unit, word, pref));
 		}
 	};
 
-	//enumerate reads the detailed unit object from obj.units and enumerates the aggregate unit.
-	this.enumerate = function(obj) {
-		let aggregateUnit = 1;
-		let current = 1;
-
-		//foreach unit we check prefix and if it is an object (not number 1), read it and raise it to power. Then we raise the unit coeficient to power and multiply the aggregateUnit with all of it.
-		for (u of obj.units) {
-			current = 1;
-			if(typeof u[0] === 'object') {
-				current *= 10 ** (u[0].v*u[2]);
-			}
-			current *= u[1].k ** u[2];
-			aggregateUnit *= current;
-		}
-		obj.aggregateUnit = aggregateUnit;
-	};
-
-	//SI reads the detailed unit object from this.units and enumerates the aggregate vector.
-	this.SI = function(obj) {
-		let aggregateVector = new Array(8).fill(0);
-		
-		//foreach unit we add vector of its units multiplied by power
-		for(let u of obj.units) {
-			for(let i = 0; i < u[1].v.length; i++) {
-				aggregateVector[i] += u[1].v[i] * u[2];
-			}
-		}
-		obj.aggregateVector = aggregateVector;
-	};
-
-/*AUXILIARY FUNCTIONS, can be fired at will*/
-
-	//vector2text will convert unit vector into text representation. 
-	this.vector2text = function(vect) {
-		//first we filter all basic units, they are important
-		let text = '';
-		let basic = Units.filter(item => item.basic);
-
-		//foreach dimension of the vector we check if its nonzero. If it is, we find the corresponding basic unit and add its id. If it is not 1, we add power and stick an asterisk at the end.
-		for(let i = 0; i < vect.length; i++) {
-			if(vect[i] !== 0){
-				text += basic.find(item => item.v[i] === 1).id;
-				if(vect[i] !== 1) {
-					text += vect[i];
-				}
-				text += '*';
-			}
-		}
-		//the last asterisk gets removed
-		text = text.replace(/\*$/, '');
-		return text;
-	};
-
-	//DimAnalysis will take vector of input and target. Returns true if ok, or the correction vector - power of basic units we have to add.
-	this.DimAnalysis = function(source, target) {
-		let corr = new Array(8).fill(0);
+	//checkDimension will take vector of input and target. Returns true if ok, or the correction vector - power of basic units that have to be added to source in order to match target
+	this.checkDimension = function(source, target) {
 		let OK = true;
-		let basic = Units.filter(item => item.basic);
-		//array of ids of dimensions that don't fit
-		let faults = [];
+		const corr = new Array(8).fill(0);
+		const basic = Units.filter(item => item.basic);
+		const faults = []; //array of ids of dimensions that don't fit
 
-		//foreach dimension we check if it is equal. If it isn't, it's not OK. We enumerate correction and add a fault.
+		//foreach dimension check if it is equal. If it isn't, it's not OK, so enumerate correction and add a fault
 		for(let i = 0; i < corr.length; i++) {
-			if(source[i] !== target[i]) {
+			if(Math.abs(source[i] - target[i]) > dimTolerance) {
 				corr[i] = source[i] - target[i];
 				faults.push(basic.find(item => item.v[i] === 1).id);
 				OK = false;
 			}
 		}
-		//nicely written warning
-		if(faults.length > 0) {
-			this.warn(langService.trans('WARN_dimension')(faults));
-		}
-		
+		(faults.length > 0) && this.warn(this.msgDB['WARN_target_dim_mismatch'](faults)); //nicely written warning
+
 		return OK || corr;
 	};
-};
+
+	//check a detailed nested object for numbers. If there is a number, give a warning
+	//CURRENTLY NOT USED, because it gives warning for ^power, and it shouldn't
+	this.checkTargetNumbers = function(obj) {
+		let isNum = false;
+		crawl(obj);
+		isNum && this.warn(this.msgDB['WARN_targetNumber']);
+
+		function crawl(arr) {
+			if(isNum) {return;}
+			for(let o of arr) {
+				if(typeof o === 'number' && o !== 1) {isNum = true; return;}
+				else if(Array.isArray(o)) {crawl(o);}
+			}
+		};
+	};
+
+	//vector2text will convert unit vector 'v' into text representation
+	this.vector2text = function(v) {
+		let text = '';
+		const basic = Units.filter(item => item.basic); //first filter all basic units
+
+		//foreach dimension of the vector check if its nonzero. If it is, find the corresponding basic unit and add its id. Add power if it isn't 1 and stick an asterisk at the end
+		for(let i = 0; i < v.length; i++) {
+			if(v[i] !== 0){
+				text += basic.find(item => item.v[i] === 1).id;
+				(v[i] !== 1) && (text += v[i]);
+				text += '*';
+			}
+		}
+		return text.replace(/\*$/, ''); //the last asterisk gets removed
+	};
+
+	//almost-zero numbers (floating point error) in vector 'v' will be zero (arbitrary threshold), that's necessary in order to use ^ + -
+	this.almostZero = v => v.map(n => Math.abs(n) > dimTolerance ? n : 0);
+
+	//finish conversion by assigning & formatting the result & status
+	this.format = function(result, params) {
+		/*//format of output number
+		if($scope.result.output && CS.parameters) {
+			//number of digits
+			let d = CS.digits ? CS.digits : 2;
+			$scope.result.output.num = CS.expForm ? $scope.result.output.num.toExponential(d-1) : $scope.result.output.num.toPrecision(d);
+		}*/
+		return result;
+	};
+
+	//beautify the input string by balancing brackets. This is not as thorough as Convert_parse > syntaxCheck
+	this.beautify = function(text) {
+		text = text.trim();
+		const opening = text.split('(').length - 1;
+		const closing = text.split(')').length - 1;
+		return closing > opening ? text + ')'.repeat(opening-closing) : text;
+	};
+}

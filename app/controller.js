@@ -4,11 +4,18 @@
 */
 
 const app = angular.module('UUC', []);
+langService.init();
 app.controller('ctrl', function($scope, $http, $timeout) {
 	$scope.CS = CS;
 
+	$scope.changeLang = function(lang) {
+		CS.lang = lang;
+		$scope.populateConvertMessages();
+	};
+
 	//perform conversion from fragment identifier. Executed upon loading of currencies
 	function execHash() {
+return
 		let hash = decodeURIComponent(window.location.hash).replace(/^.*#/, '');
 		if(!hash) {return;}
 		//'>', 'to' or 'into' is used to delimit input and target
@@ -25,45 +32,33 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 		let c = new Convert();
 		//check for wrong input
-		hash.length > 2 && c.warn('VAROVÁNÍ: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.'.trans('WARN_separators'));
+		hash.length > 2 && c.warn(''.trans('WARN_separators'));
 		//initialize conversion
-		$scope.result = c.init(i, t);
+		$scope.result = c.fullConversion(i, t);
 		finish();
 	}
 
 	//just an informative string to show how to bind UUC as a search engine in Chrome
 	$scope.searchEngineTemplate = window.location.origin.replace(/\/$/, '') + window.location.pathname.replace(/\/$/, '') + '/#%s';
 
-	//process string input (so it can be fed to convert)
-	let processInput = string => string.replace(/,/g , '.').replace(/\s+/g , '');
-
 	//initialize conversion
-	$scope.init = function() {
-		let i = processInput(CS.input);
-		let t = processInput(CS.target);
+	$scope.fullConversion = function() {
+		$scope.result = convert.fullConversion(CS.input, CS.target);
+		$scope.result = convert.format($scope.result, CS.params);
 
-		let c = new Convert();
-		$scope.result = c.init(i, t);
-		finish();
-	};
-
-	//finish conversion by assigning & formatting the result & status
-	function finish() {
-		//format of output number
-		if($scope.result.output && CS.parameters) {
-			//number of digits
-			let d = CS.digits ? CS.digits : 2;
-			$scope.result.output.num = CS.expForm ? $scope.result.output.num.toExponential(d-1) : $scope.result.output.num.toPrecision(d);
-		}
-
+		//style the results
 		$scope.statusClass = ['ok', 'warn', 'err'][$scope.result.status];
 		$scope.statusAppear = 'statusAppear';
 		$timeout(() => ($scope.statusAppear = ''), 500);
-	}
+	};
+
+	//populate database of messages with strings or functions in current language
+	$scope.populateConvertMessages = function() {Object.keys(convert.msgDB).forEach(key => (convert.msgDB[key] = langService.trans(key)));}
+	$scope.populateConvertMessages();
 
 	//this function listens to onkeyup in input & target text fields and executes conversion if the key is an Enter
 	$scope.listenForConvert = function(event) {
-		(event.keyCode === 13 || event.key === 'Enter') && $scope.init();
+		(event.keyCode === 13 || event.key === 'Enter') && $scope.fullConversion();
 	};
 
 	/*
@@ -85,6 +80,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 	//get a list of units filtered using the filter text field
 	function getUnitList() {
+return Units
 		$scope.highlightFirst = false;
 
 		//callback fed to Array.filter, it will check all dimensions of unit (item) and if they all agree with filterVector, it is a related unit and it will pass the filter.
