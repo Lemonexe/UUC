@@ -21,24 +21,6 @@ reset button
 
 save history
 
-TODO TESTS
-	3*(4*5)*2 = 120
-	(3*(4*5)*2) = 120
-	3*(4*(5*2)) = 120
-	3*(4*(5*(2+1)-1)) = 168
-	3*(4*5) / (2*2^3) * 7 = 26.25
-	3m2*(4*5m)*2kPa
-	-3.23e4m2*(42,77e-2*5m)*2kPa
-
-	3*(4*5)*2) = ERR brackets
-	3*(4*(5+2 = 84
-
-	8 Mt/yr /900/kg*m3 = 153 kbbl/d
-	8 Mt/yr / (900 kg/m3) = 153 kbbl/d
-	l^(1/3) = dm
-	_e^(30 kJ/mol / (_R * 298 K)) = 181309
-	1e309 error
-
 ad sčítání a odčítání - možná by se tam dal udělat "scriptování" že uložím do veličiny proměnných a paxnima počítám
 nemusel bych vymýšlet složitý programovací jazyk, stačila by expanze proměnné jako to dělá .bat
 

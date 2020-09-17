@@ -42,6 +42,7 @@ function Convert_parse(convert, text) {
 		let c = 0; //cursor
 		let c0 = 0; //cursor bookmark
 		let lvl = 0; //current bracket lvl
+		let IACB = false; //Is After a Closing Bracket (a simple, dirty bugfix)
 
 		//only the highest bracket will be processed in this run. That's why we only check for lvl 1
 		for(c = 0; c < text.length; c++) {
@@ -50,8 +51,9 @@ function Convert_parse(convert, text) {
 				lvl++;
 				//the preceeding text will be further processed by split and added as section
 				if(lvl === 1) {
-					c > c0 && (field = field.concat(split(text.slice(c0, c))));
+					c > c0 && (field = field.concat(split(text.slice(c0, c), IACB)));
 					c0 = c;
+					IACB = false;
 				}
 			}
 			//closing bracket
@@ -62,17 +64,19 @@ function Convert_parse(convert, text) {
 					if(c-c0-1 === 0) {throw convert.msgDB['ERR_brackets_empty'];}
 					field.push(crawl(text.slice(c0+1, c)));
 					c0 = c+1;
+					IACB = true;
 				}
 			}
 		}
 		//the rest of the text
-		c > c0 && (field = field.concat(split(text.slice(c0, c))));
+		c > c0 && (field = field.concat(split(text.slice(c0, c), IACB)));
 		return field;
 	}
 
 	//split section text sections by * / ^ + -, but include those operators, and process operators
-	function split(text) {
-		const arr = protectNumbers(text)
+	//IACB = whether text section Is After a Closing Bracket
+	function split(text, IACB) {
+		const arr = protectNumbers(text, IACB)
 			.split(/([\^*/+\-])/)
 			.filter(o => o.length > 0)
 			.map(o => unprotectNumbers(o));
@@ -89,7 +93,7 @@ function Convert_parse(convert, text) {
 			//else we'll assume it's a unit
 			else {
 				//identify number that is right before the unit (without space or *)
-				let firstNum = o.match(/^[\d\.]+(?:e[+\-]?\d+)?/);
+				let firstNum = o.match(/^[+\-]?[\d\.]+(?:e[+\-]?\d+)?/);
 				if(firstNum) {
 					firstNum = firstNum[0];
 					o = o.slice(firstNum.length); //strip number from the unit
@@ -105,10 +109,12 @@ function Convert_parse(convert, text) {
 	}
 
 	//because + - are operators, first find all numbers and replace their + - with provisional # ~ to protect them from splitting
-	function protectNumbers(text) {
+	//IACB = whether text section Is After a Closing Bracket
+	function protectNumbers(text, IACB) {
 		//first number in text section (beginning of whole input or beginning of brackets) can also have + - before it
+		//but NOT in a text section after closing brackets!
 		let firstNum = text.match(/^[+\-]?[\d\.]+(?:e[+\-]?\d+)?/);
-		if(firstNum) {
+		if(firstNum && !IACB) {
 			firstNum = firstNum[0];
 			text = text.replace(firstNum, firstNum.replace(/\-/g, '~').replace(/\+/g, '#'));
 		}

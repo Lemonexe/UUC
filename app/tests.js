@@ -13,8 +13,8 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	const eqApx = (arg1, arg2, tol, text) => log(Math.abs(arg1-arg2) < tol, arg1, arg2, text);
 	//assertion of object equivalence
 	const eqObj = (arg1, arg2, text) => log(angular.equals(arg1, arg2), JSON.stringify(arg1), JSON.stringify(arg2), text);
-	//assertion of expected error number
-	const expectErr = function(f, errNumber, text) {
+	//assertion of expected error number (but is not used for full conversion errors, because they are caught, see fullTest)
+	function expectErr(f, errNumber, text) {
 		let pass = false;
 		try {f();}
 		catch(err) {
@@ -22,7 +22,22 @@ function tests(silent) {//optional argument to silence tests that have successfu
 			if(match && match[1] === String(errNumber)) {pass = true;}
 		}
 		log(pass, '', 'error '+errNumber, text)
-	};
+	}
+	//expected result of a full conversion with 'input' & 'target' strings, expected status and optionally expected result number with tolerance
+	function fullTest(input, target, expectStat, expectNum, tol) {
+		let text = input + ' > ' + target + ': ';
+		res = convert.fullConversion(input, target);
+		eq(res.status, expectStat, text+'status'+expectStat);
+
+		res.status < 2 && typeof expectNum === 'number' && typeof tol === 'number' &&
+			eqApx(res.output.num, expectNum, tol, text+'eqApx');
+	}
+	//expected error of a full conversion with 'input' string, expected error number and description
+	function fullTestErr(input, expectErr, text) {
+		res = convert.fullConversion(input, '');
+		let match = res.messages[0].match(/[^\d]*(\d+)/); //try to match number of thrown error
+		log(match && match[1] === String(expectErr), '', 'error '+expectErr, text);
+	}
 
 	//log the result of an assertion
 	function log(pass, arg1, arg2, text) {
@@ -36,7 +51,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	eqApx(4.789**0.4, 1.8711, 1e-2, 'test(): eqApx');
 	eqObj({a: '1', b: [2]}, {a: '1', b: [2]}, 'test(): eqObj');
 
-//convert.js
+!silent && console.log('\nPartial functionality of convert.js');
 	let q1 = new convert.Q(4,[-1,1,-2,0,0,0,0,0]);
 	let q2 = new convert.Q(16,[-2,2,-4,0,0,0,0,0]);
 	eqObj(q1, {n: 4, v: [-1,1,-2,0,0,0,0,0]}, 'convert.Q');
@@ -67,7 +82,37 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	q2 = new convert.Q(7,[1,1,-2,0,0,0,0,0]);
 	expectErr(() => convert.subtract(q1, q2), 109, 'convert.add: detect dimension mismatch');
 
-//convert_parse.js
+!silent && console.log('\nFull conversions');
+	fullTest('3*(7-3)*2', '', 0, 24, 1e-6);
+	fullTest('(3*(7-3)*2)', '', 0, 24, 1e-6);
+	fullTest('3*(4*(5*(2+1)-1))', '', 0, 168, 1e-6);
+	fullTest('3*(4+5) / (2*2^3*2) * 7*(2+2*2+2)', '', 0, 47.25, 1e-6);
+	fullTest('3m2*(4*5m)*2kPa', 'J', 0, 120000, 1e-6);
+	fullTest(' -3.23e+4m2 * (42,77e-2*5m)  *2kPa1.0 ', 'MJ', 0, -138.1471, 1e-2);
+	fullTest('3*(4*(5+2', '', 0, 84, 1e-6);
+	fullTest('l^(1/3)', 'dm', 0, 1, 1e-3);
+	fullTest('_e^(30 kJ/mol / (_R * 298 K))', '', 0, 181309.23, 0.1);
+	fullTest('8 Mt/yr / (900 kg/m3)', 'kbbl/d', 0, 153.07481, 1e-3);
+	
+!silent && console.log('\nFull conversion warnings');
+	fullTest('m3', 'm2', 1);
+	fullTest('mt/ks', 'kg/h', 1);
+
+!silent && console.log('\nFull conversion errors');
+	fullTestErr('7*', 107, '7*: detect misplaced operator');
+	fullTestErr('3^m', 108, '3^m: detect non-dimensionless power');
+	fullTestErr('7m + 4s', 109, '7m + 4s: detect dimension mismatch in addition');
+
+!silent && console.log('\nConvert_parse errors');
+	expectErr(() => Convert_parse(convert, '3*(4*5)*2)'), 101, '3*(4*5)*2): detect missing bracket');
+	expectErr(() => Convert_parse(convert, '2 * / 3'), 102, '2 * / 3: detect operators next to each other');
+	expectErr(() => Convert_parse(convert, '4*()*5'), 103, '4*()*5: detect empty brackets');
+	expectErr(() => Convert_parse(convert, '1e999'), 104, '1e999: detect NaN');
+	expectErr(() => Convert_parse(convert, 'm..'), 105, 'm..: detect unknown power');
+	expectErr(() => Convert_parse(convert, 'kPaa'), 106, 'kPaa: detect unknown unit');
+	expectErr(() => Convert_parse(convert, '3#4~5'), 110, '3#4~5: detect reserved chars');
+
+//TEST SUMMARY
 	const text = ` FINISHED with ${passed}/${total} passed `;
 	const line = '\n' + '-'.repeat(text.length) + '\n';
 	console.log(line + text + line);

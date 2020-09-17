@@ -255,6 +255,7 @@ function Convert() {
 
 	//finish conversion by assigning & formatting the result & status
 	this.format = function(result, params) {
+		//TODO if dim begins with number, add an '* '
 		/*//format of output number
 		if($scope.result.output && CS.parameters) {
 			//number of digits
@@ -269,6 +270,6 @@ function Convert() {
 		text = text.trim();
 		const opening = text.split('(').length - 1;
 		const closing = text.split(')').length - 1;
-		return closing > opening ? text + ')'.repeat(opening-closing) : text;
+		return opening > closing ? text + ')'.repeat(opening-closing) : text;
 	};
 }
