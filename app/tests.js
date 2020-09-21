@@ -13,7 +13,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	const eqApx = (arg1, arg2, tol, text) => log(Math.abs(arg1-arg2) < tol, arg1, arg2, text);
 	//assertion of object equivalence
 	const eqObj = (arg1, arg2, text) => log(angular.equals(arg1, arg2), JSON.stringify(arg1), JSON.stringify(arg2), text);
-	//assertion of expected error number (but is not used for full conversion errors, because they are caught, see fullTest)
+	//assertion of expected error number (but is not used for full conversion errors, because they are caught, see fullTestErr)
 	function expectErr(f, errNumber, text) {
 		let pass = false;
 		try {f();}
@@ -23,7 +23,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 		}
 		log(pass, '', 'error '+errNumber, text)
 	}
-	//expected result of a full conversion with 'input' & 'target' strings, expected status and optionally expected result number with tolerance
+	//assertion of expected full conversion result with 'input' & 'target' strings, expected status and optionally expected result number with tolerance
 	function fullTest(input, target, expectStat, expectNum, tol) {
 		let text = input + ' > ' + target + ': ';
 		res = convert.fullConversion(input, target);
@@ -32,7 +32,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 		res.status < 2 && typeof expectNum === 'number' && typeof tol === 'number' &&
 			eqApx(res.output.num, expectNum, tol, text+'eqApx');
 	}
-	//expected error of a full conversion with 'input' string, expected error number and description
+	//assertion of expected full conversion error with 'input' string, expected error number and description
 	function fullTestErr(input, expectErr, text) {
 		res = convert.fullConversion(input, '');
 		let match = res.messages[0].match(/[^\d]*(\d+)/); //try to match number of thrown error
@@ -93,7 +93,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	fullTest('l^(1/3)', 'dm', 0, 1, 1e-3);
 	fullTest('_e^(30 kJ/mol / (_R * 298 K))', '', 0, 181309.23, 0.1);
 	fullTest('8 Mt/yr / (900 kg/m3)', 'kbbl/d', 0, 153.07481, 1e-3);
-	
+
 !silent && console.log('\nFull conversion warnings');
 	fullTest('m3', 'm2', 1);
 	fullTest('mt/ks', 'kg/h', 1);

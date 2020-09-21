@@ -44,7 +44,7 @@ return
 	//initialize conversion
 	$scope.fullConversion = function() {
 		$scope.result = convert.fullConversion(CS.input, CS.target);
-		$scope.result = convert.format($scope.result, CS.params);
+		$scope.result.output = convert.format($scope.result.output, CS.params);
 
 		//style the results
 		$scope.statusClass = ['ok', 'warn', 'err'][$scope.result.status];
@@ -52,14 +52,18 @@ return
 		$timeout(() => ($scope.statusAppear = ''), 500);
 	};
 
+	//this function, well, it runs a code
+	$scope.runCode = () => ($scope.resultCode = convert.runCode(CS.inputCode));
+
 	//populate database of messages with strings or functions in current language
 	$scope.populateConvertMessages = function() {Object.keys(convert.msgDB).forEach(key => (convert.msgDB[key] = langService.trans(key)));}
 	$scope.populateConvertMessages();
 
-	//this function listens to onkeyup in input & target text fields and executes conversion if the key is an Enter
-	$scope.listenForConvert = function(event) {
-		(event.keyCode === 13 || event.key === 'Enter') && $scope.fullConversion();
-	};
+	//these functions listen to onkeyup in various text fields
+	//input & target field: perform fullConversion on Enter
+	$scope.listenForConvert = event => (event.keyCode === 13 || event.key === 'Enter') && $scope.fullConversion();
+	//macro code field: run code on F2
+	$scope.listenForRun = event => (event.keyCode === 113 || event.key === 'F2') && $scope.runCode();
 
 	/*
 		HELP, this section of code is dedicated to Reference!

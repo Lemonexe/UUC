@@ -45,10 +45,12 @@ const langService = {
 //the translate table
 langService.table = {
 	'PŘEVODNÍK': {en: 'CONVERTER'},
-	'Úvod': {en: 'Introduction'},
+	'Makro': {en: 'Macro'},
+	'Úvod': {en: 'Intro'},
 	'Reference': {en: 'Reference'},
 	'Příklady': {en: 'Examples'},
 	'Převést': {en: 'Convert'},
+	'F2 Spustit': {en: 'F2 Run'},
 
 	'Konstanta.': {en: 'Constant.'},
 	'Základní, ': {en: 'Basic, '},
@@ -57,6 +59,7 @@ langService.table = {
 	'prefix-': {en: 'usually only decreasing prefixes are used.'},
 	'prefix0': {en: 'prefixes are not used.'},
 
+//ERRORS 100
 	'ERR_brackets_missing': {
 		cz: n => `CHYBA 101: Nevyrovnané závorky, ${n} ( chybí`,
 		en: n => `ERROR 101: Unbalanced brackets, ${n} ( missing`
@@ -86,17 +89,19 @@ langService.table = {
 		en: str => `ERROR 107: Operator "${str}" misplaced`
 	},
 	'ERR_power_dim': {
-		cz: `CHYBA 108: Mocninou může být pouze bezrozměrné číslo`,
-		en: `ERROR 108: Power has to be a dimensionless number`
+		cz: 'CHYBA 108: Mocninou může být pouze bezrozměrné číslo',
+		en: 'ERROR 108: Power has to be a dimensionless number'
 	},
 	'ERR_dim_mismatch': {
-		cz: `CHYBA 109: Nesouhlasí rozměry při sčítání či odčítání`,
-		en: `ERROR 109: Dimension mistmatch while addition or subtraction`
+		cz: 'CHYBA 109: Nesouhlasí rozměry při sčítání či odčítání',
+		en: 'ERROR 109: Dimension mistmatch while addition or subtraction'
 	},
 	'ERR_special_chars': {
 		cz: 'CHYBA 110: Speciální rezervované znaky # ~ nelze používat',
 		en: 'ERROR 110: Special reserved characters # ~ not allowed'
 	},
+
+//WARNINGS 200
 	'WARN_prefixes': {
 		cz: (unit, word, pref) => `VAROVÁNÍ 201: Jednotka ${unit.id} (${unit.name[CS.lang]}) většinou nemívá ${word} předpony, avšak nalezeno ${pref.id}`,
 		en: (unit, word, pref) => `WARNING 201: Unit ${unit.id} (${unit.name[CS.lang]}) doesn\'t usually have ${word} prefixes, yet ${pref.id} identified`
@@ -116,5 +121,23 @@ langService.table = {
 	'WARN_separators': {
 		cz: 'VAROVÁNÍ 204: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.',
 		en: 'WARNING 204: Too many target unit separators have been found (>, to or into). Only the first definiton of target units was accepted.'
+	},
+
+//MACRO CODE ERRORS 300
+	'ERRC_equalSigns': {
+		cz: line => 'CHYBA KÓDU 301: Více rovnítek na jednom řádku: ' + line,
+		en: line => 'CODE ERROR 301: Several equal signs on one line: ' + line
+	},
+	'ERRC_varName': {
+		cz: (line, varName) => `CHYBA KÓDU 302: Neplatný název proměnné "${varName}": ` + line,
+		en: (line, varName) => `CODE ERROR 302: Invalid variable name "${varName}": ` + line
+	},
+	'ERRC_argCount': {
+		cz: (line, fName, argsMin, argsMax, args) => `CHYBA KÓDU 303: Funkce "${fName}" požaduje ${argsMin}–${argsMax} argumentů, avšak nalezeno ${args}: ` + line,
+		en: (line, fName, argsMin, argsMax, args) => `CODE ERROR 303: Function "${fName}" requires ${argsMin}–${argsMax} arguments, but ${args} found: ` + line
+	},
+	'ERRC_unreadableLine': {
+		cz: line => 'CHYBA KÓDU 304: Řádek nečitelný: ' + line,
+		en: line => 'CODE ERROR 304: Line unreadable: ' + line
 	}
 };

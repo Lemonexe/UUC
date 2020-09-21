@@ -14,7 +14,7 @@ function Convert_parse(convert, text) {
 	//rationalize the input string
 	function syntaxCheck(text) {
 		(text === '') && (text = '1');
-		text = text.replace(/,/g , '.');
+		text = text.trim().replace(/,/g , '.');
 
 		//check bracket balance and add missing ones
 		const opening = text.split('(').length - 1;

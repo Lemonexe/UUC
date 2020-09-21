@@ -21,8 +21,9 @@ reset button
 
 save history
 
-ad sčítání a odčítání - možná by se tam dal udělat "scriptování" že uložím do veličiny proměnných a paxnima počítám
-nemusel bych vymýšlet složitý programovací jazyk, stačila by expanze proměnné jako to dělá .bat
+MACRO
+	remember size
+	dokumentace.md
 
 znovu zkusit zjistit jestli nejde nějak udělat keyword v IE, chrome, edge
 

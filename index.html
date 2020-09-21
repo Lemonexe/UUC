@@ -8,6 +8,7 @@
 		<!--these scripts just declare-->
 		<script src="app/convert.js" type="text/javascript"></script>
 		<script src="app/convert_parse.js" type="text/javascript"></script>
+		<script src="app/convert_macro.js" type="text/javascript"></script>
 		<script src="app/lang.js" type="text/javascript"></script>
 		<script src="app/data.js" type="text/javascript"></script>
 		<!--these script start doing something-->
@@ -26,6 +27,7 @@
 <h1>Ultimate Unit Converter II</h1>
 
 <input type="button" ng-value="'PŘEVODNÍK'.trans()" ng-click="CS.tab = 'converter'">
+<input type="button" ng-value="'Makro'.trans()" ng-click="CS.tab = 'macro'">
 <input type="button" ng-value="'Úvod'.trans()" ng-click="CS.tab = 'intro'">
 <input type="button" ng-value="'Reference'.trans()" ng-click="CS.tab = 'help'">
 <input type="button" ng-value="'Příklady'.trans()" ng-click="CS.tab = 'examples'">
@@ -130,8 +132,16 @@
 
 		<div id="status" ng-if="result" ng-class="statusAppear">
 			<br><b><cz>Stav:</cz><en>Status:</en></b><br>
-			<span ng-repeat="m in result.messages" ng-class="statusClass">{{m}}<br></span>
+			<span ng-repeat="m in result.messages track by $index" ng-class="statusClass">{{m}}<br></span>
 		</div><br>
+	</div>
+
+	<div ng-switch-when="macro">
+		<b><cz>Kód:</cz><en>Code:</en></b><br>
+		<textarea ng-model="CS.inputCode" id="inputCode" ng-keyup="listenForRun($event)" autofocus spellcheck="false"></textarea><br>
+		<input type="button" ng-value="'F2 Spustit'.trans()" ng-click="runCode()"><br>
+		<b><cz>Výstup:</cz><en>Output:</en></b><br>
+		<div ng-if="resultCode"><span ng-repeat="m in resultCode track by $index">{{m}}<br></span></div>
 	</div>
 
 	<div ng-switch-when="examples">
@@ -232,8 +242,8 @@
 
 <div id="debug"></div>
 <div id="footer">
-	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2020 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a> za použití <a href="https://angularjs.org/">AngularJS</a></cz>
-	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2020 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a> using <a href="https://angularjs.org/">AngularJS</a></en>
+	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2020 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a></cz>
+	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2020 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a></en>
 </div>
 
 	</body>

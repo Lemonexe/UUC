@@ -4,11 +4,15 @@ body {
 p {
 	max-width: 1200px;
 }
+h1 {
+	font-family: Arial;
+	font-size: 30px;
+}
 h2 {
 	margin: 10px;
 }
 input[type="text"] {
-	width: 300px;
+	width: 350px;
 }
 li {
 	margin-bottom: 5px;
@@ -59,6 +63,10 @@ li {
 	height: 19px;
 	border: 1px solid #A9A9A9;
 }
+#inputCode {
+	width: 350px;
+	height: 100px;
+}
 #paramsContainer {
 	height: 30px;
 }
@@ -68,7 +76,7 @@ li {
 	background-color: #FFFFFF;
 	border-top: 1px solid #A9A9A9;
 }
-#lang{
+#lang {
 	position: absolute;
 	top: 0px;
 	right: 0px;

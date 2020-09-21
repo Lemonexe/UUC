@@ -14,23 +14,20 @@ function Convert() {
 	//database of messages (strings or functions)
 	const msgDB = {};
 	//these messages must be supplied before using convert. Some of these are just strings, some are functions with specific arguments. See lang.js
-	['ERR_brackets_missing', 'ERR_operators', 'ERR_brackets_empty', 'ERR_NaN', 'ERR_unitPower', 'ERR_unknownUnit', 'ERR_operator_misplaced', 'ERR_power_dim', 'ERR_dim_mismatch', 'ERR_special_chars', 'WARN_prefixes', 'WARN_prefixes_word0', 'WARN_prefixes_word+', 'WARN_prefixes_word-', 'WARN_targetNumber', 'WARN_target_dim_mismatch']
-		.forEach(o => msgDB[o] = null);
+	['ERR_brackets_missing', 'ERR_operators', 'ERR_brackets_empty', 'ERR_NaN', 'ERR_unitPower', 'ERR_unknownUnit', 'ERR_operator_misplaced', 'ERR_power_dim', 'ERR_dim_mismatch', 'ERR_special_chars',
+		'WARN_prefixes', 'WARN_prefixes_word0', 'WARN_prefixes_word+', 'WARN_prefixes_word-', 'WARN_targetNumber', 'WARN_target_dim_mismatch',
+		'ERRC_equalSigns', 'ERRC_varName', 'ERRC_argCount', 'ERRC_unreadableLine'
+	].forEach(o => msgDB[o] = null);
 	this.msgDB = msgDB;
 
-	//status means 0 = OK, 1 = warnings, 2 = fatal error. Status text will contain error or warning messages.
+	//status means 0 = OK, 1 = WARNING, 2 = ERROR. Status text will contain error or warning messages.
 	this.clearStatus = function() {
 		this.status = 0;
 		this.messages = [];
 	}
 	this.clearStatus();
 
-	//err and warn functions fill messages. Err() will display only the first error, warn() will concatenate all warnings.
-	//That's because when an error occurs, it might trigger another, and it would be useless to display the whole cascade of errors
-	this.err = function(text) {
-		this.status = 2;
-		this.messages = [text];
-	};
+	//warn downgrades status to 1 and adds a message
 	this.warn = function(text) {
 		this.status = (this.status < 1) ? 1 : this.status;
 		this.messages.push(text);
@@ -50,32 +47,41 @@ function Convert() {
 	this.Unit = Unit;
 
 	//MAIN FUNCTION - do a full conversion between input string and target string, and return an output object
-	this.fullConversion = function(input, target) {
+	this.convert = function(input, target) {
+		if(typeof target !== 'string') {target = '';}
 		input = this.beautify(input); target = this.beautify(target);
 		const isTarget = target.length > 0;
-		this.clearStatus();
 
 		let iObj, tObj; //input & target object
+
+		//parse input & target strings into detailed nested objects, see convert_parse.js
+		iObj = Convert_parse(this, input);
+		tObj = Convert_parse(this, target);
+
+		//perform the calculation
+		iObj = this.rationalizeField(iObj);
+		tObj = this.rationalizeField(tObj);
+		iObj = this.reduceField(iObj);
+		tObj = this.reduceField(tObj);
+
+		//then the conversion itself is pretty simple!
+		const num = iObj.n / tObj.n;
+		let dim = isTarget ? target : this.vector2text(iObj.v); //if no target, then SI representation
+
+		//correct dimension mismatch
+		const corr = !isTarget || this.checkDimension(iObj.v, tObj.v);
+		if(corr !== true) {dim += '*' + this.vector2text(corr);}
+
+		return {num: num, dim: dim};
+	};
+
+	//execute a conversion from input & target. It simply operates on this.convert() with the added value of exception handling and message system
+	this.fullConversion = function(input, target) {
+		this.clearStatus();
 		const res = {}; //output object
-		try {
-			//parse input & target strings into detailed nested objects
-			iObj = Convert_parse(this, input);
-			tObj = Convert_parse(this, target);
 
-			//perform the calculation
-			iObj = this.reduceField(iObj);
-			tObj = this.reduceField(tObj);
-
-			//then the conversion itself is pretty simple!
-			const num = iObj.n / tObj.n;
-			let dim = isTarget ? target : this.vector2text(iObj.v); //if no target, then SI representation
-
-			//correct dimension mismatch
-			const corr = !isTarget || this.checkDimension(iObj.v, tObj.v);
-			if(corr !== true) {dim += '*' + this.vector2text(corr);}
-			res.output = {num: num, dim: dim};
-		}
-		catch(err) {this.err(err);}
+		try {res.output = this.convert(input, target);}
+		catch(err) {this.status = 2; this.messages = [err];} //downgrade status to 2 and only the error message will be shown
 
 		//return the results
 		if(this.status === 0) {this.messages = ['OK'];}
@@ -83,16 +89,16 @@ function Convert() {
 		return res;
 	};
 
-	//perform calculation of each field - reduce nested object (expression) into one physical quantity
-	this.reduceField = function(obj) {
-		const that = this;
-		//recursively crawl to simplify units into physical quantity objects (we could do it during crawl2, but crawl2 is already quite complicated as it is)
-		obj = crawl1(obj);
-		//recursively crawl to calculate everything into the final physical quantity
-		return crawl2(obj);
+	//execute code input, the so called macro, see convert_macro.js
+	this.runCode = Convert_macro;
 
-		//first crawl converts numbers & [pref, unit, power] objects into Q() instances
-		function crawl1(arr) {
+	//recursively simplify units into physical quantity objects
+	this.rationalizeField = function(obj) {
+		const that = this;
+		return crawl(obj);
+
+		//crawl converts numbers & [pref, unit, power] objects into new Q() instances
+		function crawl(arr) {
 			for(let i = 0; i < arr.length; i++) {
 				const o = arr[i];
 				//is a number: make it a simple new Q
@@ -104,24 +110,29 @@ function Convert() {
 					arr[i] = that.power(obj, new Q(o.power));
 				}
 				//is an array: recursion further
-				else if(Array.isArray(o)) {crawl1(o);}
+				else if(Array.isArray(o)) {crawl(o);}
 				//else operator ^ * / + -
 			}
 			return arr;
 		}
+	};
 
-		//second crawl is quite complicated - it calculates the whole nested object into a single Q
-		//it starts from deepest brackets, solves them and gradually gets higher. That's achieved via recursion
-		//due to operator precedence, first do all power expressions - reduce each into Q
-		//then do the same with multiplication/divison and finally, we can add and subtract everything into the final Q
-		function crawl2(arr) {
+	//recursively reduce nested object (expression) into the one final Q
+	//it starts from deepest brackets, solves them and gradually gets higher (that's achieved via recursion)
+	this.reduceField = function(obj) {
+		const that = this;
+		return crawl(obj);
+
+		//crawl operates on an array and calculates it into a single Q
+		//operator precedence: first get () result, then do ^, then * /, then + - into the final Q
+		function crawl(arr) {
 			//first element of section has to be either Q, or bracket expression array
 			if(!(arr[0] instanceof Q) && !Array.isArray(arr[0])) {throw that.msgDB['ERR_operator_misplaced'](arr[0]);}
 			let i, res, arr2;
 
 			//first enter all bracket expression arrays and get result (recursion) before continuing
 			for(i = 0; i < arr.length; i++) {
-				if(Array.isArray(arr[i])) {arr[i] = crawl2(arr[i]);}
+				if(Array.isArray(arr[i])) {arr[i] = crawl(arr[i]);}
 			}
 
 			//then do all powers
@@ -130,6 +141,7 @@ function Convert() {
 			arr = subcrawl(arr, ['*', '/'], (res, sign, q) => sign === '*' ? that.multiply(res, q) : that.divide(res, q));
 
 			//finally add and subtract everything into the final Q
+			//unlike subcrawl, there is no need for auxiliary array, this for creates the single Q object right away
 			if(!(arr[0] instanceof Q)) {throw that.msgDB['ERR_operator_misplaced'](arr[0]);}
 			res = arr[0];
 			for(i = 0; i < arr.length; i += 2) {
@@ -235,7 +247,8 @@ function Convert() {
 	};
 
 	//vector2text will convert unit vector 'v' into text representation
-	this.vector2text = function(v) {
+	//'properSyntax' is optional, will make the text valid for further processing if true
+	this.vector2text = function(v, properSyntax) {
 		let text = '';
 		const basic = Units.filter(item => item.basic); //first filter all basic units
 
@@ -243,7 +256,14 @@ function Convert() {
 		for(let i = 0; i < v.length; i++) {
 			if(v[i] !== 0){
 				text += basic.find(item => item.v[i] === 1).id;
-				(v[i] !== 1) && (text += v[i]);
+				if(properSyntax) {
+					(v[i] > 0 && v[i] !== 1) && (text += '^' + v[i]);
+					(v[i] < 0) && (text += '^(' + v[i] + ')');
+				}
+				else {
+					(v[i] !== 1) && (text += v[i]);
+				}
+
 				text += '*';
 			}
 		}
@@ -254,6 +274,7 @@ function Convert() {
 	this.almostZero = v => v.map(n => Math.abs(n) > dimTolerance ? n : 0);
 
 	//finish conversion by assigning & formatting the result & status
+	//takes 'result' as {num: number, dim: string}
 	this.format = function(result, params) {
 		//TODO if dim begins with number, add an '* '
 		/*//format of output number
