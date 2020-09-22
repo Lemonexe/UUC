@@ -13,8 +13,12 @@ const CSdefault = {
 	target: '', //target field
 	filter: '', //filter field
 	showParams: false, //whether to show output formatting parameters
-	//number of digits, number of decimal places, whether to do those things, whether to do exponential
-	params: {digits: 1, fixed: 0, doDigits: false, doFixed: false, doExp: false},
+	//specification of format type ('auto' || 'fixed' || 'digits'), number of sig digits, number of decimals, whether always exponential
+	params: {spec: 'auto', digits: 3, fixed: 3, exp: false},
+	//macro code text and size of textarea
+	inputCode: '',
+	inputCodeWidth: '350px',
+	inputCodeHeight: '150px'
 };
 
 const saveService = {

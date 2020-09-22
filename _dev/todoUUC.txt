@@ -1,7 +1,6 @@
 <<<TODO>>>
-format
-	omezit počet cifer: 0 znamená neomezeně
-	NEBO omezit počet desetinných míst: radio button
+!! currencies and references
+controller cleanup
 
 flip input & target
 
@@ -11,20 +10,14 @@ pokud při psaní input dám > nebo " to " nebo " into ", tak to automaticky př
 CSS & view
 	horní tlačítka stylizovat jako záložky
 	vlaječky místo CZ EN
-	output formatting dát vpravo od těch polí
 
 examples - při kliknutí vloží. Či spíše rovnou udělat krásný interactive tutorial
 	btw span class example má problém se zalamováním při malé šířce obrazovky
 	přidat Ncm za jiných podmínek
 
-reset button
-
 save history
 
-MACRO
-	remember size
-	dokumentace.md
-
-znovu zkusit zjistit jestli nejde nějak udělat keyword v IE, chrome, edge
+znovu zkusit zjistit jestli nejde nějak udělat keyword v FF, edge
 
 TODO README AGAIN
+	macro dokumentace.md

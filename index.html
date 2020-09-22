@@ -86,7 +86,7 @@
 		<cz>Zde můžete napsat jednotku (či její název), aby byl seznam omezen na jednotky se stejným rozměrem (1 pro bezrozměrné), nebo zadejte _ pro seznam konstant:</cz>
 		<en>You can write a unit (or its name) here to filter the ones with same dimension (1 for dimensionless), or write _ to list constants:</en>
 		<br>
-		<input type="text" ng-model="CS.filter" ng-change="listenForHelp()">
+		<input type="text" class="inputBox" ng-model="CS.filter" ng-change="listenForHelp()">
 		<h2><cz>Předpony (mocniny)</cz><en>Prefixes (exponents)</en></h2>
 		{{prefixText}}
 
@@ -108,27 +108,33 @@
 	</div>
 
 	<div ng-switch-when="converter">
-		<b><cz>Vstup:</cz><en>Input:</en></b><br>
-		<input type="text" ng-model="CS.input" ng-keyup="listenForConvert($event)" autofocus><br><br>
 
-		<b><cz>Cílové jednotky:</cz><en>Target units:</en></b><br>
-		<input type="text" ng-model="CS.target" ng-keyup="listenForConvert($event)"><br><br>
+		<div style="float: left; margin-right: 40px;">
+			<b><cz>Vstup:</cz><en>Input:</en></b><br>
+			<input type="text" class="inputBox" ng-model="CS.input" ng-keyup="listenForConvert($event)" autofocus><br><br>
 
-		<input type="button" ng-value="'Převést'.trans()" ng-click="fullConversion()"><br>
-		<label><input type="checkbox" ng-model="CS.parameters" ng-change="fullConversion()"><cz>výstupní formát</cz><en>output format</en></label><br>
-		<div id="paramsContainer">
-			<div ng-show="CS.parameters">
-				<label><input type="checkbox" ng-model="CS.expForm" ng-change="fullConversion()"><cz>vždy vědecký zápis</cz><en>always scientific notation</en></label><br>
-				<cz>omezit počet cifer</cz><en>limit digits to</en>
-				<input type="number" ng-model="CS.digits" min="1" max="20" ng-change="fullConversion()">
+			<b><cz>Cílové jednotky:</cz><en>Target units:</en></b><br>
+			<input type="text" class="inputBox" ng-model="CS.target" ng-keyup="listenForConvert($event)"><br><br>
+
+			<input type="button" ng-value="'Převést'.trans()" ng-click="fullConversion()">
+		</div>
+
+		<div id="paramContainer">
+			<a ng-click="showParams = !showParams"><b><span style="display: inline-block; width: 15px;">{{showParams ? '–' : '+'}}</span><cz>formát výstupu</cz><en>output format</en></b></a><br>
+			<div ng-show="showParams">
+				<label><input type="radio" ng-model="CS.params.spec" value="auto" ng-change="updateFormat()"> <cz>automatický</cz><en>automatic</en></label><br>
+				<label><input type="radio" ng-model="CS.params.spec" value="digits" ng-change="updateFormat()"> <cz>počet platných cifer</cz><en>significant digits</en>: </label>
+				<input type="number" class="numSelector" ng-model="CS.params.digits" min="1" max="20" ng-change="updateFormat()"><br>
+				<label><input type="radio" ng-model="CS.params.spec" value="fixed" ng-change="updateFormat()"> <cz>počet desetinných míst</cz><en>number of decimals</en>: </label>
+				<input type="number" class="numSelector" ng-model="CS.params.fixed" min="0" max="20" ng-change="updateFormat()"><br>
+				<br>
+				<label><input type="checkbox" ng-model="CS.params.exp" ng-change="updateFormat()"> <cz>vždy vědecký zápis</cz><en>always scientific notation</en></label>
 			</div>
 		</div>
-		<br>
+		<div style="display: block; height: 20px; clear: both;"></div>
 
 		<b><cz>Výstup:</cz><en>Output:</en></b><br>
-		<div id="output">
-			<span ng-if="result && result.output">{{result.output.num}} {{result.output.dim}}</span>
-		</div>
+		<span class="outputBox">{{result && result.output ? (result.output.num2 || result.output.num) + ' ' + result.output.dim : ' '}}</span>
 
 		<div id="status" ng-if="result" ng-class="statusAppear">
 			<br><b><cz>Stav:</cz><en>Status:</en></b><br>
@@ -138,7 +144,7 @@
 
 	<div ng-switch-when="macro">
 		<b><cz>Kód:</cz><en>Code:</en></b><br>
-		<textarea ng-model="CS.inputCode" id="inputCode" ng-keyup="listenForRun($event)" autofocus spellcheck="false"></textarea><br>
+		<textarea ng-model="CS.inputCode" ng-keyup="listenForRun($event)" ng-style="textareaStyle()" resize-observer autofocus spellcheck="false"></textarea><br>
 		<input type="button" ng-value="'F2 Spustit'.trans()" ng-click="runCode()"><br>
 		<b><cz>Výstup:</cz><en>Output:</en></b><br>
 		<div ng-if="resultCode"><span ng-repeat="m in resultCode track by $index">{{m}}<br></span></div>

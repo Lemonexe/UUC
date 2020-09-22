@@ -68,12 +68,14 @@ function Convert_macro(code) {
 			{id: 'convert', argsMin: 1, argsMax: 3, f: function(input, target, params) {
 				const m = that.messages;
 				input = expand(input); target = expand(target);
-				if(params) {params = JSON.parse(params);}
 				let res = that.convert(input, target);
-				res = that.format(res, params);
+				if(params) {
+					params = JSON.parse(params);
+					res = that.format(res, params);
+				}
 				//append to last message rather than create a new one
 				if(m.length === 0) {m[0] = '';}
-				m[m.length-1] += res.num + ' ' + res.dim;
+				m[m.length-1] += (res.num2 || res.num) + ' ' + res.dim;
 			}}
 		];
 
@@ -89,7 +91,6 @@ function Convert_macro(code) {
 			if(line.search('<js>') === 0) {eval(line.replace('<js>', '')); continue;}
 
 			//or parse the simple code
-			line = line.replace(/;$/, ''); //ignore (and therefore allow) semicolons
 			const eqs = line.split('=').map(o => o.trim()); //split line into sections around equal signs
 
 			//if this line is a variable declaration
@@ -115,7 +116,7 @@ function Convert_macro(code) {
 					if(!m) {continue;}
 					found = true;
 					const f = functions.find(o => o.id === v); //get the corresponding function
-					const args = m[1].split(',').filter(o => o.length > 0); //split arguments
+					const args = m[1].split(';').filter(o => o.length > 0); //split arguments
 					//a really messy code for a messy error
 					const errCond = (f.hasOwnProperty('argsMin') && args.length < f.argsMin) || (f.hasOwnProperty('argsMax') && args.length > f.argsMax);
 					if(errCond) {throw that.msgDB['ERRC_argCount'](line, f.id, f.argsMin || 0, f.argsMax || 'n', args.length);}

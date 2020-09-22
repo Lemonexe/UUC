@@ -8,6 +8,9 @@ langService.init();
 app.controller('ctrl', function($scope, $http, $timeout) {
 	$scope.CS = CS;
 
+	//generate ng-style for inputCode textarea
+	$scope.textareaStyle = () => ({width: CS.inputCodeWidth || '350px', height: CS.inputCodeHeight || '150px'});
+
 	$scope.changeLang = function(lang) {
 		CS.lang = lang;
 		$scope.populateConvertMessages();
@@ -51,6 +54,8 @@ return
 		$scope.statusAppear = 'statusAppear';
 		$timeout(() => ($scope.statusAppear = ''), 500);
 	};
+	//when a user changes format settings, there is no need to initialize conversion again
+	$scope.updateFormat = () => $scope.result && ($scope.result.output = convert.format($scope.result.output, CS.params));
 
 	//this function, well, it runs a code
 	$scope.runCode = () => ($scope.resultCode = convert.runCode(CS.inputCode));
@@ -213,3 +218,15 @@ return Units
 	}
 	loadCurrencies();
 });
+
+//directive to give textarea an observer for resize
+app.directive('resizeObserver', () => ({restrict: 'A', link: function(scope, elem) {
+	elem = elem[0];
+	function callback() {
+		CS.inputCodeWidth = elem.style.width;
+		CS.inputCodeHeight = elem.style.height;
+	}
+	new MutationObserver(callback).observe(elem, {
+		attributes: true, attributeFilter: [ "style" ]
+	});
+}}));

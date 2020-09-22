@@ -1,3 +1,7 @@
+/*
+	This CSS
+	Is a mess
+*/
 body {
 	padding-bottom: 10px;
 }
@@ -10,9 +14,6 @@ h1 {
 }
 h2 {
 	margin: 10px;
-}
-input[type="text"] {
-	width: 350px;
 }
 li {
 	margin-bottom: 5px;
@@ -31,11 +32,13 @@ li {
 	font-weight: bold;
 	color: red;
 }
+/*?*/
 .example {
 	position: absolute;
 	left: 230px;
 	font-style: italic;
 }
+/*dirty trick to allow angular generated line breaks even without ng-sanitize*/
 .reference {
 	white-space: pre-wrap;
 }
@@ -59,16 +62,28 @@ li {
 	100% {opacity: 1;}
 }
 
-#output {
-	height: 19px;
-	border: 1px solid #A9A9A9;
+.numSelector {
+	border: none;
+	outline: none;
+	width: 35px;
 }
-#inputCode {
+.inputBox {
 	width: 350px;
-	height: 100px;
+	padding: 2px;
 }
-#paramsContainer {
-	height: 30px;
+.outputBox {
+	display: inline-block;
+	height: 17px;
+	min-width: 350px;
+	padding: 2px;
+	border: 1px solid #777777;
+}
+#paramContainer {
+	float: left;
+	width: 230px;
+	border: 1px solid #777777;
+	padding: 5px;
+	padding-right: 0px;
 }
 #footer {
 	position: fixed;

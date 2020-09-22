@@ -273,17 +273,22 @@ function Convert() {
 	//almost-zero numbers (floating point error) in vector 'v' will be zero (arbitrary threshold), that's necessary in order to use ^ + -
 	this.almostZero = v => v.map(n => Math.abs(n) > dimTolerance ? n : 0);
 
-	//finish conversion by assigning & formatting the result & status
-	//takes 'result' as {num: number, dim: string}
-	this.format = function(result, params) {
-		//TODO if dim begins with number, add an '* '
-		/*//format of output number
-		if($scope.result.output && CS.parameters) {
-			//number of digits
-			let d = CS.digits ? CS.digits : 2;
-			$scope.result.output.num = CS.expForm ? $scope.result.output.num.toExponential(d-1) : $scope.result.output.num.toPrecision(d);
-		}*/
-		return result;
+	//format 'output' object as {num: number, dim: string} into the same object but with properly formatted number string 'num2'
+	this.format = function(output, params) {
+		if(!output) {return;}
+		//make it nicer when dim starts with a number
+		if(output.dim.search(/^\d/) > -1) {output.dim = ' * ' + output.dim;}
+
+		if(params.exp) {
+			let d;
+			(params.spec === 'fixed')  && (d = params.fixed || 0);
+			(params.spec === 'digits') && (d = params.digits - 1 || 3);
+			output.num2 = output.num.toExponential(d);
+		}
+		else if(params.spec === 'fixed') {output.num2 = output.num.toFixed(params.fixed || 0);}
+		else if(params.spec === 'digits') {output.num2 = output.num.toPrecision(params.digits || 3);}
+		else {output.num2 = String(output.num);}
+		return output;
 	};
 
 	//beautify the input string by balancing brackets. This is not as thorough as Convert_parse > syntaxCheck
