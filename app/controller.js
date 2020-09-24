@@ -10,11 +10,14 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 	//generate ng-style for inputCode textarea
 	$scope.textareaStyle = () => ({width: CS.inputCodeWidth || '350px', height: CS.inputCodeHeight || '150px'});
+	//generate ng-style for currently active tab button
+	$scope.tabButtonStyle = tab => CS.tab === tab ? ({'border-bottom': '2px solid white'}) : ({});
 
 	$scope.changeLang = function(lang) {
 		CS.lang = lang;
 		$scope.populateConvertMessages();
 	};
+	$scope.changeTab = tab => (CS.tab = tab);
 
 	//perform conversion from fragment identifier. Executed upon loading of currencies
 	function execHash() {
@@ -56,6 +59,13 @@ return
 	};
 	//when a user changes format settings, there is no need to initialize conversion again
 	$scope.updateFormat = () => $scope.result && ($scope.result.output = convert.format($scope.result.output, CS.params));
+
+	//flip input & target field
+	$scope.flip = function() {
+		const i = CS.input;
+		CS.input = CS.target;
+		CS.target = i;
+	};
 
 	//this function, well, it runs a code
 	$scope.runCode = () => ($scope.resultCode = convert.runCode(CS.inputCode));

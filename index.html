@@ -19,19 +19,20 @@
 		<link rel="stylesheet" href="app/style.css">
 	</head>
 	<body>
-<div id="lang" ng-switch="CS.lang">
-	<div ng-switch-when="cz" ng-click="changeLang('en')">English</div>
-	<div ng-switch-when="en" ng-click="changeLang('cz')">Česky</div>
+<div id="lang">
+	<img src="res/CZ.png" ng-click="changeLang('cz')" style="width: 45px; height: 30px;">
+	<img src="res/EN.png" ng-click="changeLang('en')" style="width: 45px; height: 30px;">
 </div>
 
 <h1>Ultimate Unit Converter II</h1>
 
-<input type="button" ng-value="'PŘEVODNÍK'.trans()" ng-click="CS.tab = 'converter'">
-<input type="button" ng-value="'Makro'.trans()" ng-click="CS.tab = 'macro'">
-<input type="button" ng-value="'Úvod'.trans()" ng-click="CS.tab = 'intro'">
-<input type="button" ng-value="'Reference'.trans()" ng-click="CS.tab = 'help'">
-<input type="button" ng-value="'Příklady'.trans()" ng-click="CS.tab = 'examples'">
-<hr>
+<div id="tabButtonContainer">
+	<span ng-click="changeTab('converter')" ng-style="tabButtonStyle('converter')" class="tabButton"><cz>Převodník</cz><en>Converter</en></span>
+	<span ng-click="changeTab('macro')" ng-style="tabButtonStyle('macro')" class="tabButton"><cz>Makro</cz><en>Macro</en></span>
+	<span ng-click="changeTab('help')" ng-style="tabButtonStyle('help')" class="tabButton"><cz>Reference</cz><en>Reference</en></span>
+	<span ng-click="changeTab('examples')" ng-style="tabButtonStyle('examples')" class="tabButton"><cz>Příklady</cz><en>Examples</en></span>
+	<span ng-click="changeTab('intro')" ng-style="tabButtonStyle('intro')" class="tabButton"><cz>Úvod</cz><en>Intro</en></span>
+</div>
 
 <div ng-switch="CS.tab">
 	<div ng-switch-when="intro">
@@ -108,20 +109,20 @@
 	</div>
 
 	<div ng-switch-when="converter">
-
-		<div style="float: left; margin-right: 40px;">
+		<div id="convertContainer">
+			<a class="fakeLink" ng-click="flip()" style="position: absolute; right: 0px; top: 47px; font-size: 18px; text-decoration: none;">⇅</a>
 			<b><cz>Vstup:</cz><en>Input:</en></b><br>
-			<input type="text" class="inputBox" ng-model="CS.input" ng-keyup="listenForConvert($event)" autofocus><br><br>
+			<input type="text" class="inputBox" ng-model="CS.input" ng-keyup="listenForConvert($event)" autofocus><br>
 
 			<b><cz>Cílové jednotky:</cz><en>Target units:</en></b><br>
-			<input type="text" class="inputBox" ng-model="CS.target" ng-keyup="listenForConvert($event)"><br><br>
+			<input type="text" class="inputBox" ng-model="CS.target" ng-keyup="listenForConvert($event)"><br>
 
 			<input type="button" ng-value="'Převést'.trans()" ng-click="fullConversion()">
 		</div>
 
 		<div id="paramContainer">
-			<a ng-click="showParams = !showParams"><b><span style="display: inline-block; width: 15px;">{{showParams ? '–' : '+'}}</span><cz>formát výstupu</cz><en>output format</en></b></a><br>
-			<div ng-show="showParams">
+			<a ng-click="CS.showParams = !CS.showParams" style="cursor: pointer;"><span style="display: inline-block; width: 15px;">{{CS.showParams ? '–' : '+'}}</span><cz>Formát výstupu</cz><en>Output format</en></a>
+			<div ng-show="CS.showParams">
 				<label><input type="radio" ng-model="CS.params.spec" value="auto" ng-change="updateFormat()"> <cz>automatický</cz><en>automatic</en></label><br>
 				<label><input type="radio" ng-model="CS.params.spec" value="digits" ng-change="updateFormat()"> <cz>počet platných cifer</cz><en>significant digits</en>: </label>
 				<input type="number" class="numSelector" ng-model="CS.params.digits" min="1" max="20" ng-change="updateFormat()"><br>
@@ -136,16 +137,16 @@
 		<b><cz>Výstup:</cz><en>Output:</en></b><br>
 		<span class="outputBox">{{result && result.output ? (result.output.num2 || result.output.num) + ' ' + result.output.dim : ' '}}</span>
 
-		<div id="status" ng-if="result" ng-class="statusAppear">
+		<div ng-if="result" ng-class="statusAppear">
 			<br><b><cz>Stav:</cz><en>Status:</en></b><br>
 			<span ng-repeat="m in result.messages track by $index" ng-class="statusClass">{{m}}<br></span>
-		</div><br>
+		</div>
 	</div>
 
 	<div ng-switch-when="macro">
 		<b><cz>Kód:</cz><en>Code:</en></b><br>
 		<textarea ng-model="CS.inputCode" ng-keyup="listenForRun($event)" ng-style="textareaStyle()" resize-observer autofocus spellcheck="false"></textarea><br>
-		<input type="button" ng-value="'F2 Spustit'.trans()" ng-click="runCode()"><br>
+		<input type="button" ng-value="'Spustit (F2)'.trans()" ng-click="runCode()"><br>
 		<b><cz>Výstup:</cz><en>Output:</en></b><br>
 		<div ng-if="resultCode"><span ng-repeat="m in resultCode track by $index">{{m}}<br></span></div>
 	</div>
@@ -247,6 +248,7 @@
 </div>
 
 <div id="debug"></div>
+<div id="footerDefense"></div>
 <div id="footer">
 	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2020 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a></cz>
 	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2020 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a></en>

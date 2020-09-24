@@ -2,49 +2,21 @@
 	This CSS
 	Is a mess
 */
-body {
-	padding-bottom: 10px;
-}
-p {
-	max-width: 1200px;
-}
+
+/*GENERIC*/
+body {font-family: Arial;}
+p {max-width: 1200px;}
 h1 {
-	font-family: Arial;
 	font-size: 30px;
+	margin-top: 10px;
+	margin-bottom: 30px;
 }
 h2 {
-	margin: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
-li {
-	margin-bottom: 5px;
-}
-
-.ok {
-	display: inline;
-	color: green;
-}
-.warn {
-	display: inline;
-	color: darkorange;
-}
-.err {
-	display: inline;
-	font-weight: bold;
-	color: red;
-}
-/*?*/
-.example {
-	position: absolute;
-	left: 230px;
-	font-style: italic;
-}
-/*dirty trick to allow angular generated line breaks even without ng-sanitize*/
-.reference {
-	white-space: pre-wrap;
-}
-.highlight {
-	background-color: #ffffbb;
-}
+li {margin-bottom: 5px;}
+input[type="button"] {cursor: pointer;}
 .fakeLink {
 	color: #0000ee;
 	cursor: pointer;
@@ -54,20 +26,12 @@ li {
 	font-family: 'Courier New', 'Courier', 'Consolas';
 	background-color: #f0f0f0;
 }
-.statusAppear {
-	animation: appear 0.5s linear forwards;
-}
-@keyframes appear {
-	0%   {opacity: 0;}
-	100% {opacity: 1;}
-}
 
-.numSelector {
-	border: none;
-	outline: none;
-	width: 35px;
-}
+
+
+/*CONVERT*/
 .inputBox {
+	margin-bottom: 15px;
 	width: 350px;
 	padding: 2px;
 }
@@ -78,16 +42,63 @@ li {
 	padding: 2px;
 	border: 1px solid #777777;
 }
+#convertContainer {
+	float: left;
+	position: relative;
+	margin-right: 40px;
+}
 #paramContainer {
 	float: left;
-	width: 230px;
-	border: 1px solid #777777;
 	padding: 5px;
 	padding-right: 0px;
 }
+.numSelector {
+	border: none;
+	outline: none;
+	width: 35px;
+}
+/*status texts*/
+.ok {color: green;}
+.warn {color: darkorange;}
+.err {font-weight: bold; color: red;}
+.statusAppear {animation: appear 0.5s linear forwards;}
+@keyframes appear {
+	0%   {opacity: 0;}
+	100% {opacity: 1;}
+}
+
+
+
+/*REFERENCES*/
+.reference {white-space: pre-wrap;} /*just a dirty trick to allow angular generated line breaks even without ng-sanitize*/
+.highlight {background-color: #ffffbb;}
+.example {
+	position: absolute;
+	left: 230px;
+	font-style: italic;
+}
+
+
+
+/*MISCELLANEOUS ELEMENTS*/
+#tabButtonContainer {
+	padding-left: 20px;
+	padding-bottom: 9px;
+	margin-bottom: 20px;
+	border-bottom: 2px solid #777777;
+}
+.tabButton {
+	padding: 10px;
+	margin-left: 8px;
+	border: 2px solid #777777;
+	cursor: pointer;
+}
+#footerDefense {height: 20px;}
 #footer {
 	position: fixed;
+	left: 0px;
 	bottom: 0px;
+	padding-left: 15px;
 	background-color: #FFFFFF;
 	border-top: 1px solid #A9A9A9;
 }
@@ -95,9 +106,6 @@ li {
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	font-size: 28px;
 	padding: 10px;
-	color: #551A8B;
-	text-decoration: underline;
 	cursor: pointer;
 }

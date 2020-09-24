@@ -44,13 +44,8 @@ const langService = {
 
 //the translate table
 langService.table = {
-	'PŘEVODNÍK': {en: 'CONVERTER'},
-	'Makro': {en: 'Macro'},
-	'Úvod': {en: 'Intro'},
-	'Reference': {en: 'Reference'},
-	'Příklady': {en: 'Examples'},
 	'Převést': {en: 'Convert'},
-	'F2 Spustit': {en: 'F2 Run'},
+	'Spustit (F2)': {en: 'Run (F2)'},
 
 	'Konstanta.': {en: 'Constant.'},
 	'Základní, ': {en: 'Basic, '},

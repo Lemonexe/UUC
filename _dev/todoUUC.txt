@@ -2,18 +2,16 @@
 !! currencies and references
 controller cleanup
 
-flip input & target
-
 pokud při psaní input dám > nebo " to " nebo " into ", tak to automaticky přepne na target (a smaže tento str)
 	tohle by mělo být v controlleru
 
-CSS & view
-	horní tlačítka stylizovat jako záložky
-	vlaječky místo CZ EN
-
-examples - při kliknutí vloží. Či spíše rovnou udělat krásný interactive tutorial
-	btw span class example má problém se zalamováním při malé šířce obrazovky
-	přidat Ncm za jiných podmínek
+CSS & view overhaul
+	reference cleanup
+	change intro to krásný interaktivní tutoriál
+		odstranit EXAMPLES
+			btw span class example má problém se zalamováním při malé šířce obrazovky
+			přidat Ncm za jiných podmínek
+		dát tam všechno infoprefixes (odstranit z reference)
 
 save history
 
