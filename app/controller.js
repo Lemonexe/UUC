@@ -124,7 +124,8 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	//each unit is described by dimension represented by basic SI and info:
 	//whether it is a constant, SI, basic SI, what prefixes are recommended and possibly a note
 	$scope.buildUnitEntry = function(unit) {
-		let text = ` (${unit.id}) `;
+		const aliases = unit.alias ? ', '+unit.alias.join(', ') : '';
+		let text = ` (${unit.id + aliases}) `;
 		//vector2text converts vector to text representation, like [1,1,-2] to m*kg*s^-2
 		text += unit.basic ? '' : ` = ${unit.k} ${convert.vector2text(unit.v)}\n`;
 
@@ -161,6 +162,8 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 				c.k = USDk / res.data.rates[c.id];
 				c.v = [0,0,0,0,0,0,0,1];
 				c.prefix = '+';
+				if(!c.alias) {c.alias = [];}
+				c.alias.push(c.id.toLowerCase()); //for all currencies enable lowercase id, because there's not really a convention
 				Units.push(c);
 			}
 

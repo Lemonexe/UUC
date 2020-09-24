@@ -53,51 +53,45 @@ function ECMA6test() {
 
 //Maintenance function that cannot be accessed by GUI. Conflicts are written in debug div. Quadratic time complexity (in relation to Units)
 function unitConflicts() {
-	//determine whether there is conflict between two given unit objects
-	let determineConflict = function(u, i) {
+	//create another database that maps each id and alias to the original unit object (just like in convert_parse.js)
+	const UnitIdMap = Units.map(item => ({id: item.id, ref: item}));
+	Units.forEach(o => o.alias && o.alias.forEach(a => UnitIdMap.push({id: a, ref: o})));
 
+	//determine whether there is conflict between two given unit objects
+	const determineConflict = function(u, i) {
 		//same ID, that's the worst that can happen
 		if(u.id === i.id) {
-			conflicts.unshift(`HARD CONFLICT: ${u.id} (${u.name}) = ${i.id} (${i.name})`);
+			conflicts.unshift(`HARD CONFLICT: ${u.id} (${u.ref.name[CS.lang]}) = ${i.id} (${i.ref.name[CS.lang]})`);
 			return;
 		}
 
 		//conflict of a unit with prefix with another unit. IF u.id is at the end of i.id
-		let index = i.id.indexOf(u.id);
-		if(
-			index > -1 &&
-			(index + u.id.length) === i.id.length
-		) {
-			let id = i.id.replace(u.id, '');
+		const j = i.id.indexOf(u.id);
+		if(j > -1 && (j + u.id.length) === i.id.length) {
+			const pref = i.id.replace(u.id, ''); //perhaps this is a prefix?
 			for(let p of Prefixes) {
-				if(p.id === id) {
-					if(
-						u.prefix === 'all' ||
-						(u.prefix === '+' && p.v > 0) ||
-						(u.prefix === '-' && p.v < 0)
-					) {
-						conflicts.unshift(`CONFLICT OF A PREFIX: ${p.id}${u.id} (${p.id} ${u.name[CS.lang]}) = ${i.id} (${i.name[CS.lang]})`);
-						break;
-					}
-					else {
-						conflicts.push(`conflict of a deprecated prefix: ${p.id}${u.id} (${p.id} ${u.name[CS.lang]}) = ${i.id} (${i.name[CS.lang]})`);
-						break;
-					}
+				if(p.id !== pref) {continue;}
+				if(
+					u.ref.prefix === 'all' ||
+					(u.ref.prefix === '+' && p.v > 0) ||
+					(u.ref.prefix === '-' && p.v < 0)
+				) {
+					conflicts.unshift(`CONFLICT OF A PREFIX: ${p.id}${u.id} (${p.id} ${u.ref.name[CS.lang]}) = ${i.id} (${i.ref.name[CS.lang]})`);
+					break;
+				}
+				else {
+					conflicts.push(`conflict of a deprecated prefix: ${p.id}${u.id} (${p.id} ${u.ref.name[CS.lang]}) = ${i.id} (${i.ref.name[CS.lang]})`);
 					break;
 				}
 			}
 		}
 	};
 
-	//two for cycles through Units, determineConflict is applied to each pair (pair of a unit with itself is excluded)
+	//two for cycles through UnitIdMap, determineConflict is applied to each pair (pair of a unit with itself is excluded)
 	let conflicts = [];
-	for(let u in Units) {
-		if(Units.hasOwnProperty(u)) {
-			for(let i in Units) {
-				if(Units.hasOwnProperty(i) && i !== u) {
-					determineConflict(Units[u], Units[i]);
-				}
-			}
+	for(let u = 0; u < UnitIdMap.length; u++) {
+		for(let i = 0; i < UnitIdMap.length; i++) {
+			(i !== u) && determineConflict(UnitIdMap[u], UnitIdMap[i]);
 		}
 	}
 	document.getElementById('debug').innerHTML = conflicts.length + ' conflicts<br>' + conflicts.join('<br>');

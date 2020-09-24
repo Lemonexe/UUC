@@ -1,6 +1,4 @@
 <<<TODO>>>
-unit reference system
-
 CSS & view overhaul
 	reference cleanup
 	change intro to krásný interaktivní tutoriál

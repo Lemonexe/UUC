@@ -3,13 +3,14 @@
 Units object is the database of all known units.
 	v: [m,kg,s,A,K,mol,cd,$]      represents the vector of powers of basic units, for example N=kg*m/s^2, therefore v = [1,1,-2,0,0,0,0]
 	id: string                    something unique. You can use the UnitConflicts() global function to detect possible id conflicts
-	name: array                   defines full name or even a short description for every language mutation
+	alias: array                  array of strings - other ids that reference the unit
+	name: object                  defines full name or even a short description for every language mutation
 	k: number                     this coeficient equates value of the unit in basic units. For example minute = 60 seconds, therefore min.k = 60
 	SI: true/false                self-explanatory. This attribute doesn't really do anything, it's merely informational. Perhaps it's redundant, since all SI derived units have k = 1
 	basic: true/false             whether it's basic SI unit or derived SI. Basic SI units are of utmost importance to the code, don't ever change them!
 	prefix: all/+/-/undefined     it means: all prefixes allowed / only bigger than one allowed / lesser than one / prefixes disallowed. It's not really a restriction, just a recommendation.
 	constant: true/undefined      whether it is a constant. If true, attributes SI, basic and prefix are ignored. Prefix is disallowed.
-	note: a note that conveys anything important beyond description - what is noteworthy or weird about this unit or its usage. Implemented as an array of strings for all language mutations.
+	note: a note that conveys anything important beyond description - what is noteworthy or weird about this unit or its usage. Implemented as an object of strings for all language mutations.
 */
 
 const Units = [
@@ -24,7 +25,7 @@ const Units = [
 	{v: [0,0,0,0,0,1,0,0], id: 'mol', name: {cz: 'mol', en: 'mole'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,0,0,0,0,0,1,0], id: 'cd', name: {cz: 'kandela', en: 'candela'}, k:1, SI: true, basic: true, prefix: 'all'},
 	//USD arbitrarily set as basic unit. Reference to this unit is harcoded in currency loading!
-	{v: [0,0,0,0,0,0,0,1], id: 'USD', name: {cz: 'americký dolar', en: 'US dollar'}, k:1, basic: true, prefix: '+'},
+	{v: [0,0,0,0,0,0,0,1], id: 'USD', alias:['$', 'usd'], name: {cz: 'americký dolar', en: 'US dollar'}, k:1, basic: true, prefix: '+'},
 
 //ALL OTHER UNITS as {id: 'identifier',v: [0,0,0,0,0,0,0], name: {cz: 'CZ', en: 'EN'}, k:1, SI: true, prefix: 'all'},
 	{v: [0,0,0,0,0,0,0,0], id: '%', name: {cz: 'procento', en: 'percent'}, k:1e-2},
@@ -32,7 +33,7 @@ const Units = [
 	{v: [0,0,0,0,0,0,0,0], id: 'rad', name: {cz: 'radián', en: 'radian'}, k:1, SI: true, prefix: '-', note: {
 		cz: 'Úhel považuji za bezrozměrné číslo, čili radián je identický s číslem 1.',
 		en: 'I consider angle units to be dimensionless, with radian being identical to number 1.'}},
-	{v: [0,0,0,0,0,0,0,0], id: '°', name: {cz: 'stupeň', en: 'degree'}, k:Math.PI/180},
+	{v: [0,0,0,0,0,0,0,0], id: '°', alias:['deg'], name: {cz: 'stupeň', en: 'degree'}, k:Math.PI/180},
 	{v: [0,0,0,0,0,0,0,0], id: 'gon', name: {cz: 'gradián', en: 'gradian'}, k:Math.PI/200},
 	{v: [0,0,-1,0,0,0,0,0], id: 'Hz', name: {cz: 'hertz', en: 'hertz'}, k:1, SI: true, prefix: 'all'},
 	{v: [1,1,-2,0,0,0,0,0], id: 'N', name: {cz: 'newton', en: 'newton'}, k:1, SI: true, prefix: 'all'},
@@ -63,12 +64,12 @@ const Units = [
 
 	{v: [0,0,1,0,0,0,0,0], id: 'min', name: {cz: 'minuta', en: 'minute'}, k:60},
 	{v: [0,0,1,0,0,0,0,0], id: 'h', name: {cz: 'hodina', en: 'hour'}, k:3600},
-	{v: [0,0,1,0,0,0,0,0], id: 'd', name: {cz: 'den', en: 'day'}, k:3600*24},
+	{v: [0,0,1,0,0,0,0,0], id: 'd', alias:['day'], name: {cz: 'den', en: 'day'}, k:3600*24},
 	{v: [0,0,1,0,0,0,0,0], id: 'week', name: {cz: 'týden', en: 'week'}, k:3600*24*7},
-	{v: [0,0,1,0,0,0,0,0], id: 'month', name: {cz: 'průměrný měsíc', en: 'average month'}, k:3600*24*30.436875, note: {
+	{v: [0,0,1,0,0,0,0,0], id: 'month', alias:['mth'], name: {cz: 'průměrný měsíc', en: 'average month'}, k:3600*24*30.436875, note: {
 		cz: 'Vypočten z gregoriánského roku.',
 		en: 'Calculated from gregorian year.'}},
-	{v: [0,0,1,0,0,0,0,0], id: 'yr', name: {cz: 'gregoriánský rok', en: 'gregorian year'}, k:3600*24*365.2425, note: {
+	{v: [0,0,1,0,0,0,0,0], id: 'yr', alias:['year'], name: {cz: 'gregoriánský rok', en: 'gregorian year'}, k:3600*24*365.2425, note: {
 		cz: 'Pokud si nejste jisti, který rok použít, zvolte tento. Juliánský rok je zastaralý.',
 		en: 'If you are unsure which year to use, pick this one. Julian year is obsolete.'}},
 	{v: [0,0,1,0,0,0,0,0], id: 'jyr', name: {cz: 'juliánský rok', en: 'julian year'}, k:3600*24*365.25},
@@ -107,27 +108,23 @@ const Units = [
 	{v: [0,1,0,0,0,0,0,0], id: 'oz', name: {cz: 'once', en: 'ounce'}, k:28.349523e-3},
 	{v: [0,1,0,0,0,0,0,0], id: 'ozt', name: {cz: 'trojská unce', en: 'troy ounce'}, k:31.1034768e-3},
 	{v: [0,1,0,0,0,0,0,0], id: 'ct', name: {cz: 'karát', en: 'carat'}, k:200e-6},
-	{v: [0,1,0,0,0,0,0,0], id: 'lb', name: {cz: 'libra', en: 'pound'}, k:0.45359237},
+	{v: [0,1,0,0,0,0,0,0], id: 'lb', alias:['lbs'], name: {cz: 'libra', en: 'pound'}, k:0.45359237},
 	{v: [0,1,0,0,0,0,0,0], id: 'st', name: {cz: 'kámen', en: 'stone'}, k:6.35029318},
 	{v: [0,1,0,0,0,0,0,0], id: 'slug', name: {cz: 'slug', en: 'slug'}, k:14.593903},
 	{v: [0,1,0,0,0,0,0,0], id: 'ts', name: {cz: 'krátká tuna', en: 'short ton'}, k:907.18474},
 	{v: [0,1,0,0,0,0,0,0], id: 'tl', name: {cz: 'imperiální tuna', en: 'long ton'}, k:1016},
-	{v: [0,1,0,0,0,0,0,0], id: 'u', name: {cz: 'atomová hmotnostní konstanta', en: 'unified atomic mass unit'}, k:1.660539040e-27, note: {
-		cz: 'Totéž co dalton (Da).',
-		en: 'Same as dalton (Da).'}},
-	{v: [0,1,0,0,0,0,0,0], id: 'Da', name: {cz: 'dalton', en: 'dalton'}, k:1.660539040e-27, note: {
-		cz: 'Totéž co atomová hmotnostní konstanta (u).',
-		en: 'Same as unified atomic mass unit (u).'}},
+	{v: [0,1,0,0,0,0,0,0], id: 'u', alias:['Da'], name: {cz: 'dalton (atomová hmotnostní konstanta)', en: 'dalton (unified atomic mass unit)'}, k:1.660539040e-27},
 
 	{v: [1,0,-1,0,0,0,0,0], id: 'mph', name: {cz: 'míle za hodinu', en: 'mile per hour'}, k:1609.344/3600},
 	{v: [1,0,-1,0,0,0,0,0], id: 'kn', name: {cz: 'uzel', en: 'knot'}, k:1852/3600},
 
 	{v: [1,1,-2,0,0,0,0,0], id: 'dyn', name: {cz: 'dyn', en: 'dyne'}, k:1e-5, prefix: 'all'},
 
+	{v: [2,1,-2,0,0,0,0,0], id: 'Wh', name: {cz: 'watthodina', en: 'watt-hour'}, k:3600, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'eV', name: {cz: 'elektronvolt', en: 'electronvolt'}, k:1.60217653e-19, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'erg', name: {cz: 'erg', en: 'erg'}, k:1e-7, SI: true, prefix: 'all'},
-	{v: [2,1,-2,0,0,0,0,0], id: 'Btu', name: {cz: 'britská tepelná jednotka', en: 'british thermal unit'}, k:1055.05585, prefix: 'all'},
-	{v: [2,1,-2,0,0,0,0,0], id: 'Chu', name: {cz: 'celsiova jednotka tepla', en: 'celsius heat unit'}, k: 1.899101e3, prefix: 'all'},
+	{v: [2,1,-2,0,0,0,0,0], id: 'Btu', alias:['BTU'], name: {cz: 'britská tepelná jednotka', en: 'british thermal unit'}, k:1055.05585, prefix: 'all'},
+	{v: [2,1,-2,0,0,0,0,0], id: 'Chu', alias:['CHU'], name: {cz: 'celsiova jednotka tepla', en: 'celsius heat unit'}, k: 1.899101e3, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'thm', name: {cz: 'therm', en: 'therm'}, k:1055.05585e5, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'cal', name: {cz: 'kalorie', en: 'calorie'}, k:4.184, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'TNT', name: {cz: 'tuna ekvivalentu TNT', en: 'ton of TNT equivalent'}, k:4.184e9, prefix: 'all'},
@@ -145,7 +142,7 @@ const Units = [
 	{v: [-1,1,-2,0,0,0,0,0], id: 'mmHg', name: {cz: 'milimetr rtuťového sloupce', en: 'milimetre of mercury'}, k:133.322387415, note: {
 		cz: 'Mezi mmHg a Torr je nepatrný rozdíl.',
 		en: 'There is a negligible difference between mmHg and Torr.'}},
-	{v: [-1,1,-2,0,0,0,0,0], id: 'Torr', name: {cz: 'torr', en: 'torr'}, k:101325/760, prefix: 'all', note: {
+	{v: [-1,1,-2,0,0,0,0,0], id: 'Torr', alias:['torr'], name: {cz: 'torr', en: 'torr'}, k:101325/760, prefix: 'all', note: {
 		cz: 'Mezi mmHg a Torr je nepatrný rozdíl.',
 		en: 'There is a negligible difference between mmHg and Torr.'}},
 	{v: [-1,1,-2,0,0,0,0,0], id: 'psi', name: {cz: 'libra na čtvereční palec', en: 'pound per square inch'}, k:6894.757, prefix: 'all'},
@@ -164,14 +161,14 @@ const Units = [
 	{v: [-3,-1,4,2,0,0,0,0], id: '_E', name: {cz: 'permitivita vakua', en: 'vacuum permittivity'}, k:8.854187817e-12, constant: true},
 	{v: [0,0,1,1,0,0,0,0], id: '_q', name: {cz: 'elementární náboj', en: 'elementary charge'}, k:1.6021766208e-19, constant: true},
 	{v: [0,0,0,0,0,-1,0,0], id: '_NA', name: {cz: 'Avogadrova konstanta', en: 'Avogadro constant'}, k:6.02214085e23, constant: true},
-	{v: [0,0,0,0,0,0,0,0], id: '_pi', name: {cz: 'pí (matematická)', en: 'pi (mathematical)'}, k:Math.PI, constant: true},
-	{v: [0,0,0,0,0,0,0,0], id: '_e', name: {cz: 'e (matematická)', en: 'e (mathematical)'}, k:Math.E, constant: true}
+	{v: [0,0,0,0,0,0,0,0], id: '_pi', name: {cz: 'Ludolfovo číslo', en: 'Archimedes\' constant'}, k:Math.PI, constant: true},
+	{v: [0,0,0,0,0,0,0,0], id: '_e', name: {cz: 'Eulerovo číslo', en: 'Euler\'s number'}, k:Math.E, constant: true}
 ];
 
 //currencies - their conversion ratio to dollar is unknown and will be obtained by currencies.php
 //k and v will be filled later (v is always the same, k is obtained from API)
 const Currencies = [
-	{id: 'EUR', name: {cz: 'euro', en: 'Euro'}},
+	{id: 'EUR', alias:['€'], name: {cz: 'euro', en: 'Euro'}},
 	{id: 'AED', name: {cz: 'dirham Spojených arabských emirátů', en: 'United Arab Emirates Dirham'}},
 	{id: 'ARS', name: {cz: 'argentinské peso', en: 'Argentine Peso'}},
 	{id: 'AUD', name: {cz: 'australský dolar', en: 'Australian Dollar'}},
@@ -180,16 +177,16 @@ const Currencies = [
 	{id: 'CAD', name: {cz: 'kanadský dolar', en: 'Canadian Dollar'}},
 	{id: 'CHF', name: {cz: 'švýcarský frank', en: 'Swiss Franc'}},
 	{id: 'CNY', name: {cz: 'čínský juan', en: 'Chinese Yuan'}},
-	{id: 'CZK', name: {cz: 'česká koruna', en: 'Czech Republic Koruna'}},
+	{id: 'CZK', alias:['Kč'], name: {cz: 'česká koruna', en: 'Czech Republic Koruna'}},
 	{id: 'DKK', name: {cz: 'dánská koruna', en: 'Danish Krone'}},
-	{id: 'GBP', name: {cz: 'britská libra', en: 'British Pound Sterling'}},
+	{id: 'GBP', alias:['£'], name: {cz: 'britská libra', en: 'British Pound Sterling'}},
 	{id: 'HKD', name: {cz: 'hongkongský dolar', en: 'Hong Kong Dollar'}},
 	{id: 'HRK', name: {cz: 'chorvatská kuna', en: 'Croatian Kuna'}},
 	{id: 'HUF', name: {cz: 'maďarský forint', en: 'Hungarian Forint'}},
 	{id: 'IDR', name: {cz: 'indonéská rupie', en: 'Indonesian Rupiah'}},
 	{id: 'ILS', name: {cz: 'nový izraelský šekel', en: 'Israeli New Sheqel'}},
 	{id: 'INR', name: {cz: 'indická rupie', en: 'Indian Rupee'}},
-	{id: 'JPY', name: {cz: 'japonský jen', en: 'Japanese Yen'}},
+	{id: 'JPY', alias: ['¥'], name: {cz: 'japonský jen', en: 'Japanese Yen'}},
 	{id: 'KRW', name: {cz: 'jihokorejský won', en: 'South Korean Won'}},
 	{id: 'MXN', name: {cz: 'mexické peso', en: 'Mexican Peso'}},
 	{id: 'NOK', name: {cz: 'norská koruna', en: 'Norwegian Krone'}},

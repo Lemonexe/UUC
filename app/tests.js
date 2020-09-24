@@ -93,6 +93,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	fullTest('l^(1/3)', 'dm', 0, 1, 1e-3);
 	fullTest('_e^(30 kJ/mol / (_R * 298 K))', '', 0, 181309.23, 0.1);
 	fullTest('8 Mt/yr / (900 kg/m3)', 'kbbl/d', 0, 153.07481, 1e-3);
+	fullTest('Da', 'u', 0, 1, 1e-6);
 
 !silent && console.log('\nFull conversion warnings');
 	fullTest('m3', 'm2', 1);

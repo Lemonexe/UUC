@@ -6,7 +6,11 @@
 
 //enter the Convert object as reference
 function Convert_parse(convert, text) {
-	const ids = Units.map(item => item.id);
+	//create another database that maps each id and alias to the original unit object
+	const UnitIdMap = Units.map(item => ({id: item.id, ref: item})); //first just map the main ids
+	Units.forEach(o => o.alias && o.alias.forEach(a => UnitIdMap.push({id: a, ref: o}))); //and push all aliases
+
+	const ids = UnitIdMap.map(item => item.id);
 	const prefs = Prefixes.map(item => item.id);
 	text = syntaxCheck(text);
 	return crawl(text);
@@ -142,15 +146,15 @@ function Convert_parse(convert, text) {
 		let j = -1;
 		//not found? There might be a prefix. First letter is stripped and we search for units without it. We also search the prefixes for the first letter
 		if(i === -1) {
-			i = ids.indexOf(text.slice(1))
+			i = ids.indexOf(text.slice(1));
 			j = prefs.indexOf(text[0]);
 
 			//if we find both, we add the unit with its prefix and check whether it is appropriately used. If we didn't find i or j, the unit is unknown.
 			if(i === -1 || j === -1) {throw convert.msgDB['ERR_unknownUnit'](text);}
-			convert.checkPrefix(Prefixes[j], Units[i]);
-			return new convert.Unit(Prefixes[j], Units[i], pow);
+			convert.checkPrefix(Prefixes[j], UnitIdMap[i].ref);
+			return new convert.Unit(Prefixes[j], UnitIdMap[i].ref, pow);
 		}
 		//unit was identified as is, and will be added with prefix equal to 1
-		return new convert.Unit(1, Units[i], pow);
+		return new convert.Unit(1, UnitIdMap[i].ref, pow);
 	}
 }
