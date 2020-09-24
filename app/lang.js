@@ -104,15 +104,14 @@ langService.table = {
 	'WARN_prefixes_word0': {cz: 'žádné', en: 'any'},
 	'WARN_prefixes_word+': {cz: 'zmenšující', en: 'decreasing'},
 	'WARN_prefixes_word-': {cz: 'zvětšující', en: 'increasing'},
-	'WARN_targetNumber': {
-		cz: 'VAROVÁNÍ 202: Neočekávané číslo v cílovém poli, ale bude s ním tedy počítáno',
-		en: 'WARNING 202: Unexpected number in the target field, but it will included in calculation'
-	},
 	'WARN_target_dim_mismatch': {
-		cz: faults => `VAROVÁNÍ 203: Rozměry jednotek ze vstupu a cíle nesouhlasí. Tyto základní jednotky byly přidány: ${faults.join(', ')}.`,
-		en: faults => `WARNING 203: Dimensions of units from input and target don\'t match. These basic units have been added: ${faults.join(', ')}.`
+		cz: faults => `VAROVÁNÍ 202: Rozměry jednotek ze vstupu a cíle nesouhlasí. Tyto základní jednotky byly přidány: ${faults.join(', ')}.`,
+		en: faults => `WARNING 202: Dimensions of units from input and target don\'t match. These basic units have been added: ${faults.join(', ')}.`
 	},
-	//TODO implement
+	'WARN_targetNumber': {
+		cz: 'VAROVÁNÍ 203: Neočekávané číslo v cílovém poli, ale bude s ním tedy počítáno',
+		en: 'WARNING 203: Unexpected number in the target field, but it will included in calculation'
+	},
 	'WARN_separators': {
 		cz: 'VAROVÁNÍ 204: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.',
 		en: 'WARNING 204: Too many target unit separators have been found (>, to or into). Only the first definiton of target units was accepted.'

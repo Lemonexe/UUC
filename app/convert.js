@@ -15,7 +15,7 @@ function Convert() {
 	const msgDB = {};
 	//these messages must be supplied before using convert. Some of these are just strings, some are functions with specific arguments. See lang.js
 	['ERR_brackets_missing', 'ERR_operators', 'ERR_brackets_empty', 'ERR_NaN', 'ERR_unitPower', 'ERR_unknownUnit', 'ERR_operator_misplaced', 'ERR_power_dim', 'ERR_dim_mismatch', 'ERR_special_chars',
-		'WARN_prefixes', 'WARN_prefixes_word0', 'WARN_prefixes_word+', 'WARN_prefixes_word-', 'WARN_targetNumber', 'WARN_target_dim_mismatch',
+		'WARN_prefixes', 'WARN_prefixes_word0', 'WARN_prefixes_word+', 'WARN_prefixes_word-', 'WARN_target_dim_mismatch', 'WARN_targetNumber', 'WARN_separators',
 		'ERRC_equalSigns', 'ERRC_varName', 'ERRC_argCount', 'ERRC_unreadableLine'
 	].forEach(o => msgDB[o] = null);
 	this.msgDB = msgDB;
@@ -77,7 +77,6 @@ function Convert() {
 
 	//execute a conversion from input & target. It simply operates on this.convert() with the added value of exception handling and message system
 	this.fullConversion = function(input, target) {
-		this.clearStatus();
 		const res = {}; //output object
 
 		try {res.output = this.convert(input, target);}
@@ -297,5 +296,20 @@ function Convert() {
 		const opening = text.split('(').length - 1;
 		const closing = text.split(')').length - 1;
 		return opening > closing ? text + ')'.repeat(opening-closing) : text;
+	};
+
+	//parse one string to a Q instance in order to filter reference units
+	this.getReference = function(text) {
+		try {
+			let id;
+			let obj = Convert_parse(this, text);
+			(obj.length === 1 && obj[0] instanceof this.Unit) && (id = obj[0].unit.id); //expression consists of single unit - save the id!
+			obj = this.rationalizeField(obj);
+			obj = this.reduceField(obj);
+			//this.clearStatus();
+			id && (obj.id = id); //tag the final reduced Q with matched id
+			return obj;
+		}
+		catch(err) {return false;} //no match
 	};
 }

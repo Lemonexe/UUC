@@ -12,7 +12,7 @@ Units object is the database of all known units.
 	note: a note that conveys anything important beyond description - what is noteworthy or weird about this unit or its usage. Implemented as an array of strings for all language mutations.
 */
 
-let Units = [
+const Units = [
 //EIGHT BASIC UNITS
 	{v: [1,0,0,0,0,0,0,0], id: 'm', name: {cz: 'metr', en: 'metre'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,1,0,0,0,0,0,0], id: 'kg', name: {cz: 'kilogram', en: 'kilogram'}, k:1, SI: true, basic: true, note: {
@@ -170,7 +170,7 @@ let Units = [
 
 //currencies - their conversion ratio to dollar is unknown and will be obtained by currencies.php
 //k and v will be filled later (v is always the same, k is obtained from API)
-let Currency = [
+const Currencies = [
 	{id: 'EUR', name: {cz: 'euro', en: 'Euro'}},
 	{id: 'AED', name: {cz: 'dirham Spojených arabských emirátů', en: 'United Arab Emirates Dirham'}},
 	{id: 'ARS', name: {cz: 'argentinské peso', en: 'Argentine Peso'}},

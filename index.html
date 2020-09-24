@@ -84,23 +84,17 @@
 	</div>
 
 	<div ng-switch-when="help">
-		<cz>Zde můžete napsat jednotku (či její název), aby byl seznam omezen na jednotky se stejným rozměrem (1 pro bezrozměrné), nebo zadejte _ pro seznam konstant:</cz>
-		<en>You can write a unit (or its name) here to filter the ones with same dimension (1 for dimensionless), or write _ to list constants:</en>
-		<br>
-		<input type="text" class="inputBox" ng-model="CS.filter" ng-change="listenForHelp()">
-		<h2><cz>Předpony (mocniny)</cz><en>Prefixes (exponents)</en></h2>
-		{{prefixText}}
-
 		<cz>
-			<h2>Jednotky</h2>
-			<p>V databázi je {{databaseCount}} položek (včetně {{constantCount}} konstant), přičemž {{Units.length}} je právě zobrazeno.<br>
-			Jednotky měn byly načteny z externí stránky v {{currencyTimestamp}}.</p>
+			V databázi je {{databaseCount}} položek, z toho {{Units.length}} je právě zobrazeno.<br>
+			Jednotky měn byly načteny z externí stránky v {{currencyTimestamp}}.<br><br>
+			Zde můžete napsat jednotku (či její název), aby byl seznam omezen na jednotky se stejným rozměrem (1 pro bezrozměrné, _ pro seznam konstant):<br>
 		</cz>
 		<en>
-			<h2>Units</h2>
-			<p>There are {{databaseCount}} items in database (including {{constantCount}} constants) while {{Units.length}} items are currently listed.<br>
-			Currency units have been loaded from external website at {{currencyTimestamp}}.</p>
+			There are {{databaseCount}} items in database with {{Units.length}} currently listed.<br>
+			Currency units have been loaded from external website at {{currencyTimestamp}}.<br><br>
+			You can write a unit (or its name) here to filter the ones with same dimension (1 for dimensionless, _ for list of constants):<br>
 		</en>
+		<input type="text" class="inputBox" ng-model="CS.filter" ng-change="listenForHelp()">
 
 		<p ng-repeat="u in Units">
 			<span class="reference" ng-class="{highlight: $index === 0 && highlightFirst}"><b>{{u.name[CS.lang]}}</b>{{buildUnitEntry(u)}}</span>
@@ -110,7 +104,7 @@
 
 	<div ng-switch-when="converter">
 		<div id="convertContainer">
-			<a class="fakeLink" ng-click="flip()" style="position: absolute; right: 0px; top: 47px; font-size: 18px; text-decoration: none;">⇅</a>
+			<a ng-click="flip()" style="position: absolute; right: 0px; top: 47px; font-size: 18px; cursor: pointer;">⇅</a>
 			<b><cz>Vstup:</cz><en>Input:</en></b><br>
 			<input type="text" class="inputBox" ng-model="CS.input" ng-keyup="listenForConvert($event)" autofocus><br>
 

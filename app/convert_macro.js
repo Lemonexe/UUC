@@ -111,7 +111,7 @@ function Convert_macro(code) {
 				let found = false;
 				const fids = functions.map(f => f.id).sort(sortCb); //function ids
 				for(let v of fids) {
-					const reg = new RegExp('^' + v.replace('$', '\\$') + '\\(([^)]*)\\)'); //regex to match a function call and capture arguments 
+					const reg = new RegExp('^' + v.replace('$', '\\$') + '\\(([^)]*)\\)'); //regex to match a function call and capture arguments
 					const m = line.match(reg);
 					if(!m) {continue;}
 					found = true;

@@ -1,9 +1,5 @@
 <<<TODO>>>
-!! currencies and references
-controller cleanup
-
-pokud při psaní input dám > nebo " to " nebo " into ", tak to automaticky přepne na target (a smaže tento str)
-	tohle by mělo být v controlleru
+unit reference system
 
 CSS & view overhaul
 	reference cleanup

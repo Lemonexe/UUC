@@ -71,7 +71,7 @@ input[type="button"] {cursor: pointer;}
 
 /*REFERENCES*/
 .reference {white-space: pre-wrap;} /*just a dirty trick to allow angular generated line breaks even without ng-sanitize*/
-.highlight {background-color: #ffffbb;}
+.highlight {background-color: #ffff90;}
 .example {
 	position: absolute;
 	left: 230px;
