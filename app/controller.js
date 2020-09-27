@@ -36,12 +36,12 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 	//just an informative string to show how to bind UUC as a search engine in Chrome
 	$scope.searchEngineTemplate = window.location.origin.replace(/\/$/, '') + window.location.pathname.replace(/\/$/, '') + '/#%s';
-
 	//list of available prefixes
 	$scope.prefixText = Prefixes.map(o => `${o.id} (${o.v})`).join(', ');
-
 	//link for github documentation on macros
 	$scope.documentation = 'https://github.com/Lemonexe/UUC/blob/master/_dev/macro.md';
+	//hide image sources from dumb robots
+	$scope.imgSrcCZ = 'res/CZ.png'; $scope.imgSrcEN = 'res/EN.png';
 
 	//initialize conversion
 	$scope.fullConversion = function() {
@@ -107,7 +107,8 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		//search for a specific dimension
 		if(fs !== '') {
 			//parse filter string into Q instance, which may also contain unit id
-			const q = convert.getReference(fs);
+			const q = convert.parseQ(fs);
+			convert.clearStatus();
 
 			//if unit wasn't successfully parsed, program tries to find unit by name using the literal value of filter text field
 			if(!q) {
@@ -202,7 +203,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		let hash = decodeURIComponent(window.location.hash).replace(/^.*#/, '');
 		if(!hash) {return;}
 		//'>', 'to' or 'into' is used to delimit input and target
-		hash = hash.replace(/to|into/g, '>');
+		hash = hash.replace(/ to | into /g, '>');
 		hash = hash.split(/>+/);
 		hash.length > 2 && convert.warn(convert.msgDB['WARN_separators']);
 

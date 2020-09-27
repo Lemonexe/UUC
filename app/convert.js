@@ -299,14 +299,13 @@ function Convert() {
 	};
 
 	//parse one string to a Q instance in order to filter reference units
-	this.getReference = function(text) {
+	this.parseQ = function(text) {
 		try {
 			let id;
 			let obj = Convert_parse(this, text);
 			(obj.length === 1 && obj[0] instanceof this.Unit) && (id = obj[0].unit.id); //expression consists of single unit - save the id!
 			obj = this.rationalizeField(obj);
 			obj = this.reduceField(obj);
-			this.clearStatus();
 			id && (obj.id = id); //tag the final reduced Q with matched id
 			return obj;
 		}

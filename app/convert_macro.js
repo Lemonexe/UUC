@@ -15,7 +15,7 @@ function Convert_macro(code) {
 		function cleanupCb(line) {
 			line = line.trim();
 			const c = line.search('//'); //find line comment
-			if(c > -1) {line = line.slice(0, c);} //cut the line comment
+			if(line.search('<js>') !== 0 && c > -1) {line = line.slice(0, c);} //cut the line comment
 			return line;
 		}
 		//callback to sort strings from longest to shortest
@@ -57,15 +57,15 @@ function Convert_macro(code) {
 
 	//MACRO STATE
 		//available functions in simple mode
-		const functions = [
+		const functions = {
 			//write all arguments as new messages
-			{id: 'write', argsMin: 1, f: function() {
+			write: {argsMin: 1, f: function() {
 				for(let i = 0; i < arguments.length; i++) {
 					that.messages.push(arguments[i]);
 				}
 			}},
 			//display 'input' string converted to 'target' with params and append the result to the last message
-			{id: 'convert', argsMin: 1, argsMax: 3, f: function(input, target, params) {
+			convert: {argsMin: 1, argsMax: 3, f: function(input, target, params) {
 				const m = that.messages;
 				input = expand(input); target = expand(target);
 				let res = that.convert(input, target);
@@ -77,7 +77,7 @@ function Convert_macro(code) {
 				if(m.length === 0) {m[0] = '';}
 				m[m.length-1] += (res.num2 || res.num) + ' ' + res.dim;
 			}}
-		];
+		};
 
 		//current simple mode variables as Q instances as 'varName': Q instance
 		const variables = {};
@@ -109,17 +109,16 @@ function Convert_macro(code) {
 			//line is contains a function call, try to identify it it
 			else {
 				let found = false;
-				const fids = functions.map(f => f.id).sort(sortCb); //function ids
-				for(let v of fids) {
+				for(let v of Object.keys(functions)) {
 					const reg = new RegExp('^' + v.replace('$', '\\$') + '\\(([^)]*)\\)'); //regex to match a function call and capture arguments
 					const m = line.match(reg);
 					if(!m) {continue;}
 					found = true;
-					const f = functions.find(o => o.id === v); //get the corresponding function
+					const f = functions[v]; //get the corresponding function
 					const args = m[1].split(';').filter(o => o.length > 0); //split arguments
 					//a really messy code for a messy error
 					const errCond = (f.hasOwnProperty('argsMin') && args.length < f.argsMin) || (f.hasOwnProperty('argsMax') && args.length > f.argsMax);
-					if(errCond) {throw that.msgDB['ERRC_argCount'](line, f.id, f.argsMin || 0, f.argsMax || 'n', args.length);}
+					if(errCond) {throw that.msgDB['ERRC_argCount'](line, v, f.argsMin || 0, f.argsMax || 'n', args.length);}
 					//finally call the function
 					f.f.apply(null, args);
 					break;

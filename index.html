@@ -20,8 +20,8 @@
 	</head>
 	<body ng-mousemove="mouseMove($event)" ng-mouseup="mouseUp()" ng-mouseleave="mouseLeave($event)">
 <div id="lang">
-	<img src="res/CZ.png" ng-click="changeLang('cz')" style="width: 45px; height: 30px;">
-	<img src="res/EN.png" ng-click="changeLang('en')" style="width: 45px; height: 30px;">
+	<img ng-src="{{imgSrcCZ}}" ng-click="changeLang('cz')" style="width: 45px; height: 30px;">
+	<img ng-src="{{imgSrcEN}}" ng-click="changeLang('en')" style="width: 45px; height: 30px;">
 </div>
 
 <h1>Ultimate Unit Converter II</h1>
@@ -148,14 +148,14 @@
 
 		<cz>
 			<p>
-				Hotovo - právě jste definovali klíčové slovo <i>uuc</i> :-)<br>
+				Hotovo – právě jste definovali klíčové slovo <i>uuc</i> :-)<br>
 				Nyní stačí otevřít nový panel, napsat uuc, <i>napsat mezeru</i>, pokračovat psaním zadání a stisknutím Enter.<br>
 				Cílové jednotky se zde specifikují znakem &gt; nebo slovy <i>to</i> či <i>into</i><br>
 				např. 3.7 kPa &nbsp;&gt;&nbsp; Torr
 			</p>
 		</cz><en>
 			<p>
-				Done - you have defined <i>uuc</i> as a keyword :-)<br>
+				Done – you have defined <i>uuc</i> as a keyword :-)<br>
 				Now you can simply open a new tab, write uuc, <i>type a space</i>, and continue by writing the input and pressing Enter.<br>
 				Target units are specified by character &gt; or by words <i>to</i> or <i>into</i><br>
 				e.g. 3.7 kPa &nbsp;&gt;&nbsp; Torr
