@@ -1,15 +1,4 @@
-<<<TODO>>>
-CSS & view overhaul
-	reference cleanup
-	change intro to krásný interaktivní tutoriál
-		odstranit EXAMPLES
-			btw span class example má problém se zalamováním při malé šířce obrazovky
-			přidat Ncm za jiných podmínek
-		dát tam všechno infoprefixes (odstranit z reference)
-
 save history
-
-znovu zkusit zjistit jestli nejde nějak udělat keyword v FF, edge
 
 TODO README AGAIN
 	macro dokumentace.md

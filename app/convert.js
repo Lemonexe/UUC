@@ -306,7 +306,7 @@ function Convert() {
 			(obj.length === 1 && obj[0] instanceof this.Unit) && (id = obj[0].unit.id); //expression consists of single unit - save the id!
 			obj = this.rationalizeField(obj);
 			obj = this.reduceField(obj);
-			//this.clearStatus();
+			this.clearStatus();
 			id && (obj.id = id); //tag the final reduced Q with matched id
 			return obj;
 		}

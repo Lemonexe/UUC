@@ -46,6 +46,9 @@ const langService = {
 langService.table = {
 	'Převést': {en: 'Convert'},
 	'Spustit (F2)': {en: 'Run (F2)'},
+	'Dále': {en: 'Next'},
+	'Zavřít': {en: 'Close'},
+	'Dokumentace': {en: 'Documentation'},
 
 	'Konstanta.': {en: 'Constant.'},
 	'Základní, ': {en: 'Basic, '},

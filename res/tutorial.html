@@ -1,0 +1,119 @@
+<div ng-switch="CS.tutorial.step">
+	<div id="tutorialBar" ng-mousedown="dragStart($event)"><input type="button" value="X" ng-click="TF.close()"></div>
+	<div class="tutorialSection" ng-switch-when="0">
+		<cz>
+			<p>Právě se nacházíme v hlavní části UUC – záložce Převodník.<br>Zde můžete napsat výraz do textového pole Vstup a stisknout tlačítko Převést nebo klávesu Enter: <a class="fakeLink" ng-click="TF.ex('SI')">příklad</a></p>
+			<p>Převod takto proběhne do základních jednotek SI, můžete však vyplnit textové pole Cílové jednotky pro určení výstupních jednotek: <a class="fakeLink" ng-click="TF.ex('simple')">příklad</a></p>
+			<p>Jak je vidět, při převodu můžete (avšak nemusíte) specifikovat číslo.<br>Pozor – jednotky jsou citlivé na velikost písmen (z důvodu kolizí): <a class="fakeLink" ng-click="TF.ex('wrongCase')">příklad</a></p>
+			<p>Pozn.: okno tutoriálu můžete přesouvat pomocí lišty či zcela zavřít</p>
+		</cz>
+		<en>
+			<p>Currently we are in the main part of UUC – the Converter tab.<br>Here you can enter an expression into the Input text field and press the Convert button or Enter key: <a class="fakeLink" ng-click="TF.ex('SI')">example</a></p>
+			<p>Input will be converted into basic SI units by default, but you can fill out the Target units text field in order to specify the output units: <a class="fakeLink" ng-click="TF.ex('simple')">example</a></p>
+			<p>As you can see, you may (but needn't) specify a number in the conversion.<br>Caution – units are case-sensitive (due to collisions): <a class="fakeLink" ng-click="TF.ex('wrongCase')">example</a></p>
+			<p>Note: you can move the tutorial window using the top bar, or close it completely</p>
+		</en>
+		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step1()">
+	</div>
+	<div class="tutorialSection" ng-switch-when="1">
+		<cz>
+			<p>V záložce Reference naleznete vyčerpávající seznam všech jednotek.</p>
+			<p>Pro snažší vyhledávání lze seznam filtrovat pomocí rozměru – do textového pole lze napsat jednotku (např. kJ), výraz (např. N/m2) nebo název (např. dolar).</p>
+			<p>Ano, UUC obsahuje také většinu důležitých světových měn!<br>Jejich směnné kurzy jsou aktualizovány každý den pomocí tohoto <a target="_blank" href="http://fixer.io/">API</a>.</p>
+			<p>Jednotky lze použít se standardními předponami SI (v závorce exponenty):<br>{{prefixText}}</p>
+		</cz>
+		<en>
+			<p>In the Reference tab you'll find a comprehensive list of all units.</p>
+			<p>To make things easier, you can filter the list by specifying a dimension – in the text field you can enter a unit (e.g. kJ), expression (e.g. N/m2) or name (e.g. dollar).</p>
+			<p>Yes, UUC also contains the most important world currencies!<br>Their exchange rates are updated daily using this <a target="_blank" href="http://fixer.io/">API</a>.</p>
+			<p>Units can be used with standard SI prefixes (exponents in brackets):<br>{{prefixText}}</p>
+		</en>
+		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step2()">
+	</div>
+	<div class="tutorialSection" ng-switch-when="2">
+		<cz>
+			<p>UUC pro vás provede rozměrovou analýzu a pokud vstup nesouhlasí s cílovými jednotkami, dostanete varování. Výsledek výpočtu pak ignorujte.</p>
+			<p>To je často způsobeno záměnou symbolu jednotky – např. C a F je coulomb a farad, nikoliv stupeň Celsia a Fahrenheita, ty jsou °C a °F: <a class="fakeLink" ng-click="TF.ex('wrongSymbol')">příklad A</a>, <a class="fakeLink" ng-click="TF.ex('okSymbol')">příklad B</a></p>
+			<p>Také to může být způsobeno syntaktickou chybou – např. mK znamená milikelvin, nikoliv metr krát kelvin, ten by byl zapsán jako m*K nebo m K.</p>
+			<p>Pozn.: veličina s rozměrem teploty je vždy zpracována jako <i>rozdíl</i> teploty, nikoliv jako teplota. Viz °C v Referenci pro více informací.</p>
+		</cz>
+		<en>
+			<p>UUC will perform dimensional analysis for you, and if the input doesn't match the target units, you will get a warning. In that case ignore the conversion result.</p>
+			<p>That's often caused by a misunderstood unit symbol – e.g. C and F are coulomb and farad, not degree Celsius and Fahrenheit, those are °C and °F: <a class="fakeLink" ng-click="TF.ex('wrongSymbol')">example A</a>, <a class="fakeLink" ng-click="TF.ex('okSymbol')">B</a></p>
+			<p>It can also be caused by a syntax error – e.g. mK means milikelvin, not metre times kelvin, which would be written as m*K or m K.</p>
+			<p>Note: a quantity with dimension of temperature will always be processed as temperature <i>difference</i>, not as temperature. See °C in Reference for more details.</p>
+		</en>
+		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.nextStep()">
+	</div>
+	<div class="tutorialSection" ng-switch-when="3">
+		<cz>
+			<p>A jaké jsou další možnosti a omezení UUC?</p>
+			<ul>
+				<li>Jednotky můžete skládat násobením * či dělením / (<a class="fakeLink" ng-click="TF.ex('okSymbol')">příklad</a>)</li>
+				<li>Předchozí příklad je možné zpřehlednit použitím závorek (<a class="fakeLink" ng-click="TF.ex('brackets')">příklad</a>)<br>Mezery mohou nahradit * jako znak násobení.</li>
+				<li>Při definici čísla se přijímá desetinná čárka i tečka.<br>Lze použít zápis e123 jako 10<sup>123</sup>: <a class="fakeLink" ng-click="TF.ex('numbers')">příklad</a></li>
+				<li>Přebytečné mezery jsou prostě ignorovány: <a class="fakeLink" ng-click="TF.ex('spaces')">příklad</a></li>
+				<li>Jednotky lze umocňovat pomocí ^čísla nebo jen pomocí čísla: <a class="fakeLink" ng-click="TF.ex('powers')">příklad</a></li>
+				<li>Mocninou může být i výraz v závorce, který však nutně musí být bezrozměrný, viz poločas rozpadu jako <a class="fakeLink" ng-click="TF.ex('radioactiveDecay')">příklad</a></li>
+				<li>Čísel může být ve výpočtu více: <a class="fakeLink" ng-click="TF.ex('volumeABC')">příklad</a></li>
+			</ul>
+		</cz>
+		<en>
+			<p>And what about other features and limitations of UUC?</p>
+			<ul>
+				<li>You can compose units by multiplication * or division / (<a class="fakeLink" ng-click="TF.ex('okSymbol')">example</a>)</li>
+				<li>The previous example can be arranged using brackets (<a class="fakeLink" ng-click="TF.ex('brackets')">example</a>)<br>Spaces can replace * as a multiplication sign.</li>
+				<li>In a number definition both decimal point and comma are accepted.<br>You can use e123 notation as 10<sup>123</sup>: <a class="fakeLink" ng-click="TF.ex('numbers')">example</a></li>
+				<li>Superfluous spaces are simply ignored: <a class="fakeLink" ng-click="TF.ex('spaces')">example</a></li>
+				<li>You can raise units to power using ^number or just number: <a class="fakeLink" ng-click="TF.ex('powers')">example</a></li>
+				<li>Even an expression in brackets can be a power, but it must be dimensionless, see radioactive decay as an <a class="fakeLink" ng-click="TF.ex('radioactiveDecay')">example</a></li>
+				<li>There can be multiple numbers in the calculation: <a class="fakeLink" ng-click="TF.ex('volumeABC')">example</a></li>
+			</ul>
+		</en>
+		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.nextStep()">
+	</div>
+	<div class="tutorialSection" ng-switch-when="4">
+		<cz>
+			<p>Užitečné příklady na specifické použití:</p>
+			<ul>
+				<li>Otáčky z RPM na Hz: <a class="fakeLink" ng-click="TF.ex('RPM')">příklad</a></li>
+				<li>Objem na charakteristický rozměr: <a class="fakeLink" ng-click="TF.ex('charDim')">příklad</a></li>
+				<li>Librostopa na joule, kde _g je normální tíhové zrychlení: <a class="fakeLink" ng-click="TF.ex('lbft')">příklad</a><br>(všechny konstanty v UUC jsou označeny znakem _)</li>
+				<li>Tíha kilogramu na centimetr čtvereční na psi: <a class="fakeLink" ng-click="TF.ex('kgcm2')">příklad</a><br>(psi by stejnou logikou mohlo být zapsáno i jako lb*_g/in2)</li>
+				<li>Poundal na newton: <a class="fakeLink" ng-click="TF.ex('poundal')">příklad</a></li>
+				<li>Přepočet magnetické indukce (B) na magnetickou intenzitu (H): <a class="fakeLink" ng-click="TF.ex('oersted')">příklad</a></li>
+				<li>Úhel jako násobek pí: <a class="fakeLink" ng-click="TF.ex('pi')">příklad</a> (prázdné pole cílové jednotky = radián)</li>
+				<li>V cílových jednotkách může být číslo, jedná se pak o dělení: <a class="fakeLink" ng-click="TF.ex('targetNumber')">příklad</a></li>
+			</ul>
+		</cz>
+		<en>
+			<p>Useful examples for specific use:</p>
+			<ul>
+				<li>Rotation frequency from RPM to Hz: <a class="fakeLink" ng-click="TF.ex('RPM')">example</a></li>
+				<li>Volume to characteristic dimension: <a class="fakeLink" ng-click="TF.ex('charDim')">example</a></li>
+				<li>Foot pound-force to joule, where  _g is standard gravity: <a class="fakeLink" ng-click="TF.ex('lbft')">example</a><br>(all constants available in UUC are marked by _ sign)</li>
+				<li>Kilogram force per square cm to psi: <a class="fakeLink" ng-click="TF.ex('kgcm2')">example</a><br>(psi could also be written as lb*_g/in2 by the same logic)</li>
+				<li>Poundal to newton: <a class="fakeLink" ng-click="TF.ex('poundal')">example</a></li>
+				<li>Calculation of magnetic flux (B) to magnetic field (H): <a class="fakeLink" ng-click="TF.ex('oersted')">example</a></li>
+				<li>Angle as a pi multiple: <a class="fakeLink" ng-click="TF.ex('pi')">example</a> (empty target field is interpreted as radian)</li>
+				<li>There can be a number in target units, which acts as division: <a class="fakeLink" ng-click="TF.ex('targetNumber')">example</a></li>
+			</ul>
+		</en>
+		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step5()">
+	</div>
+	<div class="tutorialSection" ng-switch-when="5">
+		<cz>
+			<p>Pár posledních poznámek před dokončením tutoriálu:</p>
+			<p>Po rozkliknutí <i>Formát výstupu</i> můžete výstupnímu číslu nastavit počet desetinných míst, popř. další možnosti formatování.</p>
+			<p>Pokud používáte prohlížeč Chrome, doporučuji pomocí tohoto <a class="fakeLink" ng-click="changeTab('searchEngine')">návodu</a> nastavit UUC jako klíčové slovo vyhledávače, může to ušetřit dost času.</p>
+			<p>V tutoriálu ještě nebyla zmíněna záložka Makro. Představení všech možností makra je trochu složitější, viz <a target="_blank" ng-href="{{documentation}}">tuto dokumentaci</a> (v angličtině).</p>
+		</cz>
+		<en>
+			<p>Just a few last notes before finishing the tutorial:</p>
+			<p>After expanding <i>Output format</i> you can set decimal points of the output number, or other formatting options.</p>
+			<p>If you are using the Chrome browser, I recommend following these <a class="fakeLink" ng-click="changeTab('searchEngine')">instructions</a> to set UUC as a search engine keyword, it may save you a lot of time.</p>
+			<p>This tutorial hasn't yet touched the Macro tab. Introduction of all macro features is somewhat more complicated, see <a target="_blank" ng-href="{{documentation}}">this documentation</a>.</p>
+		</en>
+		<input type="button" ng-value="'Zavřít'.trans()" ng-click="TF.close()">
+	</div>
+</div>

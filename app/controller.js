@@ -7,22 +7,41 @@ const app = angular.module('UUC', []);
 langService.init();
 app.controller('ctrl', function($scope, $http, $timeout) {
 	//INITIALIZE
-	$scope.CS = CS;
+	$scope.CS = CS; //permanent controller state that is saved
+	$scope.ctrl = {}; //temporary controller state
 	loadCurrencies(execHash);
 
 	//generate ng-style for inputCode textarea
 	$scope.textareaStyle = () => ({width: CS.inputCodeWidth || '350px', height: CS.inputCodeHeight || '150px'});
 	//generate ng-style for currently active tab button
 	$scope.tabButtonStyle = tab => CS.tab === tab ? ({'border-bottom': '2px solid white'}) : ({});
+	//generate ng-style for tutorial window
+	$scope.tutorialStyle = () => ({top: CS.tutorial.top+'px', left: CS.tutorial.left+'px', width: CS.tutorial.width+'px', height: CS.tutorial.height+'px'});
 
+	//get available screen size for resizing purposes
+	const getWindowDimensions = () => ({
+		height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
+		width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+	});
+
+	//switch language, switch tab
 	$scope.changeLang = function(lang) {
 		CS.lang = lang;
 		$scope.populateConvertMessages();
 	};
-	$scope.changeTab = tab => (CS.tab = tab);
+	$scope.changeTab = function(tab) {
+		CS.hideTutorialLink = true;
+		CS.tab = tab;
+	}
 
 	//just an informative string to show how to bind UUC as a search engine in Chrome
 	$scope.searchEngineTemplate = window.location.origin.replace(/\/$/, '') + window.location.pathname.replace(/\/$/, '') + '/#%s';
+
+	//list of available prefixes
+	$scope.prefixText = Prefixes.map(o => `${o.id} (${o.v})`).join(', ');
+
+	//link for github documentation on macros
+	$scope.documentation = 'https://github.com/Lemonexe/UUC/blob/master/_dev/macro.md';
 
 	//initialize conversion
 	$scope.fullConversion = function() {
@@ -147,6 +166,9 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		return text;
 	};
 
+	/*
+		MISC FUNCTIONS
+	*/
 	//load currency exchange rates from a public API (see currencies.php), process the results and append the currencies to Units
 	function loadCurrencies(callback) {
 		$http.get('app/currencies.php').then(function(res) {
@@ -189,6 +211,85 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		CS.target = hash[1] ? hash[1].trim() : '';
 		$scope.fullConversion();
 	}
+
+	/*
+		TUTORIAL functions
+	*/
+	//clear all, start the tutorial window and update outputs
+	$scope.initTutorial = function() {
+		CS.input = ''; CS.target = ''; CS.filter = ''; CS.showParams = false; CS.params.spec = 'auto'; CS.params.exp = false;
+		CS.tutorial = {step: 0, top: 120, left: 400, width: 600, height: 330}
+		$scope.changeTab('converter'); $scope.listenForHelp(); $scope.fullConversion();
+	};
+
+	//initiate window dragging on mousedown
+	$scope.dragStart = function($event) {
+		$event.preventDefault();
+		const ctrl = $scope.ctrl;
+		ctrl.drag = true;
+		//save initial coords of the mouse as well as the window
+		[ctrl.dragX0, ctrl.dragY0] = [$event.clientX, $event.clientY];
+		[ctrl.left0, ctrl.top0] = [CS.tutorial.left, CS.tutorial.top];
+	};
+
+	//drag the window
+	$scope.mouseMove = function($event) {
+		if(!$scope.ctrl.drag) {return;}
+		const ctrl = $scope.ctrl; const CSt = CS.tutorial; const dim = getWindowDimensions();
+		const margin = 5; const margin2 = 25; //top-left, bottom-right margin for window in [px]
+		//move window by relative, not absolute coords, that is: initial coords + traveled distance
+		CSt.left = ctrl.left0 + $event.clientX - ctrl.dragX0;
+		CSt.top = ctrl.top0 + $event.clientY - ctrl.dragY0;
+		//do not allow the window to exit screen
+		(CSt.left < margin) && (CSt.left = margin);
+		(CSt.top  < margin) && (CSt.top  = margin);
+		(CSt.left + CSt.width > dim.width - margin2)  && (CSt.left = dim.width  - margin2 - CSt.width);
+		(CSt.top + CSt.height > dim.height - margin2) && (CSt.top  = dim.height - margin2 - CSt.height);
+	};
+
+	//finish dragging the window onmouseup or onmouseleave
+	$scope.mouseUp = () => ($scope.ctrl.drag = false);
+	$scope.mouseLeave = function($event) {
+		const dim = getWindowDimensions();
+		($event.clientX < 0 || $event.clientY < 0 || $event.clientX > dim.width || $event.clientY > dim.height) && ($scope.ctrl.drag = false);
+	};
+
+	//TF = tutorial functions (advance the tutorial, operate UI, insert examples)
+	$scope.TF = {
+		step1: function() {CS.tutorial.step = 1; $scope.changeTab('help'); CS.tutorial.top = 200; CS.tutorial.left = 500;},
+		step2: function() {CS.tutorial.step = 2; $scope.changeTab('converter'); CS.tutorial.top = 120; CS.tutorial.left = 400;},
+		step5: function() {CS.tutorial.step = 5; $scope.changeTab('converter'); CS.tutorial.top = 260; CS.tutorial.left = 400; CS.showParams = true;},
+		nextStep: function() {CS.tutorial.step++; $scope.changeTab('converter');},
+		close: () => (CS.tutorial = null),
+		//examples as array [input, target]
+		examples: {
+			SI: ['min', ''],
+			simple: ['45 kPa', 'torr'],
+			wrongCase: ['45 KPA', 'torr'],
+			wrongSymbol: ['4.186 J/C/g ', 'Btu/F/lb'],
+			okSymbol: ['4.186 J/°C/g ', 'Btu/°F/lb'],
+			brackets: ['4.186 J/(°C*g) ', 'Btu/(°F lb)'],
+			numbers: ['7,42e-3', '%'],
+			spaces: ['  4   CZK / ( kW *h)  ', '€ / MJ'],
+			powers: ['kg * m2 * s^(-3)', 'W'],
+			radioactiveDecay: ['500 mg * _e^(-72 h / (8.0197 d))', 'mg'],
+			volumeABC: ['18mm * 6.5cm * 22cm', 'ml'],
+			charDim: ['(1,5 l)^(1/3)', 'cm'],
+			RPM: ['3500 /min ', 'Hz'],
+			lbft: ['_g * lb * ft ', 'J'],
+			kgcm2: ['kg * _g / cm2 ', 'psi'],
+			poundal: ['lb * ft / s2 ', 'N'],
+			oersted: ['T / _mu', 'Oe'],
+			pi: ['45°', '_pi'],
+			targetNumber: ['96', '12']
+		},
+		//use an example
+		ex: function(key) {
+			CS.input = this.examples[key][0];
+			CS.target = this.examples[key][1];
+			$scope.fullConversion();
+		},
+	};
 });
 
 //directive to give textarea an observer for resize
