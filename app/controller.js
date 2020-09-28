@@ -14,7 +14,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	//generate ng-style for inputCode textarea
 	$scope.textareaStyle = () => ({width: CS.inputCodeWidth || '350px', height: CS.inputCodeHeight || '150px'});
 	//generate ng-style for currently active tab button
-	$scope.tabButtonStyle = tab => CS.tab === tab ? ({'border-bottom': '2px solid white'}) : ({});
+	$scope.tabButtonStyle = tab => CS.tab === tab ? ({'border-bottom': '3px solid white'}) : ({});
 	//generate ng-style for tutorial window
 	$scope.tutorialStyle = () => ({top: CS.tutorial.top+'px', left: CS.tutorial.left+'px', width: CS.tutorial.width+'px', height: CS.tutorial.height+'px'});
 

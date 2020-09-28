@@ -23,7 +23,7 @@ The "interpretation" algorithm is very crude, it simply expands the variable nam
 The last two lines are built-in functions calls, where arguments are delimited by `;` semicolon.
 The only two currently available functions are:
 - `write`, which accepts any number of arguments, and, if they are non-empty (argument must be at least a space character), each argument will be a single line
-- `convert`, which must have 1-3 arguments: the input expression, the target expression and formatting parameters as a JSON. It works just like a normal conversion, except that now it is accessed by the command instead of GUI
+- `convert`, which must have 1-3 arguments: the input expression, the target expression and formatting parameters as a JSON. It works just like a normal conversion, except that now it is accessed by the command instead of GUI. The output is appended to the last message without any line break.
 
 The convert call in the previous example is without formatting parameters (like Output format > automatic).
 As a result, the decimal places are a total mess.
@@ -35,8 +35,8 @@ charge = 6 CZK/(kW*h) //electricity charges per kWh
 current = 10 mA
 voltage = 230V
 power = current * voltage
-costs = power * yr * charge
-totalCosts = 600 CZK //total expenditures
+costs = power * year * charge //year isn't a variable, that's the expression of one year right here
+totalCosts = 600 CZK //total expenditures over the year
 /*this
 is a block comment*/
 
@@ -59,12 +59,21 @@ They could be written in converter GUI as one-liners, but in macro code it is mo
 
 ```
 /*ABSOLUTE TEMPERATURE
-UUC works with temperature difference when processing temperature units. But you can just use addition and subtraction to achieve a temperature conversion. Admittedly, it is quite bothersome and it's easier to just use google for such a simple task */
+UUC works with temperature difference when processing temperature units, so it can't do a simple temperature conversion.
+But now you can just use addition and subtraction to do it!
+Admittedly, it is quite bothersome and it's probably easier to just use google for such a simple task */
+
 TF0 = 255.372 K //temperature of 0°F in K
 TC0 = 273.15 K //temperature of 0°C in K
 tF = 95°F //this is supposed to be absolute temperature in °F, but UUC doesn't know that!
 write(95 °F is )
-convert(tF+TF0-TC0; °C; {"spec": "fixed"})
+convert(tF+TF0-TC0; °C; {"spec": "fixed"}) //using + and -
+
+//GAUGE pressure - using the same logic, but simpler
+pGauge = -400 mbar
+pAbs = pGauge + atm
+write(absolute pressure )
+convert(pAbs; mbar)
 
 //NORMAL CUBIC METRE
 //UUC provides normal cubic metre as a unit, and it's defined at 0°C and 1 atm. But sometimes you might need it at 25°C...
