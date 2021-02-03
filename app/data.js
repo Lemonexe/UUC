@@ -134,6 +134,7 @@ const Units = [
 	{v: [2,1,-3,0,0,0,0,0], id: 'hp', name: {cz: 'imperiální koňská síla', en: 'imperial horsepower'}, k:745.69987158227022},
 
 	{v: [-1,1,-1,0,0,0,0,0], id: 'P', name: {cz: 'poise', en: 'poise'}, k:0.1, SI: true, prefix: 'all'},
+	{v: [2,0,-1,0,0,0,0,0], id: 'St', name: {cz: 'stokes', en: 'stokes'}, k:1e-4, SI: true, prefix: 'all'},
 
 	{v: [-1,1,-2,0,0,0,0,0], id: 'bar', name: {cz: 'bar', en: 'bar'}, k:1e5, SI: true, prefix: 'all'},
 	{v: [-1,1,-2,0,0,0,0,0], id: 'atm', name: {cz: 'atmosféra', en: 'atmosphere'}, k:101325, note: {
