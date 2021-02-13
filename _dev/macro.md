@@ -44,7 +44,7 @@ write(Electrical power: )
 convert(power; W; {"spec":"fixed", "fixed":2}) //display power as W
 write(Costs: )
 convert(costs; CZK; {"exp":true, "spec":"digits", "digits":3}) //display costs as CZK
-write(Relative costs: )
+write(Share of total costs: )
 convert(costs/totalCosts; %; {"spec":"fixed"}) //display how many % of costs is the appliance responsible for
 ```
 
@@ -59,9 +59,7 @@ They could be written in converter GUI as one-liners, but in macro code it is mo
 
 ```
 /*ABSOLUTE TEMPERATURE
-UUC works with temperature difference when processing temperature units, so it can't do a simple temperature conversion.
-But now you can just use addition and subtraction to do it!
-Admittedly, it is quite bothersome and it's probably easier to just use google for such a simple task */
+UUC works with temperature difference when processing temperature units, but it can use addition and substraction using constants. Here is how you can do the same thing using macro */
 
 TF0 = 255.372 K //temperature of 0°F in K
 TC0 = 273.15 K //temperature of 0°C in K
@@ -76,10 +74,10 @@ write(absolute pressure )
 convert(pAbs; mbar)
 
 //NORMAL CUBIC METRE
-//UUC provides normal cubic metre as a unit, and it's defined at 0°C and 1 atm. But sometimes you might need it at 25°C...
-Ncm2 = 1 atm * 1 m3 / (298 K * _R)
-write( ;one Ncm at 25°C is )
-convert(Ncm2; mol)
+//UUC provides normal cubic metre as a unit, and it's defined at 0°C and 1 atm. But sometimes you might need it at 20°C:
+Ncm20 = 1 atm * 1 m3 / (293.15 K * _R)
+write( ;one Ncm at 20°C is )
+convert(Ncm20; mol)
 ```
 
 ## Using javascript
@@ -127,5 +125,5 @@ vals.forEach(n => functions.write.f(n.n.toFixed(1) + ' mg')); //write the result
 </js>
 ```
 
-If you would like to use UUC macros to perform some amazing calculations, but are struggling with it despite reading this sloppy documentation, you can contact author via email.  
-If I have time, I'll be glad to help. To be fair, I'll be delighted if somebody uses UUC at all. Thanks for reading :)
+If you would like to use UUC macros to perform some amazing calculations, but are struggling with it even after you have read this sloppy documentation, you can contact author via email.  
+If I have time, I'll be glad to help! To be fair, I'll actually be delighted if somebody uses UUC at all. Thanks for reading :)

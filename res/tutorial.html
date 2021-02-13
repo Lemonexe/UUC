@@ -35,13 +35,13 @@
 			<p>UUC pro vás provede rozměrovou analýzu a pokud vstup nesouhlasí s cílovými jednotkami, dostanete varování. Výsledek výpočtu pak ignorujte.</p>
 			<p>To je často způsobeno záměnou symbolu jednotky – např. C a F je coulomb a farad, nikoliv stupeň Celsia a Fahrenheita, ty jsou °C a °F: <a class="fakeLink" ng-click="TF.ex('wrongSymbol')">příklad A</a>, <a class="fakeLink" ng-click="TF.ex('okSymbol')">příklad B</a></p>
 			<p>Také to může být způsobeno syntaktickou chybou – např. mK znamená milikelvin, nikoliv metr krát kelvin, ten by byl zapsán jako m*K nebo m K.</p>
-			<p>Pozn.: veličina s rozměrem teploty je vždy zpracována jako <i>rozdíl</i> teploty, nikoliv jako teplota. Viz °C v Referenci pro více informací.</p>
+			<p>Pozn.: takto zapsaná veličina s rozměrem teploty je vždy zpracována jako <i>rozdíl</i> teploty, nikoliv jako teplota. Jak převést teploty mezi sebou se dozvíte později.</p>
 		</cz>
 		<en>
 			<p>UUC will perform dimensional analysis for you, and if the input doesn't match the target units, you will get a warning. In that case ignore the conversion result.</p>
 			<p>That's often caused by a misunderstood unit symbol – e.g. C and F are coulomb and farad, not degree Celsius and Fahrenheit, those are °C and °F: <a class="fakeLink" ng-click="TF.ex('wrongSymbol')">example A</a>, <a class="fakeLink" ng-click="TF.ex('okSymbol')">B</a></p>
 			<p>It can also be caused by a syntax error – e.g. mK means milikelvin, not metre times kelvin, which would be written as m*K or m K.</p>
-			<p>Note: a quantity with dimension of temperature will always be processed as temperature <i>difference</i>, not as temperature. See °C in Reference for more details.</p>
+			<p>Note: a quantity with dimension of temperature written this way will always be processed as temperature <i>difference</i>, not as temperature. You will learn later how to convert temperatures.</p>
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.nextStep()">
 	</div>
@@ -55,7 +55,7 @@
 				<li>Přebytečné mezery jsou prostě ignorovány: <a class="fakeLink" ng-click="TF.ex('spaces')">příklad</a></li>
 				<li>Jednotky lze umocňovat pomocí ^čísla nebo jen pomocí čísla: <a class="fakeLink" ng-click="TF.ex('powers')">příklad</a></li>
 				<li>Mocninou může být i výraz v závorce, který však nutně musí být bezrozměrný, viz poločas rozpadu jako <a class="fakeLink" ng-click="TF.ex('radioactiveDecay')">příklad</a></li>
-				<li>Čísel může být ve výpočtu více: <a class="fakeLink" ng-click="TF.ex('volumeABC')">příklad</a></li>
+				<li>Čísel může být ve výpočtu více a lze i sčítat a odčítat: <a class="fakeLink" ng-click="TF.ex('volumeABC')">příklad</a></li>
 			</ul>
 		</cz>
 		<en>
@@ -67,7 +67,7 @@
 				<li>Superfluous spaces are simply ignored: <a class="fakeLink" ng-click="TF.ex('spaces')">example</a></li>
 				<li>You can raise units to power using ^number or just number: <a class="fakeLink" ng-click="TF.ex('powers')">example</a></li>
 				<li>Even an expression in brackets can be a power, but it must be dimensionless, see radioactive decay as an <a class="fakeLink" ng-click="TF.ex('radioactiveDecay')">example</a></li>
-				<li>There can be multiple numbers in the calculation: <a class="fakeLink" ng-click="TF.ex('volumeABC')">example</a></li>
+				<li>There can be multiple numbers, and you can add & subtract: <a class="fakeLink" ng-click="TF.ex('volumeABC')">example</a></li>
 			</ul>
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.nextStep()">
@@ -99,9 +99,32 @@
 				<li>There can be a number in target units, which acts as division: <a class="fakeLink" ng-click="TF.ex('targetNumber')">example</a></li>
 			</ul>
 		</en>
-		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step5()">
+		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.nextStep()">
 	</div>
 	<div class="tutorialSection" ng-switch-when="5">
+		<cz>
+			<p>
+				Jak již bylo zmíněno, převod <b>teploty</b> není zcela intuitivní. Pokud zadáte <a class="fakeLink" ng-click="TF.ex('dC')">takto</a>, program převádí <i>rozdíl</i> teploty, nikoliv teplotu.
+				Program totiž nemůže poznat, zda-li myslíte teplotu či její rozdíl, proto se vždy pracuje s rozdílem.
+				Pro konverzi samotných teplot mezi sebou však můžete využít konstanty, které definují nulu.
+			</p>
+			<p>Takto můžete převádět z <a class="fakeLink" ng-click="TF.ex('C2K')">°C na K</a> či ze <a class="fakeLink" ng-click="TF.ex('F2K')">°F na K</a>.</p>
+			<p>Pro konverzi °C a °F mezi sebou použijte ve vstupním poli obě konstanty:<br><a class="fakeLink" ng-click="TF.ex('F2C')">°F na °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F')">°C na °F</a></p>
+			<p>Sluší se zmínit, že převod přetlaku na tlak absolutní funguje obdobně, jen jednodušeji, protože všechny jednotky přetlaku mají nulu na 1&nbsp;atm.<br><a class="fakeLink" ng-click="TF.ex('gauge')">Příklad</a> (přetlak na abs. tlak)</p>
+		</cz>
+		<en>
+			<p>
+				As mentioned before, conversion of <b>temperature</b> isn't quite intuitive. If you enter <a class="fakeLink" ng-click="TF.ex('dC')">this</a>, the program will convert temperature <i>difference</i>, not temperature.
+				The program couldn't tell if you want temperature or the difference, that's why it always operates with difference.
+				However, in order to actually convert temperatures, you can use constants that define their zero values.
+			</p>
+			<p>This way you can convert <a class="fakeLink" ng-click="TF.ex('C2K')">°C to K</a> or <a class="fakeLink" ng-click="TF.ex('F2K')">°F to K</a>.</p>
+			<p>In order to convert °C and °F, use both constants in input field:<br><a class="fakeLink" ng-click="TF.ex('F2C')">°F to °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F')">°C to °F</a></p>
+			<p>It is worth mentioning that conversion of gauge pressure to absolute works analogically, but it's easier, since all gauge pressures have zero at 1&nbsp;atm.<br><a class="fakeLink" ng-click="TF.ex('gauge')">Example</a> (gauge pressure to abs. pressure)</p>
+		</en>
+		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step6()">
+	</div>
+	<div class="tutorialSection" ng-switch-when="6">
 		<cz>
 			<p>Pár posledních poznámek před dokončením tutoriálu:</p>
 			<p>Po rozkliknutí <i>Formát výstupu</i> můžete výstupnímu číslu nastavit počet desetinných míst, popř. další možnosti formatování.</p>

@@ -38,7 +38,7 @@ function Convert_macro(code) {
 
 	//PREPARE LINES OF CODE
 		//first extract block comments - delete them
-		code = code.replace(/\/\*[^/*]*\*\//g, '')
+		code = code.replace(/\/\*[^/*]*\*\//g, '');
 
 		//then extract javascript mode sections - split into sections. Keep the opening <js> tag as identifier
 		code = code.split(/(<js>[^]*?)<\/js>/);

@@ -124,16 +124,20 @@ function Convert_parse(convert, text) {
 		}
 		//match + - in all number exponents
 		const m = text.match(/[\d\.]+(?:e[+\-]?\d+)?/g);
-		m && m.forEach(m => text = text.replace(m, m.replace(/\-/g, '~').replace(/\+/g, '#')))
+		m && m.forEach(m => text = text.replace(m, m.replace(/\-/g, '~').replace(/\+/g, '#')));
 		return text;
 	}
 	function unprotectNumbers(text) {return text.replace(/\~/g, '-').replace(/\#/g, '+');}
 
-	//parse a unit
+	//parse a unit string or throw an error. It may have a prefix at beginning, and a power number at the end (without ^, otherwise it would have been split away already)
 	function parseUnit(text) {
-		let pow = 1; //unit power
+		let pow = 1, u = null; //unit power, the unit object
 
-		//number after the unit as a power without ^
+		//try to find simply as {prefix + unit}
+		u = parseUnit2(text, pow);
+		if(u) {return u;}
+
+		//not found - try to find as {prefix + unit + power}
 		const powIndex = text.search(/[\.\d]+$/);
 		if(powIndex > -1) {
 			pow = Number(text.slice(powIndex));
@@ -141,6 +145,13 @@ function Convert_parse(convert, text) {
 			text = text.slice(0, powIndex); //strip number from the unit
 		}
 
+		u = parseUnit2(text, pow);
+		if(!u) {throw convert.msgDB['ERR_unknownUnit'](text);} //the unit is unknown
+		return u;
+	}
+
+	//parse a unit string. It may have a prefix it the beginning
+	function parseUnit2(text, pow) {
 		//first we try to find the unit in ids
 		let i = ids.indexOf(text);
 		let j = -1;
@@ -149,8 +160,8 @@ function Convert_parse(convert, text) {
 			i = ids.indexOf(text.slice(1));
 			j = prefs.indexOf(text[0]);
 
-			//if we find both, we add the unit with its prefix and check whether it is appropriately used. If we didn't find i or j, the unit is unknown.
-			if(i === -1 || j === -1) {throw convert.msgDB['ERR_unknownUnit'](text);}
+			//if we find both, we add the unit with its prefix and check whether it is appropriately used. If we didn't find i or j, return nothing
+			if(i === -1 || j === -1) {return null;}
 			convert.checkPrefix(Prefixes[j], UnitIdMap[i].ref);
 			return new convert.Unit(Prefixes[j], UnitIdMap[i].ref, pow);
 		}

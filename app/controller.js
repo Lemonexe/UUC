@@ -219,7 +219,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	//clear all, start the tutorial window and update outputs
 	$scope.initTutorial = function() {
 		CS.input = ''; CS.target = ''; CS.filter = ''; CS.showParams = false; CS.params.spec = 'auto'; CS.params.exp = false;
-		CS.tutorial = {step: 0, top: 120, left: 400, width: 600, height: 330}
+		CS.tutorial = {step: 0, top: 120, left: 400, width: 600, height: 280}
 		$scope.changeTab('converter'); $scope.listenForHelp(); $scope.fullConversion();
 	};
 
@@ -257,10 +257,10 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 	//TF = tutorial functions (advance the tutorial, operate UI, insert examples)
 	$scope.TF = {
-		step1: function() {CS.tutorial.step = 1; $scope.changeTab('help'); CS.tutorial.top = 200; CS.tutorial.left = 500;},
-		step2: function() {CS.tutorial.step = 2; $scope.changeTab('converter'); CS.tutorial.top = 120; CS.tutorial.left = 400;},
-		step5: function() {CS.tutorial.step = 5; $scope.changeTab('converter'); CS.tutorial.top = 260; CS.tutorial.left = 400; CS.showParams = true;},
-		nextStep: function() {CS.tutorial.step++; $scope.changeTab('converter');},
+		step1: function() {CS.tutorial.step = 1; $scope.changeTab('help'); CS.tutorial.top = 200; CS.tutorial.left = 500; CS.tutorial.height = 280;},
+		step2: function() {CS.tutorial.step = 2; $scope.changeTab('converter'); CS.tutorial.top = 120; CS.tutorial.left = 400; CS.tutorial.height = 300;},
+		step6: function() {CS.tutorial.step = 6; $scope.changeTab('converter'); CS.tutorial.top = 260; CS.tutorial.left = 400; CS.tutorial.height = 260; CS.showParams = true;},
+		nextStep: function() {CS.tutorial.step++; $scope.changeTab('converter'); CS.tutorial.height = 330;},
 		close: () => (CS.tutorial = null),
 		//examples as array [input, target]
 		examples: {
@@ -274,7 +274,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			spaces: ['  4   CZK / ( kW *h)  ', '€ / MJ'],
 			powers: ['kg * m2 * s^(-3)', 'W'],
 			radioactiveDecay: ['500 mg * _e^(-72 h / (8.0197 d))', 'mg'],
-			volumeABC: ['18mm * 6.5cm * 22cm', 'ml'],
+			volumeABC: ['18mm * 6.5cm * 22cm  +  0.2 l', 'ml'],
 			charDim: ['(1,5 l)^(1/3)', 'cm'],
 			RPM: ['3500 /min ', 'Hz'],
 			lbft: ['_g * lb * ft ', 'J'],
@@ -282,7 +282,13 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			poundal: ['lb * ft / s2 ', 'N'],
 			oersted: ['T / _mu', 'Oe'],
 			pi: ['45°', '_pi'],
-			targetNumber: ['96', '12']
+			targetNumber: ['96', '12'],
+			dC: ['°C', 'K'],
+			C2K: ['25°C + TC0', 'K'],
+			F2K: ['85°F+TF0', ''],
+			F2C: ['98.6°F + TF0 - TC0', '°C'],
+			C2F: ['37°C + TC0 - TF0', '°F'],
+			gauge: ['80 mmHg + atm', 'kPa']
 		},
 		//use an example
 		ex: function(key) {

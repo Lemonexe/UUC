@@ -21,7 +21,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 			let match = err.match(/[^\d]*(\d+)/); //try to match number of thrown error
 			if(match && match[1] === String(errNumber)) {pass = true;}
 		}
-		log(pass, '', 'error '+errNumber, text)
+		log(pass, '', 'error '+errNumber, text);
 	}
 	//assertion of expected full conversion result with 'input' & 'target' strings, expected status and optionally expected result number with tolerance
 	function fullTest(input, target, expectStat, expectNum, tol) {
@@ -56,13 +56,13 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	let q2 = new convert.Q(16,[-2,2,-4,0,0,0,0,0]);
 	eqObj(q1, {n: 4, v: [-1,1,-2,0,0,0,0,0]}, 'convert.Q');
 
-	let pow = new convert.Q(2)
+	let pow = new convert.Q(2);
 	eqObj(convert.power(q1, pow), q2, 'convert.power');
 
-	pow = new convert.Q(2, [1e-10])
+	pow = new convert.Q(2, [1e-10]);
 	eqObj(convert.power(q1, pow), q2, 'convert.power: with tolerance');
 
-	pow = new convert.Q(2, [1])
+	pow = new convert.Q(2, [1]);
 	expectErr(() => convert.power(q1, pow), 108, 'convert.power: detect dimension error');
 
 	let res = new convert.Q(64,[-3,3,-6,0,0,0,0,0]);
@@ -73,10 +73,10 @@ function tests(silent) {//optional argument to silence tests that have successfu
 
 	q2 = new convert.Q(7,[-1,1,-2,0,0,0,0,0]);
 
-	res = new convert.Q(11,[-1,1,-2,0,0,0,0,0])
+	res = new convert.Q(11,[-1,1,-2,0,0,0,0,0]);
 	eqObj(convert.add(q1, q2), res, 'convert.add');
 
-	res = new convert.Q(-3,[-1,1,-2,0,0,0,0,0])
+	res = new convert.Q(-3,[-1,1,-2,0,0,0,0,0]);
 	eqObj(convert.subtract(q1, q2), res, 'convert.subtract');
 
 	q2 = new convert.Q(7,[1,1,-2,0,0,0,0,0]);
@@ -94,6 +94,9 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	fullTest('_e^(30 kJ/mol / (_R * 298 K))', '', 0, 181309.23, 0.1);
 	fullTest('8 Mt/yr / (900 kg/m3)', 'kbbl/d', 0, 153.07481, 1e-3);
 	fullTest('Da', 'u', 0, 1, 1e-6);
+	fullTest('Nm3', 'Ncm', 0, 1, 1e-6);
+	fullTest('0°C+TC0', 'K', 0, csts.TC0, 1e-6);
+	fullTest('57°F+TF0-TC0', '', 0, 13.8889, 1e-3);
 
 !silent && console.log('\nFull conversion warnings');
 	fullTest('m3', 'm2', 1);
