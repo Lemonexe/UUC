@@ -8,7 +8,7 @@ langService.init();
 app.controller('ctrl', function($scope, $http, $timeout) {
 	//INITIALIZE
 	$scope.CS = CS; //permanent controller state that is saved
-	$scope.ctrl = {}; //temporary controller state
+	$scope.ctrl = {autocomplete: -1}; //temporary controller state
 	loadCurrencies(execHash);
 
 	//generate ng-style for inputCode textarea
@@ -30,7 +30,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		$scope.populateConvertMessages();
 	};
 	$scope.changeTab = function(tab) {
-		CS.hideTutorialLink = true;
+		tab === 'intro' && (CS.hideTutorialLink = true);
 		CS.tab = tab;
 	}
 
@@ -47,14 +47,22 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	$scope.fullConversion = function() {
 		$scope.result = convert.fullConversion(CS.input, CS.target);
 		$scope.result.output = convert.format($scope.result.output, CS.params);
+		add2history();
 
 		//style the results
 		$scope.statusClass = ['ok', 'warn', 'err'][$scope.result.status];
 		$scope.statusAppear = 'statusAppear';
 		$timeout(() => ($scope.statusAppear = ''), 500);
 	};
+	//add the conversion request to history
+	function add2history() {
+		if(CS.input === '') {return;}
+		if(CS.history.length > 0 && CS.input === CS.history[0].input && CS.target === CS.history[0].target) {CS.history[0].params = angular.copy(CS.params); return;} //just update the params if strings are unchanged
+		CS.history.unshift({input: CS.input, target: CS.target, params: angular.copy(CS.params)}); //or add a new entry
+		(CS.history.length > 10) && CS.history.pop(); //and perhaps delete the old ones
+	}
 	//when a user changes format settings, there is no need to initialize conversion again
-	$scope.updateFormat = () => $scope.result && ($scope.result.output = convert.format($scope.result.output, CS.params));
+	$scope.updateFormat = () => {add2history(); $scope.result && ($scope.result.output = convert.format($scope.result.output, CS.params));};
 
 	//flip input & target field
 	$scope.flip = function() {
@@ -62,6 +70,31 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		CS.input = CS.target;
 		CS.target = i;
 	};
+
+	//recall from history using the autocomplete dropdown list
+	$scope.autocomplete = function(type) {//type 0: choose from dropdown, 1: go down, 2: go up
+		function execKey() {
+			(type === 1) && ctrl.autocomplete++;
+			(type === 2) && ctrl.autocomplete--;
+		}
+
+		let ctrl = $scope.ctrl;
+		if(ctrl.autocomplete === -1) {
+			if(type === 0) {return;} //user has clicked the "empty option", and thus chosen to retain current input
+			add2history(); execKey(); //type 1,2: save the current input that hasn't been sent yet, so the user doesn't lose it!
+		}
+
+		let len = CS.history.length;
+		execKey();
+		//cycle back to beginning or to end
+		(ctrl.autocomplete < 0)    && (ctrl.autocomplete = len-1);
+		(ctrl.autocomplete >= len) && (ctrl.autocomplete = 0);
+		//load the entry
+		let obj = CS.history[ctrl.autocomplete];
+		[CS.input, CS.target, CS.params] = [obj.input, obj.target, angular.copy(obj.params)];
+	};
+	//reset the currently selected history entry
+	$scope.autoforget = () => ($scope.ctrl.autocomplete = -1);
 
 	//this function, well, it runs a code
 	$scope.runCode = () => ($scope.resultCode = convert.runCode(CS.inputCode));
@@ -71,8 +104,13 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	$scope.populateConvertMessages();
 
 	//these functions listen to onkeyup in various text fields
+
 	//input & target field: perform fullConversion on Enter
-	$scope.listenForConvert = event => (event.keyCode === 13 || event.key === 'Enter') && $scope.fullConversion();
+	$scope.listenForConvert = function(event) {
+		if(event.keyCode === 13 || event.key === 'Enter') {$scope.fullConversion();}
+		else if(event.keyCode === 40 || event.key === 'ArrowDown') {$scope.autocomplete(1);}
+		else if(event.keyCode === 38 || event.key === 'ArrowUp') {$scope.autocomplete(2);}
+	};
 	//macro code field: run code on F2
 	$scope.listenForRun = event => (event.keyCode === 113 || event.key === 'F2') && $scope.runCode();
 

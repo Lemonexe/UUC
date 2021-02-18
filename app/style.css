@@ -47,6 +47,9 @@ input[type="button"] {cursor: pointer;}
 	position: relative;
 	margin-right: 40px;
 }
+#inputAutocomplete {
+	width: 20px; height: 23px;
+}
 #paramContainer {
 	float: left;
 	padding: 5px;

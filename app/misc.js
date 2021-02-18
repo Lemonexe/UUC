@@ -13,6 +13,7 @@ const CSdefault = {
 	target: '', //target field
 	filter: '', //filter field
 	showParams: false, //whether to show output formatting parameters
+	history: [], //history of last 10 commands as {input: '', target: '', params:{}}
 	//specification of format type ('auto' || 'fixed' || 'digits'), number of sig digits, number of decimals, whether always exponential
 	params: {spec: 'auto', digits: 3, fixed: 2, exp: false},
 	//macro code text and size of textarea
@@ -27,6 +28,8 @@ const saveService = {
 		const data = localStorage.getItem('UUC_userdata');
 		CS = data ? JSON.parse(data) : CSdefault;
 		!!data && (CS.hideTutorialLink = true);
+		CS.tab = 'converter'; //always land on converter tab when refreshing the page
+		!CS.hasOwnProperty('history') && (CS.history = []); //just a compatibility fix
 
 		//estimate language from window.navigator
 		!CS.lang && (CS.lang = ((window.navigator.userLanguage || window.navigator.language).slice(0,2) === 'cs') ? 'cz' : 'en');
