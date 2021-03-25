@@ -44,7 +44,7 @@
 			<p>
 				<b>Poznámky:</b>
 				<ol>
-					<li>UUC je možné přidat do prohlížeče jako vyhledávač a mít jej tak rychle po ruce! <a class="fakeLink" ng-click="changeTab('searchEngine')">Návod (pro Chrome)</a></li>
+					<li>UUC je možné přidat do prohlížeče jako vyhledávač a mít jej tak rychle po ruce! <a class="fakeLink" ng-click="changeTab('searchEngine')">Návod (pro Chrome či Edge)</a></li>
 					<li>Pokud vám zde chybí vaše oblíbená jednotky či konstanta a rádi byste ji zde viděli, <a href="mailto:zbytek@gmail.com">kontaktujte mě</a></li>
 					<li>Pokud máte nápad na vylepšení této aplikace, neváhejte <a href="mailto:zbytek@gmail.com">mě kontaktovat</a></li>
 					<li>Pokud sami programujete a máte zájem o zdrojový kód, navštivte <a href="https://github.com/Lemonexe/UUC">Github repozitář</a></li>
@@ -60,7 +60,7 @@
 			<p>
 				<b>Notes:</b>
 				<ol>
-					<li>Now you can add UUC to your browser as a search engine so as to access it quickly and conveniently! <a class="fakeLink" ng-click="changeTab('searchEngine')">Instructions (for Chrome)</a></li>
+					<li>Now you can add UUC to your browser as a search engine so as to access it quickly and conveniently! <a class="fakeLink" ng-click="changeTab('searchEngine')">Instructions (for Chrome or Edge)</a></li>
 					<li>If you are missing your favorite unit or constant and would like to see it here, you can <a href="mailto:zbytek@gmail.com">contact me</a></li>
 					<li>If you have an idea how to enhance the application, you can <a href="mailto:zbytek@gmail.com">contact me</a></li>
 					<li>If you are a programmer interested in the source code, see the <a href="https://github.com/Lemonexe/UUC">Github repository</a></li>
@@ -139,11 +139,13 @@
 	</div>
 
 	<div ng-switch-when="searchEngine">
-		<h2>Chrome</h2>
+		<h2>Chrome <cz>nebo</cz><en>or</en> Edge</h2>
 		<p><cz>Není třeba nic instalovat, jen provést jednoduché nastavení:</cz>
 		<en>No need to install anything, it can be done in the settings:</en></p>
 		<ol>
-			<li><cz>Otevřete tuto adresu:</cz><en>Open this address:</en> <span class="code">chrome://settings/searchEngines</span></li>
+			<li><cz>Otevřete jednu z těchto adres dle prohlížece:</cz><en>Open one of these addresses depending in browser:</en><br>
+				<span class="code">chrome://settings/searchEngines</span><br>
+				<span class="code">edge://settings/searchEngines</span></li>
 			<li><cz>Klepněte na tlačítko Přidat</cz><en>Click the Add button</en></li>
 			<li><cz>Do prvních dvou polí vyplňte</cz><en>Insert</en> <span class="code">uuc</span><cz>, do třetího vyplňte</cz><en> into the first two fields, into the third insert</en> <span class="code">{{searchEngineTemplate}}</span></li>
 			<li><cz>Dialog potvrďte tlačítkem Přidat</cz><en>Click the Add button to confirm the dialog</en></li>
@@ -152,14 +154,14 @@
 		<cz>
 			<p>
 				Hotovo – právě jste definovali klíčové slovo <i>uuc</i> :-)<br>
-				Nyní stačí otevřít nový panel, napsat uuc, <i>stisknout Tab</i>, pokračovat psaním zadání a stisknutím Enter.<br>
+				Nyní stačí otevřít nový panel, napsat uuc, mezeru, pokračovat psaním zadání a stisknutím Enter.<br>
 				Cílové jednotky se zde specifikují znakem &gt; nebo slovy <i>to</i> či <i>into</i><br>
 				např. 3.7 kPa &nbsp;&gt;&nbsp; Torr
 			</p>
 		</cz><en>
 			<p>
 				Done – you have defined <i>uuc</i> as a keyword :-)<br>
-				Now you can simply open a new tab, write uuc, <i>press Tab</i>, and continue by writing the input and pressing Enter.<br>
+				Now you can simply open a new tab, write uuc, space, and continue by writing the input and pressing Enter.<br>
 				Target units are specified by character &gt; or by words <i>to</i> or <i>into</i><br>
 				e.g. 3.7 kPa &nbsp;&gt;&nbsp; Torr
 			</p>

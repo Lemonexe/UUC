@@ -7,6 +7,7 @@
 const csts  = {
 	R: 8.3144598, //[J/K/mpol]
 	TC0: 273.15, //[K]
+	TF0: 459.67*5/9, //[K]
 	atm: 101325, //[Pa]
 	mile: 1609.344, //[m]
 	bbl: 158.987294928e-3, //[m3]
@@ -181,8 +182,9 @@ const Units = [
 	{v: [0,0,0,0,0,0,0,0], id: '_pi', alias:['π'], name: {cz: 'Ludolfovo číslo', en: 'Archimedes\' constant'}, k:Math.PI, constant: true},
 	{v: [0,0,0,0,0,0,0,0], id: '_e', name: {cz: 'Eulerovo číslo', en: 'Euler\'s number'}, k:Math.E, constant: true},
 	{v: [0,0,0,0,1,0,0,0], id: '_C0', alias:['_°C0','_TC0','TC0'], name: {cz: '0°C v kelvinech', en: '0°C in kelvin'}, k:csts.TC0, constant: true, note: csts.T0note},
-	{v: [0,0,0,0,1,0,0,0], id: '_F0', alias:['_°F0','_TF0','TF0'], name: {cz: '0°F v kelvinech', en: '0°F in kelvin'}, k:459.67*5/9, constant: true, note: csts.T0note},
-	{v: [0,0,0,0,1,0,0,0], id: '_R0', alias:['_°R0','_TR0','TR0'], name: {cz: '0°R v kelvinech', en: '0°R in kelvin'}, k:csts.TC0, constant: true, note: csts.T0note}
+	{v: [0,0,0,0,1,0,0,0], id: '_F0', alias:['_°F0','_TF0','TF0'], name: {cz: '0°F v kelvinech', en: '0°F in kelvin'}, k:csts.TF0, constant: true, note: csts.T0note},
+	{v: [0,0,0,0,1,0,0,0], id: 'C2F', name: {cz: 'TC0 - TF0', en: 'TC0 - TF0'}, k:csts.TC0 - csts.TF0, constant: true, note: csts.T0note},
+	{v: [0,0,0,0,1,0,0,0], id: 'F2C', name: {cz: 'TF0 - TC0', en: 'TF0 - TC0'}, k:csts.TF0 - csts.TC0, constant: true, note: csts.T0note}
 ];
 
 //currencies - their conversion ratio to dollar is unknown and will be obtained by currencies.php

@@ -325,7 +325,9 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			C2K: ['25°C + TC0', 'K'],
 			F2K: ['85°F+TF0', ''],
 			F2C: ['98.6°F + TF0 - TC0', '°C'],
+			F2C2: ['98.6°F + F2C', '°C'],
 			C2F: ['37°C + TC0 - TF0', '°F'],
+			C2F2: ['37°C + C2F', '°F'],
 			gauge: ['80 mmHg + atm', 'kPa']
 		},
 		//use an example

@@ -109,7 +109,8 @@
 				Pro konverzi samotných teplot mezi sebou však můžete využít konstanty, které definují nulu.
 			</p>
 			<p>Takto můžete převádět z <a class="fakeLink" ng-click="TF.ex('C2K')">°C na K</a> či ze <a class="fakeLink" ng-click="TF.ex('F2K')">°F na K</a>.</p>
-			<p>Pro konverzi °C a °F mezi sebou použijte ve vstupním poli obě konstanty:<br><a class="fakeLink" ng-click="TF.ex('F2C')">°F na °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F')">°C na °F</a></p>
+			<p>Pro konverzi °C &harr; °F použijte ve vstupním poli obě konstanty: <a class="fakeLink" ng-click="TF.ex('F2C')">°F na °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F')">°C na °F</a><br>
+				Nebo ještě jednodušeji: <a class="fakeLink" ng-click="TF.ex('F2C2')">°F na °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F2')">°C na °F</a></p>
 			<p>Sluší se zmínit, že převod přetlaku na tlak absolutní funguje obdobně, jen jednodušeji, protože všechny jednotky přetlaku mají nulu na 1&nbsp;atm.<br><a class="fakeLink" ng-click="TF.ex('gauge')">Příklad</a> (přetlak na abs. tlak)</p>
 		</cz>
 		<en>
@@ -119,7 +120,8 @@
 				However, in order to actually convert temperatures, you can use constants that define their zero values.
 			</p>
 			<p>This way you can convert <a class="fakeLink" ng-click="TF.ex('C2K')">°C to K</a> or <a class="fakeLink" ng-click="TF.ex('F2K')">°F to K</a>.</p>
-			<p>In order to convert °C and °F, use both constants in input field:<br><a class="fakeLink" ng-click="TF.ex('F2C')">°F to °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F')">°C to °F</a></p>
+			<p>In order to convert °C &harr; °F, use both constants in input field: <a class="fakeLink" ng-click="TF.ex('F2C')">°F to °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F')">°C to °F</a><br>
+				Or even simpler: <a class="fakeLink" ng-click="TF.ex('F2C2')">°F to °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F2')">°C to °F</a></p>
 			<p>It is worth mentioning that conversion of gauge pressure to absolute works analogically, but it's easier, since all gauge pressures have zero at 1&nbsp;atm.<br><a class="fakeLink" ng-click="TF.ex('gauge')">Example</a> (gauge pressure to abs. pressure)</p>
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step6()">
@@ -128,13 +130,13 @@
 		<cz>
 			<p>Pár posledních poznámek před dokončením tutoriálu:</p>
 			<p>Po rozkliknutí <i>Formát výstupu</i> můžete výstupnímu číslu nastavit počet desetinných míst, popř. další možnosti formatování.</p>
-			<p>Pokud používáte prohlížeč Chrome, doporučuji pomocí tohoto <a class="fakeLink" ng-click="changeTab('searchEngine')">návodu</a> nastavit UUC jako klíčové slovo vyhledávače, může to ušetřit dost času.</p>
+			<p>Pokud používáte prohlížeč Chrome nebo Edge, doporučuji pomocí tohoto <a class="fakeLink" ng-click="changeTab('searchEngine')">návodu</a> nastavit UUC jako klíčové slovo vyhledávače, může to ušetřit dost času.</p>
 			<p>V tutoriálu ještě nebyla zmíněna záložka Makro. Představení všech možností makra je trochu složitější, viz <a target="_blank" ng-href="{{documentation}}">tuto dokumentaci</a> (v angličtině).</p>
 		</cz>
 		<en>
 			<p>Just a few last notes before finishing the tutorial:</p>
 			<p>After expanding <i>Output format</i> you can set decimal points of the output number, or other formatting options.</p>
-			<p>If you are using the Chrome browser, I recommend following these <a class="fakeLink" ng-click="changeTab('searchEngine')">instructions</a> to set UUC as a search engine keyword, it may save you a lot of time.</p>
+			<p>If you are using the Chrome or Edge browser, I recommend following these <a class="fakeLink" ng-click="changeTab('searchEngine')">instructions</a> to set UUC as a search engine keyword, it may save you a lot of time.</p>
 			<p>This tutorial hasn't yet touched the Macro tab. Introduction of all macro features is somewhat more complicated, see <a target="_blank" ng-href="{{documentation}}">this documentation</a>.</p>
 		</en>
 		<input type="button" ng-value="'Zavřít'.trans()" ng-click="TF.close()">
