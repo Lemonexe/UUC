@@ -84,13 +84,15 @@ const Units = [
 	{v: [0,0,1,0,0,0,0,0], id: 'h', name: {cz: 'hodina', en: 'hour'}, k:3600},
 	{v: [0,0,1,0,0,0,0,0], id: 'd', alias:['day'], name: {cz: 'den', en: 'day'}, k:3600*24},
 	{v: [0,0,1,0,0,0,0,0], id: 'week', name: {cz: 'týden', en: 'week'}, k:3600*24*7},
-	{v: [0,0,1,0,0,0,0,0], id: 'month', alias:['mth'], name: {cz: 'průměrný měsíc', en: 'average month'}, k:3600*24*30.436875, note: {
+	{v: [0,0,1,0,0,0,0,0], id: 'month', alias:['mth', 'měs'], name: {cz: 'průměrný měsíc', en: 'average month'}, k:3600*24*30.436875, note: {
 		cz: 'Vypočten z gregoriánského roku.',
 		en: 'Calculated from gregorian year.'}},
 	{v: [0,0,1,0,0,0,0,0], id: 'yr', alias:['year'], name: {cz: 'gregoriánský rok', en: 'gregorian year'}, k:3600*24*365.2425, note: {
 		cz: 'Pokud si nejste jisti, který rok použít, zvolte tento. Juliánský rok je zastaralý.',
 		en: 'If you are unsure which year to use, pick this one. Julian year is obsolete.'}},
 	{v: [0,0,1,0,0,0,0,0], id: 'jyr', name: {cz: 'juliánský rok', en: 'julian year'}, k:3600*24*365.25},
+
+	{v: [0,0,-1,0,0,0,0,0], id: 'rpm', alias:['RPM'], name: {cz: 'otáčky za minutu', en: 'revolutions per minute'}, k:1/60},
 
 	{v: [0,0,0,0,1,0,0,0], id: '°F', name: {cz: 'stupeň Fahrenheita', en: 'degree Fahrenheit'}, k:5/9, note: csts.dTnote},
 	{v: [0,0,0,0,1,0,0,0], id: '°R', alias:['°Re', '°Ré'], name: {cz: 'stupeň Réaumura', en: 'degree Réaumur'}, k:5/4, note: csts.dTnote},

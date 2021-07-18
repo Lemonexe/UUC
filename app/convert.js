@@ -278,15 +278,20 @@ function Convert() {
 		//make it nicer when dim starts with a number
 		if(output.dim.search(/^\d/) > -1) {output.dim = ' * ' + output.dim;}
 
+		let dp = params.digits, df = params.fixed, num = output.num;
+
 		if(params.exp) {
 			let d;
-			(params.spec === 'fixed')  && (d = params.fixed || 0);
-			(params.spec === 'digits') && (d = params.digits - 1 || 3);
-			output.num2 = output.num.toExponential(d);
+			(params.spec === 'fixed')  && (d = df || 0);
+			(params.spec === 'digits') && (d = dp - 1);
+			output.num2 = num.toExponential(d);
 		}
-		else if(params.spec === 'fixed') {output.num2 = output.num.toFixed(params.fixed || 0);}
-		else if(params.spec === 'digits') {output.num2 = output.num.toPrecision(params.digits || 3);}
-		else {output.num2 = String(output.num);}
+		else if(params.spec === 'fixed') {output.num2 = num.toFixed(df || 0);}
+		else if(params.spec === 'digits') {
+			let dn = Math.floor(Math.log10(num)) + 1; //natural digits of the number. If greater than params.digits, don't use toPrecision, but round up manually to avoid exponential
+			output.num2 = dn > dp ? (Math.round(num / 10**(dn-dp)) * 10**(dn-dp)).toFixed(0) : num.toPrecision(dp);
+		}
+		else {output.num2 = String(num);}
 		return output;
 	};
 

@@ -16,7 +16,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	//generate ng-style for currently active tab button
 	$scope.tabButtonStyle = tab => CS.tab === tab ? ({'border-bottom': '3px solid white'}) : ({});
 	//generate ng-style for tutorial window
-	$scope.tutorialStyle = () => ({top: CS.tutorial.top+'px', left: CS.tutorial.left+'px', width: CS.tutorial.width+'px', height: CS.tutorial.height+'px'});
+	$scope.tutorialStyle = () => ({top: CS.tutorial.top+'px', left: CS.tutorial.left+'px', width: CS.tutorial.width+'px'});
 
 	//get available screen size for resizing purposes
 	const getWindowDimensions = () => ({
@@ -59,6 +59,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		if(CS.input === '') {return;}
 		if(CS.history.length > 0 && CS.input === CS.history[0].input && CS.target === CS.history[0].target) {CS.history[0].params = angular.copy(CS.params); return;} //just update the params if strings are unchanged
 		CS.history.unshift({input: CS.input, target: CS.target, params: angular.copy(CS.params)}); //or add a new entry
+		CS.history = CS.history.filter((o,i) => (i === 0) || o.input !== CS.input || o.target !== CS.target); //remove duplicates further down
 		(CS.history.length > 10) && CS.history.pop(); //and perhaps delete the old ones
 	}
 	//when a user changes format settings, there is no need to initialize conversion again
@@ -257,7 +258,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	//clear all, start the tutorial window and update outputs
 	$scope.initTutorial = function() {
 		CS.input = ''; CS.target = ''; CS.filter = ''; CS.showParams = false; CS.params.spec = 'auto'; CS.params.exp = false;
-		CS.tutorial = {step: 0, top: 120, left: 400, width: 600, height: 280}
+		CS.tutorial = {step: 0, top: 120, left: 400, width: 600}
 		$scope.changeTab('converter'); $scope.listenForHelp(); $scope.fullConversion();
 	};
 
@@ -295,10 +296,10 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 	//TF = tutorial functions (advance the tutorial, operate UI, insert examples)
 	$scope.TF = {
-		step1: function() {CS.tutorial.step = 1; $scope.changeTab('help'); CS.tutorial.top = 200; CS.tutorial.left = 500; CS.tutorial.height = 280;},
-		step2: function() {CS.tutorial.step = 2; $scope.changeTab('converter'); CS.tutorial.top = 120; CS.tutorial.left = 400; CS.tutorial.height = 300;},
-		step6: function() {CS.tutorial.step = 6; $scope.changeTab('converter'); CS.tutorial.top = 260; CS.tutorial.left = 400; CS.tutorial.height = 260; CS.showParams = true;},
-		nextStep: function() {CS.tutorial.step++; $scope.changeTab('converter'); CS.tutorial.height = 330;},
+		step1: function() {CS.tutorial.step = 1; $scope.changeTab('help'); CS.tutorial.top = 200; CS.tutorial.left = 500;},
+		step2: function() {CS.tutorial.step = 2; $scope.changeTab('converter'); CS.tutorial.top = 120; CS.tutorial.left = 400;},
+		step6: function() {CS.tutorial.step = 6; $scope.changeTab('converter'); CS.tutorial.top = 260; CS.tutorial.left = 400; CS.showParams = true;},
+		nextStep: function() {CS.tutorial.step++; $scope.changeTab('converter');},
 		close: () => (CS.tutorial = null),
 		//examples as array [input, target]
 		examples: {
@@ -314,13 +315,14 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			radioactiveDecay: ['500 mg * _e^(-72 h / (8.0197 d))', 'mg'],
 			volumeABC: ['18mm * 6.5cm * 22cm  +  0.2 l', 'ml'],
 			charDim: ['(1,5 l)^(1/3)', 'cm'],
-			RPM: ['3500 /min ', 'Hz'],
 			lbft: ['_g * lb * ft ', 'J'],
 			kgcm2: ['kg * _g / cm2 ', 'psi'],
 			poundal: ['lb * ft / s2 ', 'N'],
 			oersted: ['T / _mu', 'Oe'],
 			pi: ['45°', '_pi'],
 			targetNumber: ['96', '12'],
+			gasFlow: ['7000 Nm3 / h * 28 g/mol', 't/h'],
+			gasConc: ['25 mg / Nm3 / (34 g/mol)', 'ppm'],
 			dC: ['°C', 'K'],
 			C2K: ['25°C + TC0', 'K'],
 			F2K: ['85°F+TF0', ''],

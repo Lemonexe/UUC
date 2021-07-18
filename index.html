@@ -28,9 +28,9 @@
 
 <div id="tabButtonContainer">
 	<span ng-click="changeTab('converter')" ng-style="tabButtonStyle('converter')" class="tabButton"><cz>Převodník</cz><en>Converter</en></span>
-	<span ng-click="changeTab('macro')" ng-style="tabButtonStyle('macro')" class="tabButton"><cz>Makro</cz><en>Macro</en></span>
 	<span ng-click="changeTab('help')" ng-style="tabButtonStyle('help')" class="tabButton"><cz>Reference</cz><en>Reference</en></span>
 	<span ng-click="changeTab('intro')" ng-style="tabButtonStyle('intro')" class="tabButton"><cz>Úvod</cz><en>Intro</en></span>
+	<span ng-click="changeTab('macro')" ng-style="tabButtonStyle('macro')" class="tabButton" ng-show="CS.showMacroTab"><cz>Makro</cz><en>Macro</en></span>
 </div>
 
 <div ng-switch="CS.tab">
@@ -40,7 +40,8 @@
 			<p><b>Co je na UUC tak zvláštního?</b></p>
 			<p>Na internetu lze najít mnoho převodníků různých jednotek, avšak žádný, který by byl schopen převádět jednotky ve <i>zcela libovolných</i> rozměrech – tedy jako součin a podíl jednotek v různých mocninách.
 			S UUC už nebudete muset řešit, kterým číslem násobit či dělit, neboť program pochopí jakýkoliv fyzikální výraz a převede jej na libovolnou jednotku s odpovídajícím rozměrem.</p>
-			<p>Kromě prostého převodu jednotek program též nově nabízí makra, kde je možné provádět i jednoduché výpočty. To má tu výhodu oproti jiným nástrojům, že nezadáváte pouhá čísla, ale přímo fyzikální veličiny, které UUC správně zpracuje, sám převede jednotky a zkontroluje smysluplnost.</p>
+			<p>Kromě prostého převodu jednotek nabízí UUC nové též makra, kde je možné provádět i jednoduché výpočty. To má tu výhodu oproti jiným nástrojům, že nezadáváte pouhá čísla, ale přímo fyzikální veličiny, které UUC správně zpracuje, sám převede jednotky a zkontroluje smysluplnost.<br>
+			Tato funkce zůstává skryta, zde ji můžete povolit: <input type="checkbox" ng-model="CS.showMacroTab"></p>
 			<p>
 				<b>Poznámky:</b>
 				<ol>
@@ -56,7 +57,8 @@
 			<p><b>What is so special about UUC?</b></p>
 			<p> While you can find lots of different converters for various units, there isn't one that could convert units <i>in absolutely any</i> dimension – a product of several units in various powers.
 			With UUC you'll never again have to ponder, which number you're supposed to mulitply or divide with, because this program will understand any physical quantity expression and convert it to a unit of choice with corresponding dimension.</p>
-			<p>In addition to simple conversion, the program now also offers macros, where you can code simple calculations. The advantage over other programs is the possibility to actually enter physical quantities instead of just plain numbers, so UUC can automatically process them, convert units and check for consistency.</p>
+			<p>In addition to simple conversion, UUC now also offers macros, where you can code simple calculations. The advantage over other programs is the possibility to actually enter physical quantities instead of just plain numbers, so UUC can automatically process them, convert units and check for consistency.<br>
+			This feature is initially hidden, here you can enable it: <input type="checkbox" ng-model="CS.showMacroTab"></p>
 			<p>
 				<b>Notes:</b>
 				<ol>
@@ -97,7 +99,7 @@
 			<b><cz>Vstup:</cz><en>Input:</en></b><br>
 			<input type="text" class="inputBox" ng-model="CS.input" ng-keyup="listenForConvert($event)" ng-change="autoforget()" tabindex="1" autofocus><!--comment to suppress whitespace, lol!
 			--><select ng-if="CS.history.length > 0" ng-model="ctrl.autocomplete" id="inputAutocomplete" ng-change="autocomplete(0)">
-				<option ng-repeat="opt in CS.history track by $index" ng-value="$index">{{opt.input + ' > ' + opt.target}}</option>
+				<option ng-repeat="opt in CS.history track by $index" ng-value="$index">{{opt.input + (opt.target ? ' > ' + opt.target : '')}}</option>
 			</select><br>
 
 			<b><cz>Cílové jednotky:</cz><en>Target units:</en></b><br>
@@ -130,6 +132,10 @@
 	</div>
 
 	<div ng-switch-when="macro">
+		<p>
+			<cz>Zde můžete sestavit vlastní UUC "skript". Je to experimentální funkce, která je vlastně asi docela k ničemu.<br>Tlačítko Dokumentace vám vysvětlí podrobnosti.</cz>
+			<en>Here you can assemble your own UUC "script". It's an experimental feature, that imho proved to be quite useless.<br>The Documentation button will tell you more.</en>
+		</p>
 		<b><cz>Kód:</cz><en>Code:</en></b><br>
 		<textarea ng-model="CS.inputCode" ng-keyup="listenForRun($event)" ng-style="textareaStyle()" resize-observer autofocus spellcheck="false"></textarea><br>
 		<input type="button" ng-value="'Spustit (F2)'.trans()" ng-click="runCode()">

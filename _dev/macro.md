@@ -55,7 +55,7 @@ The third call uses number of decimals, but doesn't provide the number, so it de
 ## Useful examples
 
 Here are some specific useful examples.
-They could be written in converter GUI as one-liners, but in macro code it is more readable.
+They could be written in converter GUI as one-liners (see built-in interactive intro), but in macro code it is more readable.
 
 ```
 /*ABSOLUTE TEMPERATURE
