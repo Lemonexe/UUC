@@ -26,6 +26,7 @@ input[type="button"] {cursor: pointer;}
 	font-family: 'Courier New', 'Courier', 'Consolas';
 	background-color: #f0f0f0;
 }
+#lang > img {width: 45px; height: 30px;}
 
 
 

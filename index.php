@@ -1,3 +1,7 @@
+<?php
+//version of resources, to prevent caching of old .js and .html files when a new version is built
+$v = 1;
+?>
 <!DOCTYPE html>
 <html ng-app="UUC" ng-controller="ctrl">
 	<head>
@@ -6,23 +10,20 @@
 		<title>Ultimate Unit Converter</title>
 		<script src="libs/angular.min.js"></script>
 		<!--these scripts just declare-->
-		<script src="app/convert.js" type="text/javascript"></script>
-		<script src="app/convert_parse.js" type="text/javascript"></script>
-		<script src="app/convert_macro.js" type="text/javascript"></script>
-		<script src="app/lang.js" type="text/javascript"></script>
-		<script src="app/data.js" type="text/javascript"></script>
+		<script src="app/convert.js?v=<?php echo $v;?>" type="text/javascript"></script>
+		<script src="app/convert_parse.js?v=<?php echo $v;?>" type="text/javascript"></script>
+		<script src="app/convert_macro.js?v=<?php echo $v;?>" type="text/javascript"></script>
+		<script src="app/lang.js?v=<?php echo $v;?>" type="text/javascript"></script>
+		<script src="app/data.js?v=<?php echo $v;?>" type="text/javascript"></script>
 		<!--these script start doing something-->
-		<script src="app/misc.js" type="text/javascript"></script>
-		<script src="app/controller.js" type="text/javascript"></script>
+		<script src="app/misc.js?v=<?php echo $v;?>" type="text/javascript"></script>
+		<script src="app/controller.js?v=<?php echo $v;?>" type="text/javascript"></script>
 		<!--utilities-->
-		<script src="app/tests.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="app/style.css">
+		<script src="app/tests.js?v=<?php echo $v;?>" type="text/javascript"></script>
+		<link rel="stylesheet" href="app/style.css?v=<?php echo $v;?>">
 	</head>
 	<body ng-mousemove="mouseMove($event)" ng-mouseup="mouseUp()" ng-mouseleave="mouseLeave($event)">
-<div id="lang">
-	<img ng-src="{{imgSrcCZ}}" ng-click="changeLang('cz')" style="width: 45px; height: 30px;">
-	<img ng-src="{{imgSrcEN}}" ng-click="changeLang('en')" style="width: 45px; height: 30px;">
-</div>
+<div id="lang"><img ng-src="{{imgSrcCZ}}" ng-click="changeLang('cz')"><img ng-src="{{imgSrcEN}}" ng-click="changeLang('en')"></div>
 
 <h1>Ultimate Unit Converter II</h1>
 
@@ -186,7 +187,7 @@
 	</div>
 </div>
 
-<div id="tutorial" ng-if="CS.tutorial" ng-style="tutorialStyle()" ng-include="'res/tutorial.html'"></div>
+<div id="tutorial" ng-if="CS.tutorial" ng-style="tutorialStyle()" ng-include="'res/tutorial.html?v=<?php echo $v;?>'"></div>
 
 <div id="debug"></div>
 <div id="footerDefense"></div>

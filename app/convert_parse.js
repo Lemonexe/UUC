@@ -18,7 +18,7 @@ function Convert_parse(convert, text) {
 	//rationalize the input string
 	function syntaxCheck(text) {
 		(text === '') && (text = '1');
-		text = text.trim().replace(/,/g , '.');
+		text = text.replace(/,/g , '.');
 
 		//check bracket balance and add missing ones
 		const opening = text.split('(').length - 1;
@@ -26,11 +26,17 @@ function Convert_parse(convert, text) {
 		if(closing > opening) {throw convert.msgDB['ERR_brackets_missing'](closing-opening);}
 		text += ')'.repeat(opening-closing);
 
-		//check validity of operators and clean up
-		text = text.replace(/ +/g, ' ') //reduce cumulated spaces
-			.replace(/ ?([\^*/+\-()]+) ?/g, '$1') //trim operators
+		//clean up spaces in order to properly parse
+		text = text
+			.replace(/([()])/g, ' $1 ') //pad () to allow expression right next to it
+			.trim()
+			.replace(/ +/g, ' ') //reduce cumulated spaces
+			.replace(/ ?([\^*/+\-]+) ?/g, '$1') //trim operators
+			.replace(/(\(+) ?/g, '$1') //right trim (
+			.replace(/ ?(\)+)/g, '$1') // left trim )
 			.replace(/ /g, '*'); //the leftover spaces are truly multiplying signs
 
+		//check validity
 		const m = text.match(/[\^*/+\-]{2,}/);
 		if(m) {throw convert.msgDB['ERR_operators'](m[0]);}
 

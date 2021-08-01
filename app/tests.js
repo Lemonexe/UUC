@@ -87,6 +87,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	fullTest('(3*(7-3)*2)', '', 0, 24, 1e-6);
 	fullTest('3*(4*(5*(2+1)-1))', '', 0, 168, 1e-6);
 	fullTest('3*(4+5) / (2*2^3*2) * 7*(2+2*2+2)', '', 0, 47.25, 1e-6);
+	fullTest('0.5 ((5(6+(8)3)) 2 3', '15', 0, 30, 1e-6);
 	fullTest('3m2*(4*5m)*2kPa', 'J', 0, 120000, 1e-6);
 	fullTest(' -3.23e+4m2 * (42,77e-2*5m)  *2kPa1.0 ', 'MJ', 0, -138.1471, 1e-2);
 	fullTest('3*(4*(5+2', '', 0, 84, 1e-6);

@@ -5,7 +5,7 @@ While the core features of the app are performed on the front-end using only HTM
 The front-end is written in ECMA6 Javascript and uses [AngularJS](https://angularjs.org/) framework.
 
 ## Code Structure
-Almost whole HTML GUI is in **index.html**, except for the tutorial window, which is in *res/tutorial.html*.  
+Almost whole HTML GUI is in **index.php**, except for the tutorial window, which is in *res/tutorial.html*.  
 All static CSS is stored in **app/style.css**, plus there are several ng-style declarations in *app/controller.js*.
 
 ### Javascript
