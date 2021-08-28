@@ -4,13 +4,17 @@
 		<cz>
 			<p>Právě se nacházíme v hlavní části UUC – záložce Převodník.<br>Zde můžete napsat výraz do textového pole Vstup a stisknout tlačítko Převést nebo klávesu Enter: <a class="fakeLink" ng-click="TF.ex('SI')">příklad</a></p>
 			<p>Převod takto proběhne do základních jednotek SI, můžete však vyplnit textové pole Cílové jednotky pro určení výstupních jednotek: <a class="fakeLink" ng-click="TF.ex('simple')">příklad</a></p>
-			<p>Jak je vidět, při převodu můžete (avšak nemusíte) specifikovat číslo.<br>Pozor – jednotky jsou citlivé na velikost písmen (z důvodu kolizí): <a class="fakeLink" ng-click="TF.ex('wrongCase')">příklad</a></p>
+			<p>Jak je vidět, při převodu můžete (avšak nemusíte) specifikovat číslo.</p>
+			<p>Mějte na paměti že jednotky jsou dle konvencí citlivé na VELIKOST PÍSMEN!<br>
+				UUC se snaží porozumět i jinému zápisu: <a class="fakeLink" ng-click="TF.ex('wrongCase')">příklad</a>, ale nemusí to fungovat vždy..</p>
 			<p>Pozn.: okno tutoriálu můžete přesouvat pomocí lišty či zcela zavřít</p>
 		</cz>
 		<en>
 			<p>Currently we are in the main part of UUC – the Converter tab.<br>Here you can enter an expression into the Input text field and press the Convert button or Enter key: <a class="fakeLink" ng-click="TF.ex('SI')">example</a></p>
 			<p>Input will be converted into basic SI units by default, but you can fill out the Target units text field in order to specify the output units: <a class="fakeLink" ng-click="TF.ex('simple')">example</a></p>
-			<p>As you can see, you may (but needn't) specify a number in the conversion.<br>Caution – units are case-sensitive (due to collisions): <a class="fakeLink" ng-click="TF.ex('wrongCase')">example</a></p>
+			<p>As you can see, you may (but needn't) specify a number in the conversion.</p>
+			<p>Bear in mind, that units are by convention case-SENSITIVE!<br>
+				UUC tries to understand a different case: <a class="fakeLink" ng-click="TF.ex('wrongCase')">example</a>, but it may not always work..</p>
 			<p>Note: you can move the tutorial window using the top bar, or close it completely</p>
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step1()">
@@ -86,7 +90,10 @@
 				<li>Úhel jako násobek pí: <a class="fakeLink" ng-click="TF.ex('pi')">příklad</a> (prázdné pole cílové jednotky = radián)</li>
 				<li>Normální objemový tok plynu · mol. hmotnost → hmotnostní tok <a class="fakeLink" ng-click="TF.ex('gasFlow')">příklad</a></li>
 				<li>Hmotnostní koncentrace plynu / mol. hmotnost → ppm <a class="fakeLink" ng-click="TF.ex('gasConc')">příklad</a></li>
+				<li>Tlak ve výšce dle barometrické rovnice <a class="fakeLink" ng-click="TF.ex('barometric')">příklad</a></li>
+				<li>Úniková rychlost z planety <a class="fakeLink" ng-click="TF.ex('escape')">příklad</a></li>
 			</ul>
+			<p>A jistě vás napadne spousta dalších!</p>
 		</cz>
 		<en>
 			<p>Useful examples for specific use:</p>
@@ -99,7 +106,10 @@
 				<li>Angle as a pi multiple: <a class="fakeLink" ng-click="TF.ex('pi')">example</a> (empty target field is interpreted as radian)</li>
 				<li>Normal volume flow of gas · mol. weight → mass flow <a class="fakeLink" ng-click="TF.ex('gasFlow')">example</a></li>
 				<li>Mass concentration of gas / mol. weight → ppm <a class="fakeLink" ng-click="TF.ex('gasConc')">example</a></li>
+				<li>Pressure at altitude using barometric equation <a class="fakeLink" ng-click="TF.ex('barometric')">example</a></li>
+				<li>Escape velocity from planet <a class="fakeLink" ng-click="TF.ex('escape')">example</a></li>
 			</ul>
+			<p>And surely you'll think of many more!</p>
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.nextStep()">
 	</div>

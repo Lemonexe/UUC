@@ -10,8 +10,9 @@ function Convert_parse(convert, text) {
 	const UnitIdMap = Units.map(item => ({id: item.id, ref: item})); //first just map the main ids
 	Units.forEach(o => o.alias && o.alias.forEach(a => UnitIdMap.push({id: a, ref: o}))); //and push all aliases
 
-	const ids = UnitIdMap.map(item => item.id);
-	const prefs = Prefixes.map(item => item.id);
+	const idsOC = UnitIdMap.map(item => item.id); //map of unit ids in original case
+	const idsLC = UnitIdMap.map(item => item.id.toLowerCase()); //in lowercase
+	const prefs = Prefixes.map(item => item.id); //map of prefixes
 	text = syntaxCheck(text);
 	return crawl(text);
 
@@ -152,19 +153,22 @@ function Convert_parse(convert, text) {
 		}
 
 		u = parseUnit2(text, pow);
+		if(!u) {u = parseUnit2(text, pow, true);}
 		if(!u) {throw convert.msgDB['ERR_unknownUnit'](text);} //the unit is unknown
 		return u;
 	}
 
 	//parse a unit string. It may have a prefix it the beginning
-	function parseUnit2(text, pow) {
+	function parseUnit2(text, pow, insensitive) {
 		//first we try to find the unit in ids
-		let i = ids.indexOf(text);
+		let text2 = insensitive ? text.toLowerCase() : text;
+		let ids = insensitive ? idsLC : idsOC;
+		let i = ids.indexOf(text2);
 		let j = -1;
 		//not found? There might be a prefix. First letter is stripped and we search for units without it. We also search the prefixes for the first letter
 		if(i === -1) {
-			i = ids.indexOf(text.slice(1));
-			j = prefs.indexOf(text[0]);
+			i = ids.indexOf(text2.slice(1));
+			j = prefs.indexOf(text[0]); //even if in insensitive mode, look for prefix in original string (mili vs Mega)
 
 			//if we find both, we add the unit with its prefix and check whether it is appropriately used. If we didn't find i or j, return nothing
 			if(i === -1 || j === -1) {return null;}

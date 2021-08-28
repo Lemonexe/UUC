@@ -323,6 +323,8 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			targetNumber: ['96', '12'],
 			gasFlow: ['7000 Nm3 / h * 28 g/mol', 't/h'],
 			gasConc: ['25 mg / Nm3 / (34 g/mol)', 'ppm'],
+			barometric: ['atm * _e^(-37000ft * _g * 28 g/mol / (_R * 300K))', 'kPa'],
+			escape: ['( 2 _G * 5.972e24 kg / (6371 km) )^0.5', 'mph'],
 			dC: ['°C', 'K'],
 			C2K: ['25°C + TC0', 'K'],
 			F2K: ['85°F+TF0', ''],

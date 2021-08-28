@@ -98,6 +98,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	fullTest('Nm3', 'Ncm', 0, 1, 1e-6);
 	fullTest('0°C+TC0', 'K', 0, csts.TC0, 1e-6);
 	fullTest('57°F+TF0-TC0', '', 0, 13.8889, 1e-3);
+	fullTest('Mpa*PPM', '', 0, 1, 1e-3); //case-sensitive leniency
 
 !silent && console.log('\nFull conversion warnings');
 	fullTest('m3', 'm2', 1);

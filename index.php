@@ -1,6 +1,6 @@
 <?php
 //version of resources, to prevent caching of old .js and .html files when a new version is built
-$v = 1;
+$v = 4;
 ?>
 <!DOCTYPE html>
 <html ng-app="UUC" ng-controller="ctrl">

@@ -92,7 +92,7 @@ const Units = [
 		en: 'If you are unsure which year to use, pick this one. Julian year is obsolete.'}},
 	{v: [0,0,1,0,0,0,0,0], id: 'jyr', name: {cz: 'juliánský rok', en: 'julian year'}, k:3600*24*365.25},
 
-	{v: [0,0,-1,0,0,0,0,0], id: 'rpm', alias:['RPM'], name: {cz: 'otáčky za minutu', en: 'revolutions per minute'}, k:1/60},
+	{v: [0,0,-1,0,0,0,0,0], id: 'rpm', name: {cz: 'otáčky za minutu', en: 'revolutions per minute'}, k:1/60},
 
 	{v: [0,0,0,0,1,0,0,0], id: '°F', name: {cz: 'stupeň Fahrenheita', en: 'degree Fahrenheit'}, k:5/9, note: csts.dTnote},
 	{v: [0,0,0,0,1,0,0,0], id: '°R', alias:['°Re', '°Ré'], name: {cz: 'stupeň Réaumura', en: 'degree Réaumur'}, k:5/4, note: csts.dTnote},
@@ -142,11 +142,12 @@ const Units = [
 	{v: [2,1,-2,0,0,0,0,0], id: 'Wh', name: {cz: 'watthodina', en: 'watt-hour'}, k:3600, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'eV', name: {cz: 'elektronvolt', en: 'electronvolt'}, k:csts.q, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'erg', name: {cz: 'erg', en: 'erg'}, k:1e-7, SI: true, prefix: 'all'},
-	{v: [2,1,-2,0,0,0,0,0], id: 'Btu', alias:['BTU'], name: {cz: 'britská tepelná jednotka', en: 'british thermal unit'}, k:csts.BTU, prefix: 'all'},
-	{v: [2,1,-2,0,0,0,0,0], id: 'Chu', alias:['CHU'], name: {cz: 'celsiova jednotka tepla', en: 'celsius heat unit'}, k: 1.899101e3, prefix: 'all'},
+	{v: [2,1,-2,0,0,0,0,0], id: 'Btu', alias:['BTU','btu'], name: {cz: 'britská tepelná jednotka', en: 'british thermal unit'}, k:csts.BTU, prefix: 'all'},
+	{v: [2,1,-2,0,0,0,0,0], id: 'Chu', alias:['CHU','chu'], name: {cz: 'celsiova jednotka tepla', en: 'celsius heat unit'}, k: 1.899101e3, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'thm', name: {cz: 'therm', en: 'therm'}, k:csts.BTU*1e5, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'cal', name: {cz: 'kalorie', en: 'calorie'}, k:4.184, prefix: 'all'},
-	{v: [2,1,-2,0,0,0,0,0], id: 'TNT', name: {cz: 'tuna ekvivalentu TNT', en: 'ton of TNT equivalent'}, k:4.184e9, prefix: 'all'},
+	{v: [2,1,-2,0,0,0,0,0], id: 'TNT', name: {cz: 'ekvivalent tuny TNT', en: 'ton of TNT equivalent'}, k:4.184e9, prefix: '+'},
+	{v: [2,1,-2,0,0,0,0,0], id: 'BOE', alias: ['BFOE'], name: {cz: 'ekvivalent barelu ropy', en: 'barrel of oil equivalent'}, k:5.8e6*csts.BTU, prefix: '+'},
 
 	{v: [-1,0,0,1,0,0,0,0], id: 'Oe', name: {cz: 'oersted', en: 'oersted'}, k:1000/(4*Math.PI), prefix: 'all'},
 
