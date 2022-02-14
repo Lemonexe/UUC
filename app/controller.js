@@ -305,7 +305,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		examples: {
 			SI: ['min', ''],
 			simple: ['45 kPa', 'torr'],
-			wrongCase: ['45 KPA', 'torr'],
+			wrongCase: ['45 kPA', 'torr'],
 			wrongSymbol: ['4.186 J/C/g ', 'Btu/F/lb'],
 			okSymbol: ['4.186 J/°C/g ', 'Btu/°F/lb'],
 			brackets: ['4.186 J/(°C*g) ', 'Btu/(°F lb)'],
@@ -315,6 +315,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			radioactiveDecay: ['500 mg * _e^(-72 h / (8.0197 d))', 'mg'],
 			volumeABC: ['18mm * 6.5cm * 22cm  +  0.2 l', 'ml'],
 			charDim: ['(1,5 l)^(1/3)', 'cm'],
+			pythagor: ['((53 cm)^2 + (295 mm)^2)^.5', 'in'],
 			lbft: ['_g * lb * ft ', 'J'],
 			kgcm2: ['kg * _g / cm2 ', 'psi'],
 			poundal: ['lb * ft / s2 ', 'N'],

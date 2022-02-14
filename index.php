@@ -1,6 +1,6 @@
 <?php
 //version of resources, to prevent caching of old .js and .html files when a new version is built
-$v = 4;
+$v = 6;
 ?>
 <!DOCTYPE html>
 <html ng-app="UUC" ng-controller="ctrl">
@@ -47,7 +47,7 @@ $v = 4;
 				<b>Poznámky:</b>
 				<ol>
 					<li>UUC je možné přidat do prohlížeče jako vyhledávač a mít jej tak rychle po ruce! <a class="fakeLink" ng-click="changeTab('searchEngine')">Návod (pro Chrome či Edge)</a></li>
-					<li>Pokud vám zde chybí vaše oblíbená jednotky či konstanta a rádi byste ji zde viděli, <a href="mailto:zbytek@gmail.com">kontaktujte mě</a></li>
+					<li>Pokud vám zde chybí vaše oblíbená jednotka či konstanta a rádi byste ji zde viděli, <a href="mailto:zbytek@gmail.com">kontaktujte mě</a></li>
 					<li>Pokud máte nápad na vylepšení této aplikace, neváhejte <a href="mailto:zbytek@gmail.com">mě kontaktovat</a></li>
 					<li>Pokud sami programujete a máte zájem o zdrojový kód, navštivte <a href="https://github.com/Lemonexe/UUC">Github repozitář</a></li>
 				</ol>
@@ -192,8 +192,8 @@ $v = 4;
 <div id="debug"></div>
 <div id="footerDefense"></div>
 <div id="footer">
-	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2021 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a></cz>
-	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2021 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a></en>
+	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2022 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a></cz>
+	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2022 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a></en>
 </div>
 
 	</body>
