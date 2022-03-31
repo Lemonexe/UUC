@@ -26,7 +26,7 @@ input[type="button"] {cursor: pointer;}
 	font-family: 'Courier New', 'Courier', 'Consolas';
 	background-color: #f0f0f0;
 }
-#lang > img {width: 45px; height: 30px;}
+.expandable {display: inline-block; width: 15px; margin-bottom: 10px}
 
 
 
@@ -112,9 +112,14 @@ input[type="button"] {cursor: pointer;}
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	padding: 10px;
+	padding: 3px;
 	cursor: pointer;
 }
+#lang > img {
+	width: 45px; height: 30px;
+	margin: 1px; border: 1px solid #dddddd;
+}
+#lang > img:hover {margin: 0px; border: 2px solid #999999;}
 #tutorial {
 	position: absolute;
 	z-index: 10;

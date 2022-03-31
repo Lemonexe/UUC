@@ -1,1 +1,30 @@
-nothing to do :-)
+{} SUBSTITUTION FUNCTIONS
+	{30°C} evaluuje výraz jako absolutní teplotu
+	pro vybrané jednotky budou definované fce + inv. fce
+
+	implementation option 1:
+		při parse tohle bude zpracování ještě závorkama, ale naštěstí ne rekurzivně ofc :-)
+		když se detekuje {} string tak se pošle na parse, ale structured objekt se kontroluje - musí být pouze číslo a jednotka.
+		Podle rozpoznané jednotky pak aplikace funkce a dosazení výrazu zpět do "hlavního" parseru
+
+	implementation option 2 (MUCH BETTER):
+		{} se parsnou stejně jako závorky, při zavolání rekurze () se dá special argument který všechny objekty uvnitř označkuje
+		až když se dělá racionalizace tak se to vyhodnotí. () array se kontroluje - musí být pouze číslo a jednotka.
+		if !target unit then vyhodnocení pomocí funkce
+		if target unit pak další kontrola - nesmí být nic jiného! A použije se inverzní funkce
+
+	examples:
+		{0°C} → K = 298 K
+		{37°C} → {°F} = 100°F
+		
+		{30 API} → kg/m3 = 872kg/m3 
+		872g/l → {API} = 30 API
+
+		atm * 28 g/mol / _R / {25°C}  → kg/m3 =
+		atm * 28 g/mol / _R / (298 K) → kg/m3 = 1.15 kg/m3
+
+		/*
+	asi není potřeba
+		{1 bar} → kPa = 201.325 kPa
+		-10 kPa → {kPa} = 91.325 kPa
+		*/

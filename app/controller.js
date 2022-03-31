@@ -254,13 +254,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 	/*
 		TUTORIAL functions
-	*/
-	//clear all, start the tutorial window and update outputs
-	$scope.initTutorial = function() {
-		CS.input = ''; CS.target = ''; CS.filter = ''; CS.showParams = false; CS.params.spec = 'auto'; CS.params.exp = false;
-		CS.tutorial = {step: 0, top: 120, left: 400, width: 600}
-		$scope.changeTab('converter'); $scope.listenForHelp(); $scope.fullConversion();
-	};
+	*/	
 
 	//initiate window dragging on mousedown
 	$scope.dragStart = function($event) {
@@ -296,11 +290,23 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 	//TF = tutorial functions (advance the tutorial, operate UI, insert examples)
 	$scope.TF = {
-		step1: function() {CS.tutorial.step = 1; $scope.changeTab('help'); CS.tutorial.top = 200; CS.tutorial.left = 500;},
-		step2: function() {CS.tutorial.step = 2; $scope.changeTab('converter'); CS.tutorial.top = 120; CS.tutorial.left = 400;},
-		step6: function() {CS.tutorial.step = 6; $scope.changeTab('converter'); CS.tutorial.top = 260; CS.tutorial.left = 400; CS.showParams = true;},
-		nextStep: function() {CS.tutorial.step++; $scope.changeTab('converter');},
-		close: () => (CS.tutorial = null),
+		close: () => {CS.tutorial = null},
+		//clear all, start the tutorial window and update outputs
+		initTutorial: function() {
+			CS.input = ''; CS.target = ''; CS.filter = ''; CS.showParams = false; CS.params.spec = 'auto'; CS.params.exp = false;
+			CS.tutorial = {step: 0, top: 120, left: 400, width: 600}
+			$scope.changeTab('converter'); $scope.listenForHelp(); $scope.fullConversion();
+		},
+		//next step with optional parameters
+		step: function(top, left, tab) {
+			$scope.changeTab(tab || 'converter');
+			top  && (CS.tutorial.top  = top);
+			left && (CS.tutorial.left = left);
+			CS.tutorial.step++;
+		},
+		//open tutorial with only examples showing
+		showExamplesOnly: function() {this.initTutorial(); CS.tutorial.step = 4; CS.tutorial.onlyExamples = true},
+		
 		//examples as array [input, target]
 		examples: {
 			SI: ['min', ''],

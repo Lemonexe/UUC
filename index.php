@@ -1,6 +1,6 @@
 <?php
 //version of resources, to prevent caching of old .js and .html files when a new version is built
-$v = 6;
+$v = 7;
 ?>
 <!DOCTYPE html>
 <html ng-app="UUC" ng-controller="ctrl">
@@ -37,7 +37,7 @@ $v = 6;
 <div ng-switch="CS.tab">
 	<div ng-switch-when="intro">
 		<cz>
-			<p>Ultimate Unit Converter II vás vítá!<br>Pokud jste zde poprvé, <b>klikněte <a ng-click="initTutorial()" class="fakeLink">zde</a> pro spuštění interaktivního tutoriálu</b>, kde se dozvíte o hlavních možnostech použití UUC.</p>
+			<p>Ultimate Unit Converter II vás vítá!<br>Pokud jste zde poprvé, <b>klikněte <a ng-click="TF.initTutorial()" class="fakeLink">zde</a> pro spuštění interaktivního tutoriálu</b>, kde se dozvíte o hlavních možnostech použití UUC.</p>
 			<p><b>Co je na UUC tak zvláštního?</b></p>
 			<p>Na internetu lze najít mnoho převodníků různých jednotek, avšak žádný, který by byl schopen převádět jednotky ve <i>zcela libovolných</i> rozměrech – tedy jako součin a podíl jednotek v různých mocninách.
 			S UUC už nebudete muset řešit, kterým číslem násobit či dělit, neboť program pochopí jakýkoliv fyzikální výraz a převede jej na libovolnou jednotku s odpovídajícím rozměrem.</p>
@@ -54,7 +54,7 @@ $v = 6;
 			</p>
 		</cz>
 		<en>
-			<p>Ultimate Unit Converter II welcomes you!<br>If you're here for the first time, <b>click <a ng-click="initTutorial()" class="fakeLink">here</a> to open an interactive tutorial</b> that will show you the most important features and use cases of UUC.</p>
+			<p>Ultimate Unit Converter II welcomes you!<br>If you're here for the first time, <b>click <a ng-click="TF.initTutorial()" class="fakeLink">here</a> to open an interactive tutorial</b> that will show you the most important features and use cases of UUC.</p>
 			<p><b>What is so special about UUC?</b></p>
 			<p> While you can find lots of different converters for various units, there isn't one that could convert units <i>in absolutely any</i> dimension – a product of several units in various powers.
 			With UUC you'll never again have to ponder, which number you're supposed to mulitply or divide with, because this program will understand any physical quantity expression and convert it to a unit of choice with corresponding dimension.</p>
@@ -96,7 +96,7 @@ $v = 6;
 			<en>First-time visitor? Then I'll recommend to take a look at the Intro tab!</en>
 		</div>
 		<div id="convertContainer">
-			<a ng-click="flip()" style="position: absolute; right: 0px; top: 47px; font-size: 18px; cursor: pointer;">⇅</a>
+			<a ng-click="flip()" style="position: absolute; right: 2px; top: 47px; font-size: 18px; cursor: pointer;">⇅</a>
 			<b><cz>Vstup:</cz><en>Input:</en></b><br>
 			<input type="text" class="inputBox" ng-model="CS.input" ng-keyup="listenForConvert($event)" ng-change="autoforget()" tabindex="1" autofocus><!--comment to suppress whitespace, lol!
 			--><select ng-if="CS.history.length > 0" ng-model="ctrl.autocomplete" id="inputAutocomplete" ng-change="autocomplete(0)">
@@ -110,7 +110,9 @@ $v = 6;
 		</div>
 
 		<div id="paramContainer">
-			<a ng-click="CS.showParams = !CS.showParams" style="cursor: pointer;"><span style="display: inline-block; width: 15px;">{{CS.showParams ? '–' : '+'}}</span><cz>Formát výstupu</cz><en>Output format</en></a>
+			<a ng-click="TF.showExamplesOnly()" style="cursor: help;"><span class="expandable">?</span><cz>Příklady</cz><en>Examples</en></a><br>
+
+			<a ng-click="CS.showParams = !CS.showParams" style="cursor: pointer;"><span class="expandable">{{CS.showParams ? '–' : '+'}}</span><cz>Formát výstupu</cz><en>Output format</en></a>
 			<div ng-show="CS.showParams">
 				<label><input type="radio" ng-model="CS.params.spec" value="auto" ng-change="updateFormat()"> <cz>automatický</cz><en>automatic</en></label><br>
 				<label><input type="radio" ng-model="CS.params.spec" value="digits" ng-change="updateFormat()"> <cz>počet platných cifer</cz><en>significant digits</en>: </label>
