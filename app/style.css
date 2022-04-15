@@ -42,6 +42,7 @@ input[type="button"] {cursor: pointer;}
 	min-width: 350px;
 	padding: 2px;
 	border: 1px solid #777777;
+	margin-bottom: 20px;
 }
 #convertContainer {
 	float: left;
@@ -65,7 +66,7 @@ input[type="button"] {cursor: pointer;}
 .ok {color: green;}
 .warn {color: darkorange;}
 .err {font-weight: bold; color: red;}
-.statusAppear {animation: appear 0.5s linear forwards;}
+.statusAppear {animation-name: appear; animation-timing-function: linear; animation-duration: 0.5s;}
 @keyframes appear {
 	0%   {opacity: 0;}
 	100% {opacity: 1;}
@@ -134,3 +135,18 @@ input[type="button"] {cursor: pointer;}
 	text-align: right;
 }
 .tutorialSection {padding: 10px; padding-top: 0px;}
+#sharelinkBox {
+	z-index: 20;
+	position: absolute;
+	border: 1px solid #777777;
+	background-color: rgba(250, 250, 250, 0.9);
+	padding: 5px;
+}
+.copyEffect {animation-name: flick; animation-timing-function: linear; animation-duration: 0.8s;}
+@keyframes flick {
+	0%   {opacity: 0;}
+	20%  {opacity: 1;}
+	65%  {opacity: 1;}
+	80%  {opacity: 0.6;}
+	100% {opacity: 0;}
+}

@@ -1,6 +1,5 @@
-<?php
-//version of resources, to prevent caching of old .js and .html files when a new version is built
-$v = 7;
+<?php //version of resources, to prevent caching of old .js and .html files when a new version is built
+	$v = 7;
 ?>
 <!DOCTYPE html>
 <html ng-app="UUC" ng-controller="ctrl">
@@ -27,6 +26,7 @@ $v = 7;
 
 <h1>Ultimate Unit Converter II</h1>
 
+<!-- TOP MENU -->
 <div id="tabButtonContainer">
 	<span ng-click="changeTab('converter')" ng-style="tabButtonStyle('converter')" class="tabButton"><cz>Převodník</cz><en>Converter</en></span>
 	<span ng-click="changeTab('help')" ng-style="tabButtonStyle('help')" class="tabButton"><cz>Reference</cz><en>Reference</en></span>
@@ -35,6 +35,7 @@ $v = 7;
 </div>
 
 <div ng-switch="CS.tab">
+<!-- INTRO TAB -->
 	<div ng-switch-when="intro">
 		<cz>
 			<p>Ultimate Unit Converter II vás vítá!<br>Pokud jste zde poprvé, <b>klikněte <a ng-click="TF.initTutorial()" class="fakeLink">zde</a> pro spuštění interaktivního tutoriálu</b>, kde se dozvíte o hlavních možnostech použití UUC.</p>
@@ -72,6 +73,7 @@ $v = 7;
 		</en>
 	</div>
 
+<!-- REFERENCE TAB -->
 	<div ng-switch-when="help">
 		<cz>
 			V databázi je {{databaseCount}} položek, z toho {{Units.length}} je právě zobrazeno.<br>
@@ -90,11 +92,13 @@ $v = 7;
 		</p>
 	</div>
 
+<!-- MAIN TAB -->
 	<div ng-switch-when="converter">
 		<div ng-if="!CS.hideTutorialLink" style="margin-bottom: 10px;">
 			<cz>Jste zde poprvé? Pak doporučuji navštívit záložku Úvod!</cz>
 			<en>First-time visitor? Then I'll recommend to take a look at the Intro tab!</en>
 		</div>
+	<!-- left container -->
 		<div id="convertContainer">
 			<a ng-click="flip()" style="position: absolute; right: 2px; top: 47px; font-size: 18px; cursor: pointer;">⇅</a>
 			<b><cz>Vstup:</cz><en>Input:</en></b><br>
@@ -107,10 +111,13 @@ $v = 7;
 			<input type="text" class="inputBox" ng-model="CS.target" ng-keyup="listenForConvert($event)" ng-change="autoforget()" tabindex="2">
 			<br>
 			<input type="button" ng-value="'Převést'.trans()" ng-click="fullConversion()" tabindex="3">
+			<br><br>
+			<b><cz>Výstup:</cz><en>Output:</en></b><br>
+			<span class="outputBox">{{result && result.output ? (result.output.num2 || result.output.num) + ' ' + result.output.dim : ' '}}</span>
 		</div>
-
+	<!-- right container -->
 		<div id="paramContainer">
-			<a ng-click="TF.showExamplesOnly()" style="cursor: help;"><span class="expandable">?</span><cz>Příklady</cz><en>Examples</en></a><br>
+			<a ng-click="TF.showExamplesOnly()" style="cursor: pointer;"><span class="expandable">?</span><cz>Příklady</cz><en>Examples</en></a><br>
 
 			<a ng-click="CS.showParams = !CS.showParams" style="cursor: pointer;"><span class="expandable">{{CS.showParams ? '–' : '+'}}</span><cz>Formát výstupu</cz><en>Output format</en></a>
 			<div ng-show="CS.showParams">
@@ -122,18 +129,24 @@ $v = 7;
 				<br>
 				<label><input type="checkbox" ng-model="CS.params.exp" ng-change="updateFormat()"> <cz>vždy vědecký zápis</cz><en>always scientific notation</en></label>
 			</div>
+			<br>
+			<a ng-click="ctrl.sharelink = !ctrl.sharelink" style="cursor: pointer;"><span class="expandable">≫</span><cz>Sdílet odkaz</cz><en>Share link</en></a>
+			<span ng-show="ctrl.copylink" style="opacity: 0;" ng-class="ctrl.copyclass"><cz>úspěšně zkopírováno</cz><en>copied successfully</en></span><br>
+			<div id="sharelinkBox" ng-show="ctrl.sharelink">
+				<cz>Kliknutím zkopírujete do schránky odkaz na tuto konverzi.</cz>
+				<en>Click to copy the link with this conversion to clipboard.</en><br>
+				<span class="fakeLink" ng-click="copySharelink()" style="cursor: copy;">{{getSharelink()}}</span>
+			</div>
 		</div>
-		<div style="display: block; height: 20px; clear: both;"></div>
-
-		<b><cz>Výstup:</cz><en>Output:</en></b><br>
-		<span class="outputBox">{{result && result.output ? (result.output.num2 || result.output.num) + ' ' + result.output.dim : ' '}}</span>
-
+	<!-- below containers -->
+		<div style="display: block; clear: both;"></div>
 		<div ng-if="result" ng-class="statusAppear">
 			<br><b><cz>Stav:</cz><en>Status:</en></b><br>
 			<span ng-repeat="m in result.messages track by $index" ng-class="statusClass">{{m}}<br></span>
 		</div>
 	</div>
 
+<!-- MACRO TAB (hidden from top menu until activated) -->
 	<div ng-switch-when="macro">
 		<p>
 			<cz>Zde můžete sestavit vlastní UUC "skript". Je to experimentální funkce, která je vlastně asi docela k ničemu.<br>Tlačítko Dokumentace vám vysvětlí podrobnosti.</cz>
@@ -147,6 +160,7 @@ $v = 7;
 		<div ng-if="resultCode"><span ng-repeat="m in resultCode track by $index">{{m}}<br></span></div>
 	</div>
 
+<!-- SEARCHENGINE TAB (hidden from topmenu) -->
 	<div ng-switch-when="searchEngine">
 		<h2>Chrome <cz>nebo</cz><en>or</en> Edge</h2>
 		<p><cz>Není třeba nic instalovat, jen provést jednoduché nastavení:</cz>
@@ -156,7 +170,8 @@ $v = 7;
 				<span class="code">chrome://settings/searchEngines</span><br>
 				<span class="code">edge://settings/searchEngines</span></li>
 			<li><cz>Klepněte na tlačítko Přidat</cz><en>Click the Add button</en></li>
-			<li><cz>Do prvních dvou polí vyplňte</cz><en>Insert</en> <span class="code">uuc</span><cz>, do třetího vyplňte</cz><en> into the first two fields, into the third insert</en> <span class="code">{{searchEngineTemplate}}</span></li>
+			<li><cz>Do prvních dvou polí vyplňte</cz><en>Insert</en> <span class="code">uuc</span><cz>, do třetího vyplňte</cz><en> into the first two fields, into the third insert</en>
+				<span class="code">{{currentWebAddress + '/#%s'}}</span></li>
 			<li><cz>Dialog potvrďte tlačítkem Přidat</cz><en>Click the Add button to confirm the dialog</en></li>
 		</ol>
 
@@ -189,6 +204,7 @@ $v = 7;
 	</div>
 </div>
 
+<!-- OTHER ELEMENTS (such as floating tutorial window)-->
 <div id="tutorial" ng-if="CS.tutorial" ng-style="tutorialStyle()" ng-include="'res/tutorial.html?v=<?php echo $v;?>'"></div>
 
 <div id="debug"></div>

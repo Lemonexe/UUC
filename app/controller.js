@@ -34,8 +34,8 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		CS.tab = tab;
 	}
 
-	//just an informative string to show how to bind UUC as a search engine in Chrome
-	$scope.searchEngineTemplate = window.location.origin.replace(/\/$/, '') + window.location.pathname.replace(/\/$/, '') + '/#%s';
+	//current website address without / at end, used to append #hash to it
+	$scope.currentWebAddress = window.location.origin.replace(/\/$/, '') + window.location.pathname.replace(/\/$/, '');
 	//list of available prefixes
 	$scope.prefixText = Prefixes.map(o => `${o.id} (${o.v})`).join(', ');
 	//link for github documentation on macros
@@ -252,6 +252,21 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		$scope.fullConversion();
 	}
 
+	//get a link for sharing
+	$scope.getSharelink = function() {
+		const i = CS.input.trim(), t = CS.target.trim();
+		const phrase = (i === "" ? '' : i) + (t === "" ? '' : '>' + t);
+		return $scope.currentWebAddress + '#' + phrase; //encodeURI(phrase) is not really necessary..
+	};
+	//copy it to clipboard ~ Ctrl+C
+	$scope.copySharelink = function() {
+		const c = $scope.ctrl;
+		c.sharelink = false;
+		c.copyclass = 'copyEffect'; c.copylink = true;
+		$timeout(() => {c.copyclass = ''; c.copylink = false;}, 800);
+		navigator.clipboard.writeText($scope.getSharelink());
+	};
+
 	/*
 		TUTORIAL functions
 	*/	
@@ -294,7 +309,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		//clear all, start the tutorial window and update outputs
 		initTutorial: function() {
 			CS.input = ''; CS.target = ''; CS.filter = ''; CS.showParams = false; CS.params.spec = 'auto'; CS.params.exp = false;
-			CS.tutorial = {step: 0, top: 120, left: 400, width: 600}
+			CS.tutorial = angular.copy(this.newWindow);
 			$scope.changeTab('converter'); $scope.listenForHelp(); $scope.fullConversion();
 		},
 		//next step with optional parameters
@@ -305,7 +320,12 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			CS.tutorial.step++;
 		},
 		//open tutorial with only examples showing
-		showExamplesOnly: function() {this.initTutorial(); CS.tutorial.step = 4; CS.tutorial.onlyExamples = true},
+		showExamplesOnly: function() {
+			CS.tutorial = angular.copy(this.newWindow);
+			CS.tutorial.step = 4; CS.tutorial.onlyExamples = true;
+		},
+
+		newWindow: {step: 0, top: 120, left: 400, width: 600}, //new tutorial window
 		
 		//examples as array [input, target]
 		examples: {

@@ -103,7 +103,7 @@ const Units = [
 	{v: [1,0,0,0,0,0,0,0], id: 'Å', name: {cz: 'angstrom', en: 'angstrom'}, k:1e-10, SI: true},
 	{v: [1,0,0,0,0,0,0,0], id: 'th', name: {cz: 'thou', en: 'thou'}, k:2.54e-5},
 	{v: [1,0,0,0,0,0,0,0], id: 'in', name: {cz: 'palec', en: 'inch'}, k:2.54e-2},
-	{v: [1,0,0,0,0,0,0,0], id: 'ft', name: {cz: 'stopa', en: 'foot'}, k:0.3048},
+	{v: [1,0,0,0,0,0,0,0], id: 'ft', name: {cz: 'stopa', en: 'foot'}, k:0.3048, prefix: '+'},
 	{v: [1,0,0,0,0,0,0,0], id: 'yd', name: {cz: 'yard', en: 'yard'}, k:0.9144},
 	{v: [1,0,0,0,0,0,0,0], id: 'mi', name: {cz: 'míle', en: 'mile'}, k:csts.mile},
 	{v: [1,0,0,0,0,0,0,0], id: 'nmi', name: {cz: 'námořní míle', en: 'nautical mile'}, k:1852},
