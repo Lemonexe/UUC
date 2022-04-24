@@ -5,7 +5,7 @@
 
 //program constants
 const csts  = {
-	R: 8.3144598, //[J/K/mpol]
+	R: 8.3144598, //[J/K/mol]
 	TC0: 273.15, //[K]
 	TF0: 459.67*5/9, //[K]
 	atm: 101325, //[Pa]
@@ -13,8 +13,10 @@ const csts  = {
 	bbl: 158.987294928e-3, //[m3]
 	q: 1.6021766208e-19, //[C]
 	BTU: 1055.05585, //[J]
+	APIk: 141.5e3, //[1]
+	APIq: -131.5, //[m3/kg]
 	dTnote: {cz: 'Viz °C pro důležitou poznámku.', en: 'See °C for an important note.'},
-	T0note: {cz: 'Viz tutoriál pro příklad jak lze použít na převod teplot.', en: 'See tutorial for an example how to use it for temperature conversion.'}
+	Hgnote: {cz: 'Mezi mmHg a Torr je nepatrný rozdíl.', en: 'There is a negligible difference between mmHg and Torr.'}
 };
 
 /*
@@ -46,6 +48,7 @@ const Units = [
 	{v: [0,0,0,0,0,0,0,1], id: 'USD', alias:['$', 'usd'], name: {cz: 'americký dolar', en: 'US dollar'}, k:1, basic: true, prefix: '+'},
 
 //ALL OTHER UNITS as {id: 'identifier',v: [0,0,0,0,0,0,0], name: {cz: 'CZ', en: 'EN'}, k:1, SI: true, prefix: 'all'},
+//SI derived
 	{v: [0,0,0,0,0,0,0,0], id: '%', name: {cz: 'procento', en: 'percent'}, k:1e-2},
 	{v: [0,0,0,0,0,0,0,0], id: 'ppm', name: {cz: 'dílů na jeden milion', en: 'parts per million'}, k:1e-6},
 	{v: [0,0,0,0,0,0,0,0], id: 'rad', name: {cz: 'radián', en: 'radian'}, k:1, SI: true, prefix: '-', note: {
@@ -67,8 +70,8 @@ const Units = [
 	{v: [0,1,-2,-1,0,0,0,0], id: 'T', name: {cz: 'tesla', en: 'tesla'}, k:1, SI: true, prefix: 'all'},
 	{v: [2,1,-2,-2,0,0,0,0], id: 'H', name: {cz: 'henry', en: 'henry'}, k:1, SI: true, prefix: 'all'},
 	{v: [0,0,0,0,1,0,0,0], id: '°C', name: {cz: 'stupeň Celsia', en: 'degree Celsius'}, k:1, SI: true, note: {
-		cz: 'Stupeň Celsia je považován za jednotku rozdílu teploty (ΔT), nikoliv teploty (T)! Program by nemohl poznat, zda-li se vstupem myslí T nebo ΔT, takže bude vždy považován za ΔT. Pro převod teploty (T) použijte konstantu TC0 –  viz tutoriál pro příklad použití.',
-		en: 'Degree Celsius is considered to be a unit of temperature difference (ΔT), not temperature (T)! The program couldn\'t tell whether the input is T or ΔT, so it\'s always considered to be ΔT. In order to convert temperature (T) use the TC0 constant – see tutorial how to use it.'}},
+		cz: '°C je považován za jednotku rozdílu teploty (ΔT). Absolutní teplota (T) je zapsána pomocí složených závorek, např. {10°C}, viz tutoriál',
+		en: '°C is considered to be a unit of temperature difference (ΔT). Absolute temperature (T) is written using curly braces, e.g. {10°C}, see tutorial'}},
 	{v: [0,0,0,0,0,0,1,0], id: 'lm', name: {cz: 'lumen', en: 'lumen'}, k:1, SI: true, prefix: 'all'},
 	{v: [-2,0,0,0,0,0,1,0], id: 'lx', name: {cz: 'lux', en: 'lux'}, k:1, SI: true, prefix: 'all'},
 	{v: [0,0,-1,0,0,0,0,0], id: 'Bq', name: {cz: 'becquerel', en: 'becquerel'}, k:1, SI: true, prefix: 'all'},
@@ -77,6 +80,7 @@ const Units = [
 	{v: [2,0,-2,0,0,0,0,0], id: 'Sv', name: {cz: 'sievert', en: 'sievert'}, k:1, SI: true, prefix: 'all'},
 	{v: [-1,0,0,0,0,0,0,0], id: 'dpt', name: {cz: 'dioptrie', en: 'dioptre'}, k:1, SI: true},
 
+//non-SI
 	{v: [0,0,0,0,0,1,0,0], id: 'Nm3', alias:['Ncm'], name: {cz: 'normální krychlový metr', en: 'normal cubic metre'}, k:csts.atm/csts.TC0/csts.R, note: {
 		cz: 'Definován při 0°C a 1 atm. Navzdory názvu je Nm3 jednotkou látkového množství, nikoliv objemu.',
 		en: 'Defined at 0°C and 1 atm. Despite the name, Nm3 is actually amount of substance, not volume.'}},
@@ -98,7 +102,8 @@ const Units = [
 	{v: [0,0,-1,0,0,0,0,0], id: 'rpm', name: {cz: 'otáčky za minutu', en: 'revolutions per minute'}, k:1/60},
 
 	{v: [0,0,0,0,1,0,0,0], id: '°F', name: {cz: 'stupeň Fahrenheita', en: 'degree Fahrenheit'}, k:5/9, note: csts.dTnote},
-	{v: [0,0,0,0,1,0,0,0], id: '°R', alias:['°Re', '°Ré'], name: {cz: 'stupeň Réaumura', en: 'degree Réaumur'}, k:5/4, note: csts.dTnote},
+	{v: [0,0,0,0,1,0,0,0], id: '°Re', alias:['°Ré', '°r'], name: {cz: 'stupeň Réaumura', en: 'degree Réaumur'}, k:1.25, note: csts.dTnote},
+	{v: [0,0,0,0,1,0,0,0], id: '°R', name: {cz: 'Rankine', en: 'Rankine'}, k:5/9, note: csts.dTnote},
 
 	{v: [1,0,0,0,0,0,0,0], id: 'Å', name: {cz: 'angstrom', en: 'angstrom'}, k:1e-10, SI: true},
 	{v: [1,0,0,0,0,0,0,0], id: 'th', name: {cz: 'thou', en: 'thou'}, k:2.54e-5},
@@ -121,7 +126,7 @@ const Units = [
 	{v: [3,0,0,0,0,0,0,0], id: 'bsh', name: {cz: 'americký bušl', en: 'US bushel'}, k:35.2391e-3},
 	{v: [3,0,0,0,0,0,0,0], id: 'ccm', name: {cz: 'kubický centimetr', en: 'cubic centimetr'}, k:1e-6},
 	{v: [3,0,0,0,0,0,0,0], id: 'bbl', name: {cz: 'barel ropy', en: 'oil barrel'}, k:csts.bbl, prefix: '+'},
-	
+
 	{v: [3,0,-1,0,0,0,0,0], id: 'BPD', name: {cz: 'barel ropy za den', en: 'oil barrel per day'}, k:csts.bbl/3600/24, prefix: '+'},
 
 	{v: [0,1,0,0,0,0,0,0], id: 'g', name: {cz: 'gram', en: 'gram'}, k:1e-3, SI: true, prefix: 'all'},
@@ -163,12 +168,8 @@ const Units = [
 	{v: [-1,1,-2,0,0,0,0,0], id: 'atm', name: {cz: 'atmosféra', en: 'atmosphere'}, k:csts.atm, note: {
 		cz: 'Také slouží jako standardní tlak.',
 		en: 'Also serves as standard pressure.'}},
-	{v: [-1,1,-2,0,0,0,0,0], id: 'mmHg', name: {cz: 'milimetr rtuťového sloupce', en: 'milimetre of mercury'}, k:133.322387415, note: {
-		cz: 'Mezi mmHg a Torr je nepatrný rozdíl.',
-		en: 'There is a negligible difference between mmHg and Torr.'}},
-	{v: [-1,1,-2,0,0,0,0,0], id: 'Torr', alias:['torr'], name: {cz: 'torr', en: 'torr'}, k:csts.atm/760, prefix: 'all', note: {
-		cz: 'Mezi mmHg a Torr je nepatrný rozdíl.',
-		en: 'There is a negligible difference between mmHg and Torr.'}},
+	{v: [-1,1,-2,0,0,0,0,0], id: 'mmHg', name: {cz: 'milimetr rtuťového sloupce', en: 'milimetre of mercury'}, k:133.322387415, note: csts.Hgnote},
+	{v: [-1,1,-2,0,0,0,0,0], id: 'Torr', alias:['torr'], name: {cz: 'torr', en: 'torr'}, k:csts.atm/760, prefix: 'all', note: csts.Hgnote},
 	{v: [-1,1,-2,0,0,0,0,0], id: 'psi', name: {cz: 'libra na čtvereční palec', en: 'pound per square inch'}, k:6894.757293168362, prefix: 'all'},
 
 	{v: [0,1,-2,-1,0,0,0,0], id: 'G', name: {cz: 'gauss', en: 'gauss'}, k:0.0001, SI: true, prefix: 'all'},
@@ -176,6 +177,7 @@ const Units = [
 	{v: [0,0,-1,0,0,0,0,0], id: 'Ci', name: {cz: 'Curie', en: 'Curie'}, k:3.7e10, SI: false, prefix: 'all'},
 	{v: [0,-1,1,1,0,0,0,0], id: 'R', name: {cz: 'Rentgen', en: 'Roentgen'}, k:2.58e-4, SI: false, prefix: 'all'},
 
+//constants
 	{v: [1,0,-2,0,0,0,0,0], id: '_g', name: {cz: 'normální tíhové zrychlení', en: 'standard gravity'}, k:9.80665, constant: true, note: {
 		cz: 'Nikoliv univerzální konstanta, nýbrž konvenční.',
 		en: 'Not a universal constant, but a conventional one.'}},
@@ -190,12 +192,20 @@ const Units = [
 	{v: [0,0,0,0,0,-1,0,0], id: '_NA', name: {cz: 'Avogadrova konstanta', en: 'Avogadro constant'}, k:6.02214085e23, constant: true},
 	{v: [0,0,0,0,0,0,0,0], id: '_pi', alias:['π'], name: {cz: 'Ludolfovo číslo', en: 'Archimedes\' constant'}, k:Math.PI, constant: true},
 	{v: [0,0,0,0,0,0,0,0], id: '_e', name: {cz: 'Eulerovo číslo', en: 'Euler\'s number'}, k:Math.E, constant: true},
-	//{v: [-3,1,0,0,0,0,0,0], id: '_APIa', alias:['_APIk'], name: {cz: 'API hustota (lineární člen)', en: 'API density (linear coef)'}, k:141.5e3, constant: true},
-	//{v: [0, 0,0,0,0,0,0,0], id: '_APIb', alias:['_APIq'], name: {cz: 'API hustota (absolutní člen)', en: 'API density (absolutní coef)'}, k:-131.5, constant: true},
-	{v: [0,0,0,0,1,0,0,0], id: '_C0', alias:['_°C0','_TC0','TC0'], name: {cz: '0°C v kelvinech', en: '0°C in kelvin'}, k:csts.TC0, constant: true, note: csts.T0note},
-	{v: [0,0,0,0,1,0,0,0], id: '_F0', alias:['_°F0','_TF0','TF0'], name: {cz: '0°F v kelvinech', en: '0°F in kelvin'}, k:csts.TF0, constant: true, note: csts.T0note},
-	{v: [0,0,0,0,1,0,0,0], id: 'C2F', name: {cz: 'TC0 - TF0', en: 'TC0 - TF0'}, k:csts.TC0 - csts.TF0, constant: true, note: csts.T0note},
-	{v: [0,0,0,0,1,0,0,0], id: 'F2C', name: {cz: 'TF0 - TC0', en: 'TF0 - TC0'}, k:csts.TF0 - csts.TC0, constant: true, note: csts.T0note}
+
+//special for Unitfuns, unusable without {}
+	{v: [3,-1,0,0,0,0,0,0], id: 'API', alias:['°API'], name: {cz: 'API hustota', en: 'API density'}, k:141.5e3, onlyUnitfuns: true},
+	{v: [0,0,0,0,0,0,0,0], id: 'ln', alias:['log'], name: {cz: 'Přirozený logaritmus', en: 'Natural logarithm'}, k:NaN, onlyUnitfuns: true}
+];
+
+//unitfuns - irregular units that have a conversion function instead of mere ratio
+//{id: link to regular unit, f: function UF => SI, fi: inverse function SI => UF, v: SI dimension (output when f, input when fi)}
+const Unitfuns = [
+	{id: '°C', f: UF => UF + csts.TC0, fi: SI => SI - csts.TC0, v: [0,0,0,0,1,0,0,0]},
+	{id: '°F', f: UF => 5/9*UF + csts.TF0, fi: SI => 9/5*(SI - csts.TF0), v: [0,0,0,0,1,0,0,0]},
+	{id: '°Re', f: UF => 1.25*UF + csts.TC0, fi: SI => 0.8*(SI - csts.TC0), v: [0,0,0,0,1,0,0,0]},
+	{id: 'API', f: UF => csts.APIk/(UF - csts.APIq), fi: SI => csts.APIk/SI + csts.APIq, v: [-3,1,0,0,0,0,0,0]},
+	{id: 'ln', f: UF => Math.log(UF), fi: SI => {throw '🏆 '+langService.trans('ERR_Secret');}, v: [0,0,0,0,0,0,0,0]}
 ];
 
 //currencies - their conversion ratio to dollar is unknown and will be obtained by currencies.php

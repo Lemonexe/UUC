@@ -1,12 +1,12 @@
 /*
 	convert_parse.js
 	contains the convert parse function
-	which will parse an input string into a detailed nested structure with numbers, units and operators
+	which will parse an input string into a detailed nested structure with numbers, units and operators (always returns array)
 */
 
 //enter the Convert object as reference
 function Convert_parse(convert, text) {
-	//create another database that maps each id and alias to the original unit object
+	//create auxiliary database that maps each id and alias to the original unit object
 	const UnitIdMap = Units.map(item => ({id: item.id, ref: item})); //first just map the main ids
 	Units.forEach(o => o.alias && o.alias.forEach(a => UnitIdMap.push({id: a, ref: o}))); //and push all aliases
 
@@ -19,22 +19,23 @@ function Convert_parse(convert, text) {
 	//rationalize the input string
 	function syntaxCheck(text) {
 		(text === '') && (text = '1');
-		text = text.replace(/,/g , '.');
+		text = text.replace(/,/g , '.'); //decimal commas to points
 
-		//check bracket balance and add missing ones
-		const opening = text.split('(').length - 1;
-		const closing = text.split(')').length - 1;
-		if(closing > opening) {throw convert.msgDB['ERR_brackets_missing'](closing-opening);}
+		//check bracket balance and add missing closing ) brackets
+		const count = char => text.split(char).length - 1;
+		const opening = count('('), closing = count(')'), copening = count('{'), cclosing = count('}'); //c for curly
+		if(closing > opening ) {throw convert.msgDB['ERR_brackets_missing'](closing-opening);}
+		if(cclosing !== copening) {throw convert.msgDB['ERR_cbrackets_missing']} //unbalanced } are not forgiven!
 		text += ')'.repeat(opening-closing);
 
 		//clean up spaces in order to properly parse
 		text = text
-			.replace(/([()])/g, ' $1 ') //pad () to allow expression right next to it
+			.replace(/([(){}])/g, ' $1 ') //pad () and {} to allow expression right next to it
 			.trim()
 			.replace(/ +/g, ' ') //reduce cumulated spaces
 			.replace(/ ?([\^*/+\-]+) ?/g, '$1') //trim operators
-			.replace(/(\(+) ?/g, '$1') //right trim (
-			.replace(/ ?(\)+)/g, '$1') // left trim )
+			.replace(/([({]+) ?/g, '$1') //right trim (
+			.replace(/ ?([)}]+)/g, '$1') // left trim )
 			.replace(/ /g, '*'); //the leftover spaces are truly multiplying signs
 
 		//check validity
@@ -58,7 +59,7 @@ function Convert_parse(convert, text) {
 		//only the highest bracket will be processed in this run. That's why we only check for lvl 1
 		for(c = 0; c < text.length; c++) {
 			//opening bracket
-			if(text[c] === '(') {
+			if(text[c] === '(' || text[c] === '{') {
 				lvl++;
 				//the preceeding text will be further processed by split and added as section
 				if(lvl === 1) {
@@ -68,12 +69,17 @@ function Convert_parse(convert, text) {
 				}
 			}
 			//closing bracket
-			else if(text[c] === ')') {
+			else if(text[c] === ')' || text[c] === '}') {
 				lvl--;
 				//the text between the highest brackets will be crawled again
 				if(lvl === 0) {
 					if(c-c0-1 === 0) {throw convert.msgDB['ERR_brackets_empty'];}
-					field.push(crawl(text.slice(c0+1, c)));
+					if((text[c]===')' && text[c0]==='{') || (text[c]==='}' && text[c0]==='(')) {throw convert.msgDB['ERR_brackets_mismatch'](text[c0], text[c]);}
+
+					const res = crawl(text.slice(c0+1, c)); //recursively crawl again to gain another [] array
+					if(text[c] === '}') {res.unshift('{}');} //mark crawled array with '{}' marker
+					field.push(res);
+
 					c0 = c+1;
 					IACB = true;
 				}
@@ -84,14 +90,15 @@ function Convert_parse(convert, text) {
 		return field;
 	}
 
-	//split section text sections by * / ^ + -, but include those operators, and process operators
-	//IACB = whether text section Is After a Closing Bracket
-	function split(text, IACB) {
+	//split section text sections by * / ^ + -, but include those operators
+	//while doing that, also process numbers, units and operators
+	function split(text, IACB) { //IACB see crawl function definition
 		const arr = protectNumbers(text, IACB)
 			.split(/([\^*/+\-])/)
 			.filter(o => o.length > 0)
 			.map(o => unprotectNumbers(o));
 
+		//text is now split into array of strings, iterate through it and parse them
 		const arr2 = [];
 		arr.forEach(function(o) {
 			//try if it's a number
@@ -120,8 +127,7 @@ function Convert_parse(convert, text) {
 	}
 
 	//because + - are operators, first find all numbers and replace their + - with provisional # ~ to protect them from splitting
-	//IACB = whether text section Is After a Closing Bracket
-	function protectNumbers(text, IACB) {
+	function protectNumbers(text, IACB) { //IACB see crawl function definition
 		//first number in text section (beginning of whole input or beginning of brackets) can also have + - before it
 		//but NOT in a text section after closing brackets!
 		let firstNum = text.match(/^[+\-]?[\d\.]+(?:e[+\-]?\d+)?/);
@@ -153,7 +159,9 @@ function Convert_parse(convert, text) {
 		}
 
 		u = parseUnit2(text, pow);
-		if(!u) {u = parseUnit2(text, pow, true);}
+
+		//not found either, now try something else: case insensitive
+		if(!u) {u = parseUnit2(text, pow, true);} //note: at this point, pow could have been found, or it has defaulted to 1
 		if(!u) {throw convert.msgDB['ERR_unknownUnit'](text);} //the unit is unknown
 		return u;
 	}

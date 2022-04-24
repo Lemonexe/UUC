@@ -200,6 +200,8 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 				case '-': text += 'většinou se používají jen zmenšující předpony.'.trans('prefix-'); break;
 				default: text += 'předpony se nepoužívají.'.trans('prefix0');
 			}
+			//and if you choose the thirty dollar OnlyFuns subscription you get..
+			text += unit.onlyUnitfuns ? ' Použijte pouze ve {složených závorkách}; viz tutoriál'.trans('onlyUnitfuns') : ''; //Silence wench!
 		}
 
 		text += unit.note ? (' ' + unit.note[CS.lang]) : '';

@@ -56,6 +56,7 @@ langService.table = {
 	'prefix+': {en: 'usually only increasing prefixes are used.'},
 	'prefix-': {en: 'usually only decreasing prefixes are used.'},
 	'prefix0': {en: 'prefixes are not used.'},
+	'onlyUnitfuns': {en: 'Only use in {curly braces}; see tutorial'},
 
 //ERRORS 100
 	'ERR_brackets_missing': {
@@ -98,6 +99,26 @@ langService.table = {
 		cz: 'CHYBA 110: Speciální rezervované znaky # ~ nelze používat',
 		en: 'ERROR 110: Special reserved characters # ~ not allowed'
 	},
+	'ERR_cbrackets_missing': {
+		cz: 'CHYBA 111: Nevyrovnané složené závorky',
+		en: 'ERROR 111: Unbalanced curly brackets'
+	},
+	'ERR_brackets_mismatch': {
+		cz: (open, close) => `CHYBA 112: Nesouhlasí závorky ${open} a ${close}`,
+		en: (open, close) => `ERROR 112: Mismatched brackets ${open} and ${close}`
+	},
+	'ERR_cbrackets_illegal': {
+		cz: 'CHYBA 113: Nesprávné použití složených závorek {}, viz tutoriál',
+		en: 'ERROR 113: Incorrect use of curly brackets {}, see tutorial'
+	},
+	'ERR_unknown_unitfun': {
+		cz: str => `CHYBA 114: Jednotka ${str} nemá k dispozici {} funkci`,
+		en: str => `ERROR 114: Unit ${str} does not have a {} function`
+	},
+	'ERR_cbrackets_dim_mismatch': {
+		cz: str => `CHYBA 115: Nesouhlasí rozměry vstupu s cílovou jednotkou ${str}`,
+		en: str => `ERROR 115: Dimension mismatch of input with target unit ${str}`
+	},
 
 //WARNINGS 200
 	'WARN_prefixes': {
@@ -108,9 +129,10 @@ langService.table = {
 	'WARN_prefixes_word+': {cz: 'zmenšující', en: 'decreasing'},
 	'WARN_prefixes_word-': {cz: 'zvětšující', en: 'increasing'},
 	'WARN_target_dim_mismatch': {
-		cz: faults => `VAROVÁNÍ 202: Rozměry jednotek ze vstupu a cíle nesouhlasí. Tyto základní jednotky byly přidány: ${faults.join(', ')}.`,
-		en: faults => `WARNING 202: Dimensions of units from input and target don\'t match. These basic units have been added: ${faults.join(', ')}.`
+		cz: faults => 'VAROVÁNÍ 202: Rozměry jednotek ze vstupu a cíle nesouhlasí. Tyto základní jednotky byly přidány: ' + faults.join(', '),
+		en: faults => 'WARNING 202: Dimensions of units from input and target don\'t match. These basic units have been added: ' + faults.join(', ')
 	},
+	//203 is unused
 	'WARN_targetNumber': {
 		cz: 'VAROVÁNÍ 203: Neočekávané číslo v cílovém poli, ale bude s ním tedy počítáno',
 		en: 'WARNING 203: Unexpected number in the target field, but it will included in calculation'
@@ -118,6 +140,10 @@ langService.table = {
 	'WARN_separators': {
 		cz: 'VAROVÁNÍ 204: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.',
 		en: 'WARNING 204: Too many target unit separators have been found (>, to or into). Only the first definiton of target units was accepted.'
+	},
+	'WARN_curly_prefix': {
+		cz: 'VAROVÁNÍ 205: Ignorován prefix v složených závorkách {}',
+		en: 'WARNING 205: Prefix ignored in curly braces {}'
 	},
 
 //MACRO CODE ERRORS 300
@@ -136,5 +162,11 @@ langService.table = {
 	'ERRC_unreadableLine': {
 		cz: line => 'CHYBA KÓDU 304: Řádek nečitelný: ' + line,
 		en: line => 'CODE ERROR 304: Line unreadable: ' + line
+	},
+
+//what kind of project would it be without an easter egg?
+	'ERR_Secret': {
+		cz: 'Tajný Error, gratuluju! Čeho tímto vůbec chcete dosáhnout? Inverzní funkce k logaritmu je _e^(číslo)',
+		en: 'Secret Error, congratz! What are you even trying to do? Inverse function of logarithm is _e^(number)'
 	}
 };
