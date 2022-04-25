@@ -52,6 +52,9 @@ In this example, the first convert call uses `spec: fixed` (like Output format >
 The second call uses `spec: digits` (like Output format > significant digits, which are specified as `digits: 3`). It also uses `exp: true` (like Output format > always scientific notation).
 The third call uses number of decimals, but doesn't provide the number, so it defaults to zero.
 
+**Note:** the {curly bracket expressions} from main Converter were not implemented to Macro. The new {} functionality even removes the _need_ for Macro to some degree..
+Simply, the two paths have diverged, and now I prefer main Converter over Macro due to its superior UX.
+
 ## Useful examples
 
 Here are some specific useful examples.

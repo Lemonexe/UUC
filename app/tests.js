@@ -110,7 +110,7 @@ headline('Full conversions');
 	fullTest('3*(4*(5*(2+1)-1)', '', 168, 1e-6); //tolerance for missing closing brackets )
 	fullTest('0.5 ((5(6+(8)3)) 2 3', '15', 30, 1e-6); //spaces instead of *
 	fullTest('3(4+5)2 / (2*2^3*2) * 7*(2+2*2+2)', '', 94.5, 1e-6); //not even spaces, numbers right on brackets
-	fullTest('3m2*(4*5m)*2kPa', 'J', 120000, 1e-6);
+	fullTest('3m2*(4*5m)*2kPa', 'kg*m2 * s^(-2)', 120000, 1e-6);
 	fullTest(' -3.23e+4m2 * (42,77e-2*5m)  *2kPa1.0 ', 'MJ', -138.1471, 1e-2);
 	fullTest('3*(4*(5+2', '', 84, 1e-6);
 	fullTest('l^(1/3)', 'dm', 1, 1e-3);
@@ -126,10 +126,12 @@ headline('Full conversions');
 	fullTest('atm * 28 g/mol / _R / {25°C}', '', 1.14447, 1e-4);
 	fullTest('{57°F}', '{°C}', 13.8889, 1e-3);
 	fullTest('{ln 1000}/{ln 10}', '1', 3, 1e-3);
+	fullTest('(27K - 32K) / ( {ln (27K/(32K)) } )', '°C', 29.4292, 1e-3);
 
 headline('Full conversion warnings');
 	fullTest('mt/ks', '', 1e-3, 1e-6, 201);
 	fullTest('m3', 'm2', 1, 1e-6, 202);
+	fullTest('6 km', '500 m', 12, 1e-6, 203);
 
 headline('Full conversion errors');
 	fullTestErr('7*', '', 107, 'misplaced operator');
@@ -141,6 +143,8 @@ headline('Full conversion errors');
 	fullTestErr('{3°C}', '{3°C}', 113, 'number in target {}');
 	fullTestErr('{3C}', '', 114, 'unsupported Unitfun');
 	fullTestErr('kJ', '{°C}', 115, 'target {} dim mismatch');
+	fullTestErr('(-1)^(.5)', '', 116, 'NaN: sq root < 0');
+	fullTestErr('{ln (-1)}', '', 116, 'NaN: logarithm < 0');
 
 headline('Convert_parse errors');
 	expectErr(() => Convert_parse(convert, '3*(4*5)*2)'), 101, '3*(4*5)*2): missing bracket');

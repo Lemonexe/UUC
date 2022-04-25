@@ -1,5 +1,6 @@
 <div ng-switch="CS.tutorial.step">
 	<div id="tutorialBar" ng-mousedown="dragStart($event)"><input type="button" value="X" ng-click="TF.close()"></div>
+
 	<div class="tutorialSection" ng-switch-when="0">
 		<cz>
 			<p>Právě se nacházíme v hlavní části UUC – záložce Převodník.<br>Zde můžete napsat výraz do textového pole Vstup a stisknout tlačítko Převést nebo klávesu Enter: <a class="fakeLink" ng-click="TF.ex('SI')">příklad</a></p>
@@ -19,6 +20,7 @@
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step(200, 500, 'help')">
 	</div>
+
 	<div class="tutorialSection" ng-switch-when="1">
 		<cz>
 			<p>V záložce Reference naleznete vyčerpávající seznam všech jednotek.</p>
@@ -34,6 +36,7 @@
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step(120, 400)">
 	</div>
+
 	<div class="tutorialSection" ng-switch-when="2">
 		<cz>
 			<p>UUC pro vás provede rozměrovou analýzu a pokud vstup nesouhlasí s cílovými jednotkami, dostanete varování. Výsledek výpočtu pak ignorujte.</p>
@@ -49,6 +52,7 @@
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step()">
 	</div>
+
 	<div class="tutorialSection" ng-switch-when="3">
 		<cz>
 			<p>A jaké jsou další možnosti a omezení UUC?</p>
@@ -56,7 +60,7 @@
 				<li>Jednotky můžete skládat násobením * či dělením / (<a class="fakeLink" ng-click="TF.ex('okSymbol')">příklad</a>)</li>
 				<li>Předchozí příklad je možné zpřehlednit použitím závorek (<a class="fakeLink" ng-click="TF.ex('brackets')">příklad</a>)<br>
 					<i>mezery mohou nahradit * jako znak násobení</i></li>
-				<li>Desetinná čárka i tečka se v číslech přijímají,<br>
+				<li>Čísla mohou být zapsána s desetinnou čárkou i tečkou,<br>
 					lze použít zápis e123 jako 10<sup>123</sup>: <a class="fakeLink" ng-click="TF.ex('numbers')">příklad</a></li>
 				<li>Přebytečné mezery jsou prostě ignorovány: <a class="fakeLink" ng-click="TF.ex('spaces')">příklad</a></li>
 				<li>Jednotky lze umocňovat pomocí ^čísla nebo jen pomocí čísla: <a class="fakeLink" ng-click="TF.ex('powers')">příklad</a></li>
@@ -82,6 +86,7 @@
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step()">
 	</div>
+
 	<div class="tutorialSection" ng-switch-when="4">
 		<cz>
 			<p>Užitečné příklady na specifické použití:</p>
@@ -95,6 +100,7 @@
 				<li>Poundal na newton: <a class="fakeLink" ng-click="TF.ex('poundal')">příklad</a></li>
 				<li>Přepočet magnetické indukce (B) na magnetickou intenzitu (H): <a class="fakeLink" ng-click="TF.ex('oersted')">příklad</a></li>
 				<li>Úhel jako násobek pí: <a class="fakeLink" ng-click="TF.ex('pi')">příklad</a> (prázdné pole cílové jednotky = radián)</li>
+				<li>Přetlak na absolutní tlak: <a class="fakeLink" ng-click="TF.ex('gauge2abs')">příklad</a>, <a class="fakeLink" ng-click="TF.ex('abs2gauge')">obráceně</a></li>
 				<li>Normální objemový tok plynu · mol. hmotnost → hmotnostní tok <a class="fakeLink" ng-click="TF.ex('gasFlow')">příklad</a></li>
 				<li>Hmotnostní koncentrace plynu / mol. hmotnost → ppm <a class="fakeLink" ng-click="TF.ex('gasConc')">příklad</a></li>
 				<li>Tlak ve výšce dle barometrické rovnice <a class="fakeLink" ng-click="TF.ex('barometric')">příklad</a></li>
@@ -102,6 +108,7 @@
 				<li>Poločas rozpadu: <a class="fakeLink" ng-click="TF.ex('radioactiveDecay')">příklad</a></li>
 			</ul>
 			<p>A jistě vás napadne spousta dalších!</p>
+			<p ng-show="!CS.tutorial.onlyExamples"><i>Pozn.: v hlavní záložce je odkaz přímo sem, abyste nemuseli znovu do tutoriálu</i></p>
 		</cz>
 		<en>
 			<p>Useful examples for specific use:</p>
@@ -115,6 +122,7 @@
 				<li>Poundal to newton: <a class="fakeLink" ng-click="TF.ex('poundal')">example</a></li>
 				<li>Calculation of magnetic flux (B) to magnetic field (H): <a class="fakeLink" ng-click="TF.ex('oersted')">example</a></li>
 				<li>Angle as a pi multiple: <a class="fakeLink" ng-click="TF.ex('pi')">example</a> (empty target field is interpreted as radian)</li>
+				<li>Gauge pressure to absolute: <a class="fakeLink" ng-click="TF.ex('gauge2abs')">example</a>, <a class="fakeLink" ng-click="TF.ex('abs2gauge')">reverse</a></li>
 				<li>Normal volume flow of gas · mol. weight → mass flow <a class="fakeLink" ng-click="TF.ex('gasFlow')">example</a></li>
 				<li>Mass concentration of gas / mol. weight → ppm <a class="fakeLink" ng-click="TF.ex('gasConc')">example</a></li>
 				<li>Pressure at altitude using barometric equation <a class="fakeLink" ng-click="TF.ex('barometric')">example</a></li>
@@ -122,47 +130,68 @@
 				<li>Radioactive decay: <a class="fakeLink" ng-click="TF.ex('radioactiveDecay')">example</a></li>
 			</ul>
 			<p>And surely you'll think of many more!</p>
+			<p ng-show="!CS.tutorial.onlyExamples"><i>Note: in main tab there is a link to this list, so you don't have to open tutorial again</i></p>
 		</en>
 		<input ng-show="!CS.tutorial.onlyExamples" type="button" ng-value="'Dále'.trans()" ng-click="TF.step()">
 		<input ng-show="CS.tutorial.onlyExamples" type="button" ng-value="'Zavřít'.trans()" ng-click="TF.close()">
 	</div>
+
 	<div class="tutorialSection" ng-switch-when="5">
 		<cz>
 			<p>
-				Jak již bylo zmíněno, převod <b>teploty</b> není zcela intuitivní. Pokud zadáte <a class="fakeLink" ng-click="TF.ex('dC')">takto</a>, program převádí <i>rozdíl</i> teploty, nikoliv teplotu.
-				Program totiž nemůže poznat, zda-li myslíte teplotu či její rozdíl, proto se vždy pracuje s rozdílem.
-				Pro konverzi samotných teplot mezi sebou však můžete využít konstanty, které definují nulu.
+				Jak již bylo zmíněno, program chápe <b>teplotu</b> jako teplotní <i>rozdíl</i>, nikoliv absolutní teplotu (<a class="fakeLink" ng-click="TF.ex('dC')">příklad</a>).
+				Program by nemohl poznat, zda-li myslíte T či ΔT, proto se obecně pracuje s ΔT.
+				Speciální zápis pomocí {složených závorek} umožňuje interpretovat teplotu jako absolutní,
+				např. takto: <a class="fakeLink" ng-click="TF.ex('F2K')">°F na K</a> či <a class="fakeLink" ng-click="TF.ex('F2C')">°F na °C</a>
 			</p>
-			<p>Takto můžete převádět z <a class="fakeLink" ng-click="TF.ex('C2K')">°C na K</a> či ze <a class="fakeLink" ng-click="TF.ex('F2K')">°F na K</a>.</p>
-			<p>Pro konverzi °C &harr; °F použijte ve vstupním poli obě konstanty: <a class="fakeLink" ng-click="TF.ex('F2C')">°F na °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F')">°C na °F</a><br>
-				Nebo ještě jednodušeji: <a class="fakeLink" ng-click="TF.ex('F2C2')">°F na °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F2')">°C na °F</a></p>
-			<p>Sluší se zmínit, že převod přetlaku na tlak absolutní funguje obdobně, jen jednodušeji, protože všechny jednotky přetlaku mají nulu na 1&nbsp;atm.<br><a class="fakeLink" ng-click="TF.ex('gauge')">Příklad</a> (přetlak na abs. tlak)</p>
+			<p>
+				Další příklady: °API hustota na SI <a class="fakeLink" ng-click="TF.ex('API')">tam</a> a <a class="fakeLink" ng-click="TF.ex('API2')">zpět</a>,<br>
+				výpočet hustoty vzduchu pomocí <a class="fakeLink" ng-click="TF.ex('airDenseK')">K</a>, či právě s využitím <a class="fakeLink" ng-click="TF.ex('airDenseC')">{°C}</a>,<br>
+				speciální funkce přirozený <a class="fakeLink" ng-click="TF.ex('ln')">logaritmus</a>, lze využít např. pro <a class="fakeLink" ng-click="TF.ex('exchanger')">logΔT</a>
+			</p>
+			<p style="color: #808080">Pozn. {složené závorky} na české klávesnici: pravý Alt + B, N</p>
+			<p style="color: #808080">
+				Pozn. jsou zde omezení: ve Vstupu může v {} být jedno číslo a jedna jednotka,
+				v&nbsp;Cílových jednotkách je použití ještě omezenější – <i>celé pole</i> musí být tvořeno pouze tímto výrazem, a nesmí v něm být číslo.
+				Nelze použít prefix ani mocninu. Místo čísla ovšem může být bezrozměrný výraz v závorce, viz logΔT výše.
+			</p>
 		</cz>
 		<en>
 			<p>
-				As mentioned before, conversion of <b>temperature</b> isn't quite intuitive. If you enter <a class="fakeLink" ng-click="TF.ex('dC')">this</a>, the program will convert temperature <i>difference</i>, not temperature.
-				The program couldn't tell if you want temperature or the difference, that's why it always operates with difference.
-				However, in order to actually convert temperatures, you can use constants that define their zero values.
+				As mentioned before, the program understands <b>temperature</b> as temp <i>difference</i>, not as absolute temp (<a class="fakeLink" ng-click="TF.ex('dC')">example</a>).
+				The program couldn't tell if you want T or ΔT, that's why it generally operates with ΔT.
+				Special syntax with {curly brackets} allows to interpret temperature as absolute,
+				like this: <a class="fakeLink" ng-click="TF.ex('F2K')">°F to K</a> or <a class="fakeLink" ng-click="TF.ex('F2C')">°F to °C</a>
 			</p>
-			<p>This way you can convert <a class="fakeLink" ng-click="TF.ex('C2K')">°C to K</a> or <a class="fakeLink" ng-click="TF.ex('F2K')">°F to K</a>.</p>
-			<p>In order to convert °C &harr; °F, use both constants in input field: <a class="fakeLink" ng-click="TF.ex('F2C')">°F to °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F')">°C to °F</a><br>
-				Or even simpler: <a class="fakeLink" ng-click="TF.ex('F2C2')">°F to °C</a>, <a class="fakeLink" ng-click="TF.ex('C2F2')">°C to °F</a></p>
-			<p>It is worth mentioning that conversion of gauge pressure to absolute works analogically, but it's easier, since all gauge pressures have zero at 1&nbsp;atm.<br><a class="fakeLink" ng-click="TF.ex('gauge')">Example</a> (gauge pressure to abs. pressure)</p>
+			<p>
+				More examples: °API density to SI <a class="fakeLink" ng-click="TF.ex('API')">there</a> and <a class="fakeLink" ng-click="TF.ex('API2')">back</a>,<br>
+				air density calculation using <a class="fakeLink" ng-click="TF.ex('airDenseK')">K</a>, or using <a class="fakeLink" ng-click="TF.ex('airDenseC')">{°C}</a>,<br>
+				special function natural <a class="fakeLink" ng-click="TF.ex('ln')">logarithm</a>, for example <a class="fakeLink" ng-click="TF.ex('exchanger')">logΔT</a>
+			</p>
+			<p style="color: #808080">Note: {curly brackets} on english keyboard: Shift + { } next to Enter</p>
+			<p style="color: #808080">
+				Note: there are limitations: in Input there can only be one number, one unit in {},
+				in&nbsp;Target units it is even more strict – <i>whole field</i> must comprise only this expression, and there mustn't be a number.
+				Neither prefix nor power can be used. But instead of number you can use dimensionless (bracket), see logΔT above.
+			</p>
 		</en>
 		<input type="button" ng-value="'Dále'.trans()" ng-click="TF.step(330, 400); CS.showParams = true">
 	</div>
+
 	<div class="tutorialSection" ng-switch-when="6">
 		<cz>
 			<p><u>Poslední poznámky před dokončením tutoriálu:</u></p>
 			<p>Po rozkliknutí <i>Formát výstupu</i> můžete výstupnímu číslu nastavit počet desetinných míst, popř. další možnosti formatování.</p>
-			<p>Pokud chcete právě zadaný převod komukoliv poslat, stačí <i>Sdílet odkaz</i>.</p>
+			<p>Pokud chcete právě zadaný převod komukoliv poslat, stačí <i>Sdílet odkaz</i>.<br>
+				Pomocí ikony 📋 vedle výstupu můžete zkopírovat pouze výstup.</p>
 			<p>Pokud používáte prohlížeč Chrome nebo Edge, doporučuji pomocí tohoto <a class="fakeLink" ng-click="changeTab('searchEngine')">návodu</a> nastavit UUC jako klíčové slovo vyhledávače, může to ušetřit dost času.</p>
 			<p>V záložce Úvod ještě můžete prozkoumat skrytou pokročilou funkci Makro.</p>
 		</cz>
 		<en>
 			<p><u>Last notes before finishing the tutorial:</u></p>
 			<p>After expanding <i>Output format</i> you can set decimal points of the output number, or use other formatting options.</p>
-			<p>If you want to send the current conversion to anyone, just <i>Share link</i>.</p>
+			<p>If you want to send the current conversion to anyone, just <i>Share link</i>.<br>
+				Using the 📋 icon next to output you can copy just the output.</p>
 			<p>If you are using the Chrome or Edge browser, I recommend following these <a class="fakeLink" ng-click="changeTab('searchEngine')">instructions</a> to set UUC as a search engine keyword, it may save you a lot of time.</p>
 			<p>In the Intro tab you can also explore the hidden advanced function Macro.</p>
 		</en>

@@ -32,6 +32,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	$scope.changeTab = function(tab) {
 		tab === 'intro' && (CS.hideTutorialLink = true);
 		CS.tab = tab;
+		$scope.ctrl.sharelink = false;
 	}
 
 	//current website address without / at end, used to append #hash to it
@@ -53,6 +54,10 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		$scope.statusClass = ['ok', 'warn', 'err'][$scope.result.status];
 		$scope.statusAppear = 'statusAppear';
 		$timeout(() => ($scope.statusAppear = ''), 500);
+	};
+	//compose result string
+	$scope.composeResult = function() {
+		const res = $scope.result; return res && res.output ? (res.output.num2 || res.output.num) + ' ' + res.output.dim : ' '
 	};
 	//add the conversion request to history
 	function add2history() {
@@ -265,13 +270,20 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		const c = $scope.ctrl;
 		c.sharelink = false;
 		c.copyclass = 'copyEffect'; c.copylink = true;
-		$timeout(() => {c.copyclass = ''; c.copylink = false;}, 800);
+		$timeout(() => {c.copyclass = ''; c.copylink = false;}, 1000);
 		navigator.clipboard.writeText($scope.getSharelink());
+	};
+	//copy the conversion output to clipboard, analogically
+	$scope.copyOutput = function() {
+		const c = $scope.ctrl;
+		c.copyclass = 'copyEffect'; c.copyoutput = true;
+		$timeout(() => {c.copyclass = ''; c.copyoutput = false;}, 1000);
+		navigator.clipboard.writeText($scope.composeResult());
 	};
 
 	/*
 		TUTORIAL functions
-	*/	
+	*/
 
 	//initiate window dragging on mousedown
 	$scope.dragStart = function($event) {
@@ -307,10 +319,10 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 	//TF = tutorial functions (advance the tutorial, operate UI, insert examples)
 	$scope.TF = {
-		close: () => {CS.tutorial = null},
+		close: () => {CS.tutorial = null;},
 		//clear all, start the tutorial window and update outputs
 		initTutorial: function() {
-			CS.input = ''; CS.target = ''; CS.filter = ''; CS.showParams = false; CS.params.spec = 'auto'; CS.params.exp = false;
+			CS.input = ''; CS.target = ''; CS.filter = ''; CS.params.spec = 'auto'; CS.params.exp = CS.showParams = $scope.ctrl.sharelink = false;
 			CS.tutorial = angular.copy(this.newWindow);
 			$scope.changeTab('converter'); $scope.listenForHelp(); $scope.fullConversion();
 		},
@@ -324,11 +336,12 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		//open tutorial with only examples showing
 		showExamplesOnly: function() {
 			CS.tutorial = angular.copy(this.newWindow);
-			CS.tutorial.step = 4; CS.tutorial.onlyExamples = true;
+			CS.tutorial.step = 4; CS.tutorial.onlyExamples = true; $scope.ctrl.sharelink = false;
 		},
-
+		//use an example
+		ex: function(key) {[CS.input, CS.target] = this.examples[key]; $scope.fullConversion();},
 		newWindow: {step: 0, top: 120, left: 400, width: 600}, //new tutorial window
-		
+
 		//examples as array [input, target]
 		examples: {
 			SI: ['min', ''],
@@ -341,7 +354,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			spaces: ['  4   CZK / ( kW *h)  ', '€ / MJ'],
 			powers: ['kg * m2 * s^(-3)', 'W'],
 			radioactiveDecay: ['500 mg * _e^(-72 h / (8.0197 d))', 'mg'],
-			volumeABC: ['18mm * 6.5cm * 22cm  +  0.2 l', 'ml'],
+			volumeABC: ['18mm * 6.5cm * 22cm  +  230 ml', 'l'],
 			charDim: ['(1,5 l)^(1/3)', 'cm'],
 			pythagor: ['((53 cm)^2 + (295 mm)^2)^.5', 'in'],
 			lbft: ['_g * lb * ft ', 'J'],
@@ -354,21 +367,18 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			gasConc: ['25 mg / Nm3 / (34 g/mol)', 'ppm'],
 			barometric: ['atm * _e^(-37000ft * _g * 28 g/mol / (_R * 300K))', 'kPa'],
 			escape: ['( 2 _G * 5.972e24 kg / (6371 km) )^0.5', 'mph'],
+			gauge2abs: ['80 mmHg + atm', 'kPa'],
+			abs2gauge: ['160 mbar - atm', 'kPa'],
 			dC: ['°C', 'K'],
-			C2K: ['25°C + TC0', 'K'],
-			F2K: ['85°F+TF0', ''],
-			F2C: ['98.6°F + TF0 - TC0', '°C'],
-			F2C2: ['98.6°F + F2C', '°C'],
-			C2F: ['37°C + TC0 - TF0', '°F'],
-			C2F2: ['37°C + C2F', '°F'],
-			gauge: ['80 mmHg + atm', 'kPa']
-		},
-		//use an example
-		ex: function(key) {
-			CS.input = this.examples[key][0];
-			CS.target = this.examples[key][1];
-			$scope.fullConversion();
-		},
+			F2K:  ['{131°F}', 'K'],
+			F2C:  ['{131°F}', '{°C}'],
+			API:  ['{10°API}', 'kg/m3'],
+			API2: ['1000 kg/m3', '{API}'],
+			airDenseK: ['atm * 28 g/mol / _R / (298.15 K)', 'kg/m3'],
+			airDenseC: ['atm * 28 g/mol / _R / {25°C}', 'kg/m3'],
+			ln: ['{ln 10000} / {ln 10}', ''],
+			exchanger: ['(27K - 32K) / ( {ln (27K/(32K)) } )', '°C']
+		}
 	};
 });
 

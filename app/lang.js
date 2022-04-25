@@ -119,6 +119,10 @@ langService.table = {
 		cz: str => `CHYBA 115: Nesouhlasí rozměry vstupu s cílovou jednotkou ${str}`,
 		en: str => `ERROR 115: Dimension mismatch of input with target unit ${str}`
 	},
+	'ERR_NaN_result': {
+		cz: 'CHYBA 116: Zakázaná matematická operace',
+		en: 'ERROR 116: Illegal math operation'
+	},
 
 //WARNINGS 200
 	'WARN_prefixes': {
@@ -132,7 +136,6 @@ langService.table = {
 		cz: faults => 'VAROVÁNÍ 202: Rozměry jednotek ze vstupu a cíle nesouhlasí. Tyto základní jednotky byly přidány: ' + faults.join(', '),
 		en: faults => 'WARNING 202: Dimensions of units from input and target don\'t match. These basic units have been added: ' + faults.join(', ')
 	},
-	//203 is unused
 	'WARN_targetNumber': {
 		cz: 'VAROVÁNÍ 203: Neočekávané číslo v cílovém poli, ale bude s ním tedy počítáno',
 		en: 'WARNING 203: Unexpected number in the target field, but it will included in calculation'

@@ -1,5 +1,5 @@
 <?php //version of resources, to prevent caching of old .js and .html files when a new version is built
-	$v = 7;
+	$v = 8;
 ?>
 <!DOCTYPE html>
 <html ng-app="UUC" ng-controller="ctrl">
@@ -112,8 +112,10 @@
 			<br>
 			<input type="button" ng-value="'Převést'.trans()" ng-click="fullConversion()" tabindex="3">
 			<br><br>
-			<b><cz>Výstup:</cz><en>Output:</en></b><br>
-			<span class="outputBox">{{result && result.output ? (result.output.num2 || result.output.num) + ' ' + result.output.dim : ' '}}</span>
+			<b><cz>Výstup:</cz><en>Output:</en></b>
+			<span ng-show="ctrl.copyoutput" ng-class="ctrl.copyclass" class="copyEffStatic"><cz>úspěšně zkopírováno</cz><en>copied successfully</en></span><br>
+			<span class="outputBox">{{composeResult()}}</span>
+			<span ng-show="result && result.output && result.status < 2" ng-click="copyOutput()" style="cursor: copy;" title="Ctrl+C">📋</span><br>
 		</div>
 	<!-- right container -->
 		<div id="paramContainer">
@@ -131,11 +133,11 @@
 			</div>
 			<br>
 			<a ng-click="ctrl.sharelink = !ctrl.sharelink" style="cursor: pointer;"><span class="expandable">≫</span><cz>Sdílet odkaz</cz><en>Share link</en></a>
-			<span ng-show="ctrl.copylink" style="opacity: 0;" ng-class="ctrl.copyclass"><cz>úspěšně zkopírováno</cz><en>copied successfully</en></span><br>
+			<span ng-show="ctrl.copylink" ng-class="ctrl.copyclass" class="copyEffStatic"><cz>úspěšně zkopírováno</cz><en>copied successfully</en></span><br>
 			<div id="sharelinkBox" ng-show="ctrl.sharelink">
-				<cz>Kliknutím zkopírujete do schránky odkaz na tuto konverzi.</cz>
-				<en>Click to copy the link with this conversion to clipboard.</en><br>
-				<span class="fakeLink" ng-click="copySharelink()" style="cursor: copy;">{{getSharelink()}}</span>
+				<cz>Kliknutím zkopírujete do schránky odkaz na tuto konverzi</cz>
+				<en>Click to copy the link with this conversion to clipboard</en><br>
+				<span ng-click="copySharelink()" style="cursor: copy;" title="Ctrl+C">📋 <span class="fakeLink" >{{getSharelink()}}</span></span>
 			</div>
 		</div>
 	<!-- below containers -->

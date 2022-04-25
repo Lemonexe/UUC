@@ -43,6 +43,7 @@ input[type="button"] {cursor: pointer;}
 	padding: 2px;
 	border: 1px solid #777777;
 	margin-bottom: 20px;
+	margin-right: -2px; /*because of Ctrl+C icon*/
 }
 #convertContainer {
 	float: left;
@@ -142,11 +143,12 @@ input[type="button"] {cursor: pointer;}
 	background-color: rgba(250, 250, 250, 0.9);
 	padding: 5px;
 }
-.copyEffect {animation-name: flick; animation-timing-function: linear; animation-duration: 0.8s;}
+.copyEffStatic {color: green; opacity: 0;}
+.copyEffect {animation-name: flick; animation-timing-function: linear; animation-duration: 1s;}
 @keyframes flick {
 	0%   {opacity: 0;}
-	20%  {opacity: 1;}
+	15%  {opacity: 1;}
 	65%  {opacity: 1;}
-	80%  {opacity: 0.6;}
+	80%  {opacity: 0.65;}
 	100% {opacity: 0;}
 }

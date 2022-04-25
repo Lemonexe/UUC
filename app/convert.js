@@ -16,7 +16,7 @@ function Convert() {
 	//these messages must be supplied before using convert. Some of these are just strings, some are functions with specific arguments. See lang.js
 	//controller populates it with language-specific strings
 	['ERR_brackets_missing', 'ERR_operators', 'ERR_brackets_empty', 'ERR_NaN', 'ERR_unitPower', 'ERR_unknownUnit', 'ERR_operator_misplaced', 'ERR_power_dim', 'ERR_dim_mismatch', 'ERR_special_chars',
-		'ERR_cbrackets_missing', 'ERR_brackets_mismatch', 'ERR_cbrackets_illegal', 'ERR_unknown_unitfun', 'ERR_cbrackets_dim_mismatch',
+		'ERR_cbrackets_missing', 'ERR_brackets_mismatch', 'ERR_cbrackets_illegal', 'ERR_unknown_unitfun', 'ERR_cbrackets_dim_mismatch', 'ERR_NaN_result',
 		'WARN_prefixes', 'WARN_prefixes_word0', 'WARN_prefixes_word+', 'WARN_prefixes_word-', 'WARN_target_dim_mismatch', 'WARN_targetNumber', 'WARN_separators', 'WARN_curly_prefix',
 		'ERRC_equalSigns', 'ERRC_varName', 'ERRC_argCount', 'ERRC_unreadableLine'
 	].forEach(o => msgDB[o] = null);
@@ -72,11 +72,13 @@ function Convert() {
 		//processing {target} bypasses everything else, because the functionality is very specific and intentionally limited
 		if(isTargetCurly) {return this.processTargetCurly(iObj, tObj);}
 
+		this.checkTargetNumbers(tObj);
 		tObj = this.rationalizeField(tObj);
 		tObj = this.reduceField(tObj);
 
 		//then the conversion itself is pretty simple!
 		const num = iObj.n / tObj.n;
+		if(isNaN(num)){throw this.msgDB['ERR_NaN_result'];}
 		let dim = isTarget ? target : this.vector2text(iObj.v); //if no target, then SI representation
 
 		//correct dimension mismatch
@@ -202,17 +204,26 @@ function Convert() {
 
 	//generic function to process array with curly {}, returns [numerical input, Unitfun object]
 	this.processCurly = function(arr, curly) {
+		const Err113 = this.msgDB['ERR_cbrackets_illegal'];
 		const units = arr.filter(o => o instanceof this.Unit); //all Unit objects within {expression}
 		const nums = arr.filter(o => typeof o === 'number' ); //all numbers within {expression}
 		const arrs = arr.filter(o => Array.isArray(o)); //all (arrays) within {expression}
 		const idsUF = Unitfuns.map(o => o.id); //map of Unitfuns id
 
+		//check appropriate use of {}
+		if(!curly || units.length !== 1 || units[0].power !== 1 || arrs.length > 1) {throw Err113;}
+		['+','-','/','^'].forEach(op => {if(arr.indexOf(op) > -1) {throw Err113;}});
+
+		//parse array if necessary
+		if(arrs.length > 0) {
+			const res = this.reduceField(this.rationalizeField(arrs[0]));
+			if(!checkZeros(res.v)) {throw this.msgDB['ERR_cbrackets_dim_mismatch'](units[0].unit.id);}
+			nums.push(res.n);
+		}
+		if(nums.length > 1) {throw Err113;}
+
 		//numerical x within {}, for input should be 1 num, but 0 is allowed; for target strictly 0 nums
 		const x = nums.length === 1 ? nums[0] : 0; //note: it even works to use {°C*3} lol
-
-		//check appropriate use of {}
-		if(!curly || units.length !== 1 || nums.length > 1 || arrs.length > 1 || units[0].power !== 1) {throw this.msgDB['ERR_cbrackets_illegal'];}
-		['+','-','/','^'].forEach(op => {if(arr.indexOf(op) > -1) {throw this.msgDB['ERR_cbrackets_illegal'];}});
 
 		//find the unitfun
 		const i = idsUF.indexOf(units[0].unit.id);
@@ -230,8 +241,8 @@ function Convert() {
 		if(x !== 0) {throw this.msgDB['ERR_cbrackets_illegal'];} //no number in {target}
 
 		//dimension mismatch is error, unlike regular conversion where it is just a warning
-		const corr = this.almostZero(this.divide(new Q(1, unitfun.v), new Q(1, iObj.v)).v);
-		for(let o of corr) {if(o !== 0) {throw this.msgDB['ERR_cbrackets_dim_mismatch'](unitfun.id);}}
+		if(!checkZeros(this.divide(new Q(1, unitfun.v), new Q(1, iObj.v)).v))
+			{throw this.msgDB['ERR_cbrackets_dim_mismatch'](unitfun.id);}
 
 		const y = unitfun.fi(iObj.n); //from SI (rationalized reduced input) to inverse unitfun result
 		return {num: y, dim: unitfun.id};
@@ -243,8 +254,7 @@ function Convert() {
 	//raise quantity object 'q1' to the power of 'q2'
 	this.power = function(q1, q2) {
 		//q2 has to be dimensionless
-		const v = this.almostZero(q2.v);
-		for(let o of v) {if(o !== 0) {throw this.msgDB['ERR_power_dim'];}}
+		if(!checkZeros(q2.v)) {throw this.msgDB['ERR_power_dim'];}
 
 		return new Q(q1.n**q2.n, q1.v.map(o => o * q2.n));
 	};
@@ -255,8 +265,7 @@ function Convert() {
 
 	this.add = function(q1, q2) {
 		//check dimension
-		const v = this.almostZero(q1.v.map((o,i) => o - q2.v[i]));
-		for(let o of v) {if(o !== 0) {throw this.msgDB['ERR_dim_mismatch'];}}
+		if(!checkZeros(q1.v.map((o,i) => o - q2.v[i]))) {throw this.msgDB['ERR_dim_mismatch'];}
 
 		return new Q(q1.n + q2.n, q1.v);
 	};
@@ -298,20 +307,14 @@ function Convert() {
 		return OK || corr;
 	};
 
-	//check a detailed nested object for numbers. If there is a number, give a warning
-	//CURRENTLY NOT USED, because it gives warning for ^power, and it shouldn't
+	//check a detailed nested object for numbers (only shallow crawl), give a warning if number
 	this.checkTargetNumbers = function(obj) {
-		let isNum = false;
-		crawl(obj);
-		isNum && this.warn(this.msgDB['WARN_targetNumber']);
-
-		function crawl(arr) {
-			if(isNum) {return;}
-			for(let o of arr) {
-				if(typeof o === 'number' && o !== 1) {isNum = true; return;}
-				else if(Array.isArray(o)) {crawl(o);}
+		if(obj.length <= 1) {return;}
+		for(let o of obj) {
+			if(typeof o === 'number' && o !== 1) {
+				this.warn(this.msgDB['WARN_targetNumber']); return;
 			}
-		};
+		}
 	};
 
 	//vector2text will convert unit vector 'v' into text representation
@@ -338,8 +341,8 @@ function Convert() {
 		return text.replace(/\*$/, ''); //the last asterisk gets removed
 	};
 
-	//almost-zero numbers (floating point error) in vector 'v' will be zero (arbitrary threshold), that's necessary in order to use ^ + -
-	this.almostZero = v => v.map(n => Math.abs(n) > dimTolerance ? n : 0);
+	//check if vector 'v' is all zeroes (w/ tolerance for floating point error)
+	const checkZeros = v => v.reduce((acc, o) => acc && Math.abs(o) < dimTolerance, true);
 
 	//format 'output' object as {num: number, dim: string} into the same object but with properly formatted number string 'num2'
 	this.format = function(output, params) {

@@ -1,9 +1,1 @@
-amend tutorial
-	DO NOT use prefixes or powers in {}
-	macro does not support {}, it is not necessary, the paths have diverged
-	CZ keyboard: alt B,N etc.
-
-allow () inside {}
-	heat exchanger example
-
-copy to clipboard output by clicking on emoji 📋
+nothing to do :-)
