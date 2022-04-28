@@ -1,5 +1,6 @@
 <div ng-switch="CS.tutorial.step">
-	<div id="tutorialBar" ng-mousedown="dragStart($event)"><input type="button" value="X" ng-click="TF.close()"></div>
+	<div id="tutorialBar" ng-mousedown="dragStart($event)">{{CS.tutorial.onlyExamples ? '' : (CS.tutorial.step+1).toFixed(0)+'/7'}}
+		<input type="button" style="position: absolute; right: 0px;" value="X" ng-click="TF.close()"></div>
 
 	<div class="tutorialSection" ng-switch-when="0">
 		<cz>

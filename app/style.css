@@ -133,7 +133,8 @@ input[type="button"] {cursor: pointer;}
 	background-color: #d0d0d0;
 	border-bottom: 1px solid #777777;
 	cursor: move;
-	text-align: right;
+	text-align: center;
+	height: 21px;
 }
 .tutorialSection {padding: 10px; padding-top: 0px;}
 #sharelinkBox {

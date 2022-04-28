@@ -91,6 +91,7 @@ const Units = [
 	{v: [0,0,1,0,0,0,0,0], id: 'h', name: {cz: 'hodina', en: 'hour'}, k:3600},
 	{v: [0,0,1,0,0,0,0,0], id: 'd', alias:['day'], name: {cz: 'den', en: 'day'}, k:3600*24},
 	{v: [0,0,1,0,0,0,0,0], id: 'week', name: {cz: 'týden', en: 'week'}, k:3600*24*7},
+	{v: [0,0,1,0,0,0,0,0], id: 'ftn', name: {cz: 'dva týdny', en: 'fortnight'}, k:1209600, prefix: 'all'},
 	{v: [0,0,1,0,0,0,0,0], id: 'month', alias:['mth', 'měs'], name: {cz: 'průměrný měsíc', en: 'average month'}, k:3600*24*30.436875, note: {
 		cz: 'Vypočten z gregoriánského roku.',
 		en: 'Calculated from gregorian year.'}},
@@ -110,6 +111,7 @@ const Units = [
 	{v: [1,0,0,0,0,0,0,0], id: 'in', name: {cz: 'palec', en: 'inch'}, k:2.54e-2},
 	{v: [1,0,0,0,0,0,0,0], id: 'ft', name: {cz: 'stopa', en: 'foot'}, k:0.3048, prefix: '+'},
 	{v: [1,0,0,0,0,0,0,0], id: 'yd', name: {cz: 'yard', en: 'yard'}, k:0.9144},
+	{v: [1,0,0,0,0,0,0,0], id: 'fur', name: {cz: 'furlong', en: 'furlong'}, k:201.168, prefix: 'all'},
 	{v: [1,0,0,0,0,0,0,0], id: 'mi', name: {cz: 'míle', en: 'mile'}, k:csts.mile},
 	{v: [1,0,0,0,0,0,0,0], id: 'nmi', name: {cz: 'námořní míle', en: 'nautical mile'}, k:1852},
 	{v: [1,0,0,0,0,0,0,0], id: 'au', name: {cz: 'astronomická jednotka', en: 'astronomical unit'}, k:149597870700, prefix: '+'},
@@ -138,6 +140,7 @@ const Units = [
 	{v: [0,1,0,0,0,0,0,0], id: 'lb', alias:['lbs'], name: {cz: 'libra', en: 'pound'}, k:0.45359237},
 	{v: [0,1,0,0,0,0,0,0], id: 'st', name: {cz: 'kámen', en: 'stone'}, k:6.35029318},
 	{v: [0,1,0,0,0,0,0,0], id: 'slug', name: {cz: 'slug', en: 'slug'}, k:14.593903},
+	{v: [0,1,0,0,0,0,0,0], id: 'fir', name: {cz: 'firkin', en: 'firkin'}, k:40.8233133, prefix: 'all'},
 	{v: [0,1,0,0,0,0,0,0], id: 'ts', name: {cz: 'krátká tuna', en: 'short ton'}, k:907.18474},
 	{v: [0,1,0,0,0,0,0,0], id: 'tl', name: {cz: 'imperiální tuna', en: 'long ton'}, k:1016},
 	{v: [0,1,0,0,0,0,0,0], id: 'u', alias:['Da'], name: {cz: 'dalton (atomová hmotnostní konstanta)', en: 'dalton (unified atomic mass unit)'}, k:1.660539040e-27},
@@ -156,6 +159,7 @@ const Units = [
 	{v: [2,1,-2,0,0,0,0,0], id: 'cal', name: {cz: 'kalorie', en: 'calorie'}, k:4.184, prefix: 'all'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'TNT', name: {cz: 'ekvivalent tuny TNT', en: 'ton of TNT equivalent'}, k:4.184e9, prefix: '+'},
 	{v: [2,1,-2,0,0,0,0,0], id: 'BOE', alias: ['BFOE'], name: {cz: 'ekvivalent barelu ropy', en: 'barrel of oil equivalent'}, k:5.8e6*csts.BTU, prefix: '+'},
+	{v: [2,1,-2,0,0,0,0,0], id: 'GGE', name: {cz: 'ekvivalent galonu benzínu', en: 'gasoline gallon equivalent'}, k:114e3*csts.BTU, prefix: '+'},
 
 	{v: [-1,0,0,1,0,0,0,0], id: 'Oe', name: {cz: 'oersted', en: 'oersted'}, k:1000/(4*Math.PI), prefix: 'all'},
 
@@ -194,7 +198,7 @@ const Units = [
 	{v: [0,0,0,0,0,0,0,0], id: '_e', name: {cz: 'Eulerovo číslo', en: 'Euler\'s number'}, k:Math.E, constant: true},
 
 //special for Unitfuns, unusable without {}
-	{v: [3,-1,0,0,0,0,0,0], id: 'API', alias:['°API'], name: {cz: 'API hustota', en: 'API density'}, k:141.5e3, onlyUnitfuns: true},
+	{v: [3,-1,0,0,0,0,0,0], id: 'API', alias:['°API'], name: {cz: 'API hustota', en: 'API density'}, k:1/141.5e3, onlyUnitfuns: true}, //theoretically, without {} API = specific volume unit
 	{v: [0,0,0,0,0,0,0,0], id: 'ln', alias:['log'], name: {cz: 'Přirozený logaritmus', en: 'Natural logarithm'}, k:NaN, onlyUnitfuns: true}
 ];
 
