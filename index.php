@@ -1,11 +1,12 @@
 <?php //version of resources, to prevent caching of old .js and .html files when a new version is built
-	$v = 8;
+	$v = 9;
 ?>
 <!DOCTYPE html>
 <html ng-app="UUC" ng-controller="ctrl">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="description" content="A useful tool for unit conversion.">
+		<meta name="robots" content="noimageindex">
 		<title>Ultimate Unit Converter</title>
 		<script src="libs/angular.min.js"></script>
 		<!--these scripts just declare-->
@@ -22,7 +23,7 @@
 		<link rel="stylesheet" href="app/style.css?v=<?php echo $v;?>">
 	</head>
 	<body ng-mousemove="mouseMove($event)" ng-mouseup="mouseUp()" ng-mouseleave="mouseLeave($event)">
-<div id="lang"><img ng-src="{{imgSrcCZ}}" ng-click="changeLang('cz')"><img ng-src="{{imgSrcEN}}" ng-click="changeLang('en')"></div>
+<div id="lang"><img src="res/CZ.png" ng-click="changeLang('cz')"><img src="res/EN.png" ng-click="changeLang('en')"></div>
 
 <h1>Ultimate Unit Converter II</h1>
 
@@ -115,7 +116,7 @@
 			<b><cz>Výstup:</cz><en>Output:</en></b>
 			<span ng-show="ctrl.copyoutput" ng-class="ctrl.copyclass" class="copyEffStatic"><cz>úspěšně zkopírováno</cz><en>copied successfully</en></span><br>
 			<span class="outputBox">{{composeResult()}}</span>
-			<span ng-show="result && result.output && result.status < 2" ng-click="copyOutput()" style="cursor: copy;" title="Ctrl+C">📋</span><br>
+			<span ng-show="availableCtrlC && result && result.output && result.status < 2" ng-click="copyOutput()" style="cursor: copy;" title="Ctrl+C">📋</span><br>
 		</div>
 	<!-- right container -->
 		<div id="paramContainer">
@@ -135,9 +136,16 @@
 			<a ng-click="ctrl.sharelink = !ctrl.sharelink" style="cursor: pointer;"><span class="expandable">≫</span><cz>Sdílet odkaz</cz><en>Share link</en></a>
 			<span ng-show="ctrl.copylink" ng-class="ctrl.copyclass" class="copyEffStatic"><cz>úspěšně zkopírováno</cz><en>copied successfully</en></span><br>
 			<div id="sharelinkBox" ng-show="ctrl.sharelink">
-				<cz>Kliknutím zkopírujete do schránky odkaz na tuto konverzi</cz>
-				<en>Click to copy the link with this conversion to clipboard</en><br>
-				<span ng-click="copySharelink()" style="cursor: copy;" title="Ctrl+C">📋 <span class="fakeLink" >{{getSharelink()}}</span></span>
+				<div ng-show="availableCtrlC">
+					<cz>Kliknutím zkopírujete do schránky odkaz na tuto konverzi</cz>
+					<en>Click to copy the link with this conversion to clipboard</en><br>
+					<span ng-click="copySharelink()" style="cursor: copy;" title="Ctrl+C">📋 <span class="fakeLink" style="cursor: copy;">{{getSharelink()}}</span></span>
+				</div>
+				<div ng-show="!availableCtrlC">
+					<cz>❗ Schránka není dostupná, protože spojení je nezabezpečené. Zkuste otevřít v</cz>
+					<en>❗ Clipboard is not available due to unsecured connection. Try opening in</en>
+					<a ng-href="{{currentWebAddress.replace('http', 'https')}}">https</a>
+				</div>
 			</div>
 		</div>
 	<!-- below containers -->
@@ -215,6 +223,8 @@
 	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2022 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a></cz>
 	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2022 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a></en>
 </div>
+
+<a id="githubLogo" href="https://github.com/Lemonexe/UUC" target="_blank" title="github"><img src="res/GitHub-Mark-32px.png"></a>
 
 	</body>
 </html>

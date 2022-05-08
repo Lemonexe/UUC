@@ -34,7 +34,7 @@ Units object is the database of all known units.
 */
 
 const Units = [
-//EIGHT BASIC UNITS
+	//EIGHT BASIC UNITS
 	{v: [1,0,0,0,0,0,0,0], id: 'm', name: {cz: 'metr', en: 'metre'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,1,0,0,0,0,0,0], id: 'kg', name: {cz: 'kilogram', en: 'kilogram'}, k:1, SI: true, basic: true, note: {
 		cz: 'To protože kilogram se obtížně programuje, neboť samo "kilo" je předpona. Proto jsem definoval také gram jako odvozenou jednotku SI, která může mít jakékoliv předpony.',
@@ -47,8 +47,10 @@ const Units = [
 	//USD arbitrarily set as basic unit. Reference to this unit is harcoded in currency loading!
 	{v: [0,0,0,0,0,0,0,1], id: 'USD', alias:['$', 'usd'], name: {cz: 'americký dolar', en: 'US dollar'}, k:1, basic: true, prefix: '+'},
 
-//ALL OTHER UNITS as {id: 'identifier',v: [0,0,0,0,0,0,0], name: {cz: 'CZ', en: 'EN'}, k:1, SI: true, prefix: 'all'},
-//SI derived
+
+
+	//ALL OTHER UNITS as {id: 'identifier',v: [0,0,0,0,0,0,0], name: {cz: 'CZ', en: 'EN'}, k:1, SI: true, prefix: 'all'},
+	//SI derived
 	{v: [0,0,0,0,0,0,0,0], id: '%', name: {cz: 'procento', en: 'percent'}, k:1e-2},
 	{v: [0,0,0,0,0,0,0,0], id: 'ppm', name: {cz: 'dílů na jeden milion', en: 'parts per million'}, k:1e-6},
 	{v: [0,0,0,0,0,0,0,0], id: 'rad', name: {cz: 'radián', en: 'radian'}, k:1, SI: true, prefix: '-', note: {
@@ -80,7 +82,9 @@ const Units = [
 	{v: [2,0,-2,0,0,0,0,0], id: 'Sv', name: {cz: 'sievert', en: 'sievert'}, k:1, SI: true, prefix: 'all'},
 	{v: [-1,0,0,0,0,0,0,0], id: 'dpt', name: {cz: 'dioptrie', en: 'dioptre'}, k:1, SI: true},
 
-//non-SI
+
+
+	//non-SI
 	{v: [0,0,0,0,0,1,0,0], id: 'Nm3', alias:['Ncm'], name: {cz: 'normální krychlový metr', en: 'normal cubic metre'}, k:csts.atm/csts.TC0/csts.R, note: {
 		cz: 'Definován při 0°C a 1 atm. Navzdory názvu je Nm3 jednotkou látkového množství, nikoliv objemu.',
 		en: 'Defined at 0°C and 1 atm. Despite the name, Nm3 is actually amount of substance, not volume.'}},
@@ -181,7 +185,9 @@ const Units = [
 	{v: [0,0,-1,0,0,0,0,0], id: 'Ci', name: {cz: 'Curie', en: 'Curie'}, k:3.7e10, SI: false, prefix: 'all'},
 	{v: [0,-1,1,1,0,0,0,0], id: 'R', name: {cz: 'Rentgen', en: 'Roentgen'}, k:2.58e-4, SI: false, prefix: 'all'},
 
-//constants
+
+
+	//constants
 	{v: [1,0,-2,0,0,0,0,0], id: '_g', name: {cz: 'normální tíhové zrychlení', en: 'standard gravity'}, k:9.80665, constant: true, note: {
 		cz: 'Nikoliv univerzální konstanta, nýbrž konvenční.',
 		en: 'Not a universal constant, but a conventional one.'}},
@@ -197,7 +203,9 @@ const Units = [
 	{v: [0,0,0,0,0,0,0,0], id: '_pi', alias:['π'], name: {cz: 'Ludolfovo číslo', en: 'Archimedes\' constant'}, k:Math.PI, constant: true},
 	{v: [0,0,0,0,0,0,0,0], id: '_e', name: {cz: 'Eulerovo číslo', en: 'Euler\'s number'}, k:Math.E, constant: true},
 
-//special for Unitfuns, unusable without {}
+
+
+	//special for Unitfuns, unusable without {}
 	{v: [3,-1,0,0,0,0,0,0], id: 'API', alias:['°API'], name: {cz: 'API hustota', en: 'API density'}, k:1/141.5e3, onlyUnitfuns: true}, //theoretically, without {} API = specific volume unit
 	{v: [0,0,0,0,0,0,0,0], id: 'ln', alias:['log'], name: {cz: 'Přirozený logaritmus', en: 'Natural logarithm'}, k:NaN, onlyUnitfuns: true}
 ];

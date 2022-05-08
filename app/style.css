@@ -1,6 +1,8 @@
 /*
 	This CSS
 	Is a mess
+
+(a stylish haiku by Lemonexe)
 */
 
 /*GENERIC*/
@@ -122,6 +124,10 @@ input[type="button"] {cursor: pointer;}
 	margin: 1px; border: 1px solid #dddddd;
 }
 #lang > img:hover {margin: 0px; border: 2px solid #999999;}
+#githubLogo {
+	position: fixed; bottom: 0px; right: 0px;
+	margin-right: 3px;
+}
 #tutorial {
 	position: absolute;
 	z-index: 10;

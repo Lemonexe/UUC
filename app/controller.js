@@ -41,8 +41,6 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	$scope.prefixText = Prefixes.map(o => `${o.id} (${o.v})`).join(', ');
 	//link for github documentation on macros
 	$scope.documentation = 'https://github.com/Lemonexe/UUC/blob/master/_dev/macro.md';
-	//hide image sources from dumb robots
-	$scope.imgSrcCZ = 'res/CZ.png'; $scope.imgSrcEN = 'res/EN.png';
 
 	//initialize conversion
 	$scope.fullConversion = function() {
@@ -263,7 +261,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	$scope.getSharelink = function() {
 		const i = CS.input.trim(), t = CS.target.trim();
 		const phrase = (i === "" ? '' : i) + (t === "" ? '' : '>' + t);
-		return $scope.currentWebAddress + '#' + phrase; //encodeURI(phrase) is not really necessary..
+		return $scope.currentWebAddress + '#' + encodeURI(phrase);
 	};
 	//copy it to clipboard ~ Ctrl+C
 	$scope.copySharelink = function() {
@@ -280,6 +278,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		$timeout(() => {c.copyclass = ''; c.copyoutput = false;}, 1000);
 		navigator.clipboard.writeText($scope.composeResult());
 	};
+	$scope.availableCtrlC = !!navigator.clipboard; //unsecure connection (such as http) = false
 
 	/*
 		TUTORIAL functions

@@ -48,9 +48,11 @@ function Convert() {
 	function Unit(pref, unit, power) {this.pref = pref; this.unit = unit; this.power = power;}
 	this.Unit = Unit;
 
-/*
-	MAIN CONVERSION FUNCTIONS
-*/
+
+
+	/*
+		MAIN CONVERSION FUNCTIONS
+	*/
 	//the most important function - do a full conversion between input string and target string, and return an output object
 		//called from: fullConversion, Convert_macro
 	this.convert = function(input, target) {
@@ -79,11 +81,11 @@ function Convert() {
 		//then the conversion itself is pretty simple!
 		const num = iObj.n / tObj.n;
 		if(isNaN(num)){throw this.msgDB['ERR_NaN_result'];}
-		let dim = isTarget ? target : this.vector2text(iObj.v); //if no target, then SI representation
+		let dim = isTarget ? target : this.vector2text(iObj.v, true); //if no target, then SI representation
 
 		//correct dimension mismatch
 		const corr = !isTarget || this.checkDimension(iObj.v, tObj.v);
-		if(corr !== true) {dim += '*' + this.vector2text(corr);}
+		if(corr !== true) {dim += '*' + this.vector2text(corr, true);}
 
 		return {num: num, dim: dim};
 	};
@@ -248,9 +250,11 @@ function Convert() {
 		return {num: y, dim: unitfun.id};
 	};
 
-/*
-	ARITHMETICS FUNCTIONS
-*/
+
+
+	/*
+		ARITHMETICS FUNCTIONS
+	*/
 	//raise quantity object 'q1' to the power of 'q2'
 	this.power = function(q1, q2) {
 		//q2 has to be dimensionless
@@ -271,9 +275,11 @@ function Convert() {
 	};
 	this.subtract = (q1, q2) => this.add(q1, this.multiply(q2, new Q(-1)));
 
-/*
-	UTILITIY FUNCTIONS
-*/
+
+
+	/*
+		UTILITIY FUNCTIONS
+	*/
 	//checkPrefix accepts pair [prefix object, unit object] and gives warnings if they are not appropriately used
 	this.checkPrefix = function(pref, unit) {
 		//find all possible mismatch situations and fill the appropriate word for warning

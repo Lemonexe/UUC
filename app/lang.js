@@ -58,7 +58,8 @@ langService.table = {
 	'prefix0': {en: 'prefixes are not used.'},
 	'onlyUnitfuns': {en: 'Only use in {curly braces}; see tutorial'},
 
-//ERRORS 100
+
+	//ERRORS 100
 	'ERR_brackets_missing': {
 		cz: n => `CHYBA 101: Nevyrovnané závorky, ${n} ( chybí`,
 		en: n => `ERROR 101: Unbalanced brackets, ${n} ( missing`
@@ -124,7 +125,8 @@ langService.table = {
 		en: 'ERROR 116: Illegal math operation'
 	},
 
-//WARNINGS 200
+
+	//WARNINGS 200
 	'WARN_prefixes': {
 		cz: (unit, word, pref) => `VAROVÁNÍ 201: Jednotka ${unit.id} (${unit.name[CS.lang]}) většinou nemívá ${word} předpony, avšak nalezeno ${pref.id}`,
 		en: (unit, word, pref) => `WARNING 201: Unit ${unit.id} (${unit.name[CS.lang]}) doesn\'t usually have ${word} prefixes, yet ${pref.id} identified`
@@ -149,7 +151,8 @@ langService.table = {
 		en: 'WARNING 205: Prefix ignored in curly braces {}'
 	},
 
-//MACRO CODE ERRORS 300
+
+	//MACRO CODE ERRORS 300
 	'ERRC_equalSigns': {
 		cz: line => 'CHYBA KÓDU 301: Více rovnítek na jednom řádku: ' + line,
 		en: line => 'CODE ERROR 301: Several equal signs on one line: ' + line
@@ -167,7 +170,8 @@ langService.table = {
 		en: line => 'CODE ERROR 304: Line unreadable: ' + line
 	},
 
-//what kind of project would it be without an easter egg?
+
+	//what kind of project would it be without an easter egg?
 	'ERR_Secret': {
 		cz: 'Tajný Error, gratuluju! Čeho tímto vůbec chcete dosáhnout? Inverzní funkce k logaritmu je _e^(číslo)',
 		en: 'Secret Error, congratz! What are you even trying to do? Inverse function of logarithm is _e^(number)'

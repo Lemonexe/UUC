@@ -64,16 +64,18 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	function headline(str) {!silent && console.log('%c\n'+str, 'font-size: 16px;');}
 
 
-/*
-	HERE COME THE ACTUAL TESTS
-*/
 
-headline('Testing tests');
-//I'm so sophisticated that even tests are tested
+
+	/*
+		HERE COME THE ACTUAL TESTS
+	*/
+
+	headline('Testing tests');
+	//I'm so sophisticated that even tests are tested
 	eqApx(4.789**0.4, 1.8711, 1e-2, 'test(): eqApx');
 	eqObj({a: '1', b: [2]}, {a: '1', b: [2]}, 'test(): eqObj');
 
-headline('Arithmetics');
+	headline('Arithmetics');
 	let q1 = new convert.Q(4,[-1,1,-2,0,0,0,0,0]);
 	let q2 = new convert.Q(16,[-2,2,-4,0,0,0,0,0]);
 	eqObj(q1, {n: 4, v: [-1,1,-2,0,0,0,0,0]}, 'convert.Q');
@@ -104,7 +106,7 @@ headline('Arithmetics');
 	q2 = new convert.Q(7,[1,1,-2,0,0,0,0,0]);
 	expectErr(() => convert.subtract(q1, q2), 109, 'convert.add: detect dimension mismatch');
 
-headline('Full conversions');
+	headline('Full conversions');
 	fullTest('3*(7-3)*2', '', 24, 1e-6);
 	fullTest('(3*(7-3)*2)', '', 24, 1e-6);
 	fullTest('3*(4*(5*(2+1)-1)', '', 168, 1e-6); //tolerance for missing closing brackets )
@@ -128,12 +130,12 @@ headline('Full conversions');
 	fullTest('{ln 1000}/{ln 10}', '1', 3, 1e-3);
 	fullTest('(27K - 32K) / ( {ln (27K/(32K)) } )', '°C', 29.4292, 1e-3);
 
-headline('Full conversion warnings');
+	headline('Full conversion warnings');
 	fullTest('mt/ks', '', 1e-3, 1e-6, 201);
 	fullTest('m3', 'm2', 1, 1e-6, 202);
 	fullTest('6 km', '500 m', 12, 1e-6, 203);
 
-headline('Full conversion errors');
+	headline('Full conversion errors');
 	fullTestErr('7*', '', 107, 'misplaced operator');
 	fullTestErr('3^m', '', 108, 'non-dimensionless power');
 	fullTestErr('7m + 4s', '', 109, 'addition dim mismatch');
@@ -146,7 +148,7 @@ headline('Full conversion errors');
 	fullTestErr('(-1)^(.5)', '', 116, 'NaN: sq root < 0');
 	fullTestErr('{ln (-1)}', '', 116, 'NaN: logarithm < 0');
 
-headline('Convert_parse errors');
+	headline('Convert_parse errors');
 	expectErr(() => Convert_parse(convert, '3*(4*5)*2)'), 101, '3*(4*5)*2): missing bracket');
 	expectErr(() => Convert_parse(convert, '2 * / 3'), 102, '2 * / 3: illegal operator use');
 	expectErr(() => Convert_parse(convert, '4*()*5'), 103, '4*()*5: empty brackets');
@@ -157,7 +159,7 @@ headline('Convert_parse errors');
 	expectErr(() => Convert_parse(convert, '{3°C'), 111, '{3°C: unbalanced {}');
 	expectErr(() => Convert_parse(convert, '(2+{1+1)}'), 112, '(2+{1+1)}: {}() mismatch');
 
-//TEST SUMMARY
+	//TEST SUMMARY
 	const color = passed === total ? 'green' : 'red';
 	const text = ` FINISHED with ${passed}/${total} passed `;
 	const line = '-'.repeat(text.length);
