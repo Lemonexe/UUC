@@ -53,6 +53,7 @@ const Units = [
 	//SI derived
 	{v: [0,0,0,0,0,0,0,0], id: '%', name: {cz: 'procento', en: 'percent'}, k:1e-2},
 	{v: [0,0,0,0,0,0,0,0], id: 'ppm', name: {cz: 'dílů na jeden milion', en: 'parts per million'}, k:1e-6},
+	{v: [0,0,0,0,0,0,0,0], id: 'ppb', name: {cz: 'dílů na jednu miliardu', en: 'parts per billion'}, k:1e-9},
 	{v: [0,0,0,0,0,0,0,0], id: 'rad', name: {cz: 'radián', en: 'radian'}, k:1, SI: true, prefix: '-', note: {
 		cz: 'Úhel považuji za bezrozměrné číslo, čili radián je identický s číslem 1.',
 		en: 'I consider angle units to be dimensionless, with radian being identical to number 1.'}},

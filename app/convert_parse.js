@@ -19,7 +19,9 @@ function Convert_parse(convert, text) {
 	//rationalize the input string
 	function syntaxCheck(text) {
 		(text === '') && (text = '1');
-		text = text.replace(/,/g , '.'); //decimal commas to points
+		text = text
+			.replace('·', '*') //process cdots
+			.replace(/,/g , '.'); //decimal commas to points
 
 		//check bracket balance and add missing closing ) brackets
 		const count = char => text.split(char).length - 1;

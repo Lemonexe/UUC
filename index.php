@@ -1,5 +1,5 @@
 <?php //version of resources, to prevent caching of old .js and .html files when a new version is built
-	$v = 9;
+	$v = 10;
 ?>
 <!DOCTYPE html>
 <html ng-app="UUC" ng-controller="ctrl">

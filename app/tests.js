@@ -110,7 +110,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	fullTest('3*(7-3)*2', '', 24, 1e-6);
 	fullTest('(3*(7-3)*2)', '', 24, 1e-6);
 	fullTest('3*(4*(5*(2+1)-1)', '', 168, 1e-6); //tolerance for missing closing brackets )
-	fullTest('0.5 ((5(6+(8)3)) 2 3', '15', 30, 1e-6); //spaces instead of *
+	fullTest('0.5 ((5(6+(8)3)) 2·3', '15', 30, 1e-6); //spaces and cdots instead of *
 	fullTest('3(4+5)2 / (2*2^3*2) * 7*(2+2*2+2)', '', 94.5, 1e-6); //not even spaces, numbers right on brackets
 	fullTest('3m2*(4*5m)*2kPa', 'kg*m2 * s^(-2)', 120000, 1e-6);
 	fullTest(' -3.23e+4m2 * (42,77e-2*5m)  *2kPa1.0 ', 'MJ', -138.1471, 1e-2);
