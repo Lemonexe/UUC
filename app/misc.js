@@ -44,6 +44,23 @@ const saveService = {
 saveService.load();
 window.onbeforeunload = saveService.save;
 
+// parse window.location.hash to input, target and params
+function parseLocationHash(hash) {
+	const resObj = {};
+
+	hash = decodeURIComponent(hash).replace(/^.*#/, '');
+
+	//'>', 'to' or 'into' is used to delimit input and target
+	hash = hash.replace(/ to | into /g, '>');
+	hash = hash.split(/>+/);
+	hash.length > 2 && convert.warn(convert.msgDB['WARN_separators']);
+
+	//detect input & target, return them
+	resObj.input = hash[0].trim();
+	resObj.target = hash[1] ? hash[1].trim() : '';
+	return resObj;
+}
+
 //test availability of ECMA6 with a sample code
 function ECMA6test() {
 	try {

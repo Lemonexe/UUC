@@ -244,16 +244,13 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 	//perform conversion from fragment identifier. Executed upon loading of currencies
 	function execHash() {
-		let hash = decodeURIComponent(window.location.hash).replace(/^.*#/, '');
-		if(!hash) {return;}
-		//'>', 'to' or 'into' is used to delimit input and target
-		hash = hash.replace(/ to | into /g, '>');
-		hash = hash.split(/>+/);
-		hash.length > 2 && convert.warn(convert.msgDB['WARN_separators']);
+		const hash = window.location.hash;
+		const {input, target, params} = parseLocationHash(hash);
 
-		//detect input & target, feed them into full conversion
-		CS.input = hash[0].trim();
-		CS.target = hash[1] ? hash[1].trim() : '';
+		if(!input && !target) {return;}
+		CS.input = input; CS.target = target;
+		params && (CS.params = params);
+
 		$scope.fullConversion();
 	}
 

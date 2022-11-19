@@ -159,6 +159,13 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	expectErr(() => Convert_parse(convert, '{3°C'), 111, '{3°C: unbalanced {}');
 	expectErr(() => Convert_parse(convert, '(2+{1+1)}'), 112, '(2+{1+1)}: {}() mismatch');
 
+	headline('location hash');
+	eqObj(parseLocationHash('#!#3 kPa to torr'), {input:'3 kPa', target:'torr'}, 'parse simple location hash');
+	eqObj(parseLocationHash('#!#3%20kPa%20to%20torr'), {input:'3 kPa', target:'torr'}, 'parse simple URIencoded location hash');
+	eqObj(parseLocationHash('#!#3·%7B3°C%7D%2F(1e-1)%5E2*_g'), {input:'3·{3°C}/(1e-1)^2*_g', target:''}, 'parse complex location hash');
+	const {input, target} = parseLocationHash('2m to cm > ft');
+	fullTest(input, target, 200, 1e-2, 204);
+
 	//TEST SUMMARY
 	const color = passed === total ? 'green' : 'red';
 	const text = ` FINISHED with ${passed}/${total} passed `;
