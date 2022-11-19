@@ -163,8 +163,12 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	eqObj(parseLocationHash('#!#3 kPa to torr'), {input:'3 kPa', target:'torr'}, 'parse simple location hash');
 	eqObj(parseLocationHash('#!#3%20kPa%20to%20torr'), {input:'3 kPa', target:'torr'}, 'parse simple URIencoded location hash');
 	eqObj(parseLocationHash('#!#3·%7B3°C%7D%2F(1e-1)%5E2*_g'), {input:'3·{3°C}/(1e-1)^2*_g', target:''}, 'parse complex location hash');
-	const {input, target} = parseLocationHash('2m to cm > ft');
-	fullTest(input, target, 200, 1e-2, 204);
+	res = parseLocationHash('2m to cm > ft');
+	fullTest(res.input, res.target, 200, 1e-2, 204);
+	eqObj(parseLocationHash('#!#_G&fixed,3'), {input:'_G', target:'', params: {spec:'fixed', fixed:3, exp:false}}, 'parse location hash with format params #1');
+	eqObj(parseLocationHash('#!#_G&digits,2,exp'), {input:'_G', target:'', params: {spec:'digits', digits:2, exp:true}}, 'parse location hash with format params #2');
+	res = parseLocationHash('#!#_pi into 1 &auto,2.1');
+	fullTest(res.input, res.target, Math.PI, 1e-6, 206);
 
 	//TEST SUMMARY
 	const color = passed === total ? 'green' : 'red';

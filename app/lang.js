@@ -150,6 +150,10 @@ langService.table = {
 		cz: 'VAROVÁNÍ 205: Ignorován prefix v složených závorkách {}',
 		en: 'WARNING 205: Prefix ignored in curly braces {}'
 	},
+	'WARN_format_params': {
+		cz: 'VAROVÁNÍ 206: Formátovací parametry z adresy nebylo možné přečíst',
+		en: 'WARNING 206: Format params from address could not be parsed'
+	},
 
 
 	//MACRO CODE ERRORS 300

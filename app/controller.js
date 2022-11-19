@@ -249,7 +249,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 		if(!input && !target) {return;}
 		CS.input = input; CS.target = target;
-		params && (CS.params = params);
+		params && (CS.params = {...CS.params, ...params});
 
 		$scope.fullConversion();
 	}
@@ -257,7 +257,13 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	//get a link for sharing
 	$scope.getSharelink = function() {
 		const i = CS.input.trim(), t = CS.target.trim();
-		const phrase = (i === "" ? '' : i) + (t === "" ? '' : '>' + t);
+		let phrase = (i === "" ? '' : i) + (t === "" ? '' : '>' + t);
+
+		const csp = CS.params;
+		if(csp.spec !== 'auto') {
+			phrase += `&${csp.spec},${csp[csp.spec]}` + (csp.exp ? ',exp' : '');
+		}
+
 		return $scope.currentWebAddress + '#' + encodeURI(phrase);
 	};
 	//copy it to clipboard ~ Ctrl+C

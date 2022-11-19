@@ -44,12 +44,44 @@ const saveService = {
 saveService.load();
 window.onbeforeunload = saveService.save;
 
-// parse window.location.hash to input, target and params
+//parse window.location.hash to input, target and params
 function parseLocationHash(hash) {
 	const resObj = {};
-
 	hash = decodeURIComponent(hash).replace(/^.*#/, '');
 
+	//process the substring which contains format params in the format of `${spec},${digits || fixed}` + (exp ? ',exp' : '')
+	function processParams(paramsStr) {
+		const warn = () => convert.warn(convert.msgDB['WARN_format_params']);
+		let obj = {};
+		let params = paramsStr.split(',');
+		if(params.length > 3) {warn(); return;}
+		
+		//get spec
+		if(params[0] === 'fixed' || params[0] === 'digits') {obj.spec = params[0];}
+		else {warn(); return;}
+		
+		//get digits || fixed as integer
+		const num = Number(params[1]);
+		if(Number.isInteger(num)) {obj[obj.spec] = num;}
+		else {warn(); return;}
+
+		//get exp if defined
+		obj.exp = false;
+		if(params[2] === 'exp') {obj.exp = true;}
+		else if(params.length === 3) {warn(); return;}
+
+		return obj;
+	}
+
+	//extract the params from hash and process it
+	let paramsObj;
+	const paramsMatch = hash.match(/&.+$/);
+	if(paramsMatch) {
+		hash = hash.slice(0, paramsMatch.index);
+		paramsObj = processParams(paramsMatch[0].slice(1));
+	}
+
+	//continue with parsing the first part of the hash into target & input
 	//'>', 'to' or 'into' is used to delimit input and target
 	hash = hash.replace(/ to | into /g, '>');
 	hash = hash.split(/>+/);
@@ -58,6 +90,7 @@ function parseLocationHash(hash) {
 	//detect input & target, return them
 	resObj.input = hash[0].trim();
 	resObj.target = hash[1] ? hash[1].trim() : '';
+	paramsObj && (resObj.params = paramsObj);
 	return resObj;
 }
 

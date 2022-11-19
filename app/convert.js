@@ -17,7 +17,7 @@ function Convert() {
 	//controller populates it with language-specific strings
 	['ERR_brackets_missing', 'ERR_operators', 'ERR_brackets_empty', 'ERR_NaN', 'ERR_unitPower', 'ERR_unknownUnit', 'ERR_operator_misplaced', 'ERR_power_dim', 'ERR_dim_mismatch', 'ERR_special_chars',
 		'ERR_cbrackets_missing', 'ERR_brackets_mismatch', 'ERR_cbrackets_illegal', 'ERR_unknown_unitfun', 'ERR_cbrackets_dim_mismatch', 'ERR_NaN_result',
-		'WARN_prefixes', 'WARN_prefixes_word0', 'WARN_prefixes_word+', 'WARN_prefixes_word-', 'WARN_target_dim_mismatch', 'WARN_targetNumber', 'WARN_separators', 'WARN_curly_prefix',
+		'WARN_prefixes', 'WARN_prefixes_word0', 'WARN_prefixes_word+', 'WARN_prefixes_word-', 'WARN_target_dim_mismatch', 'WARN_targetNumber', 'WARN_separators', 'WARN_curly_prefix', 'WARN_format_params',
 		'ERRC_equalSigns', 'ERRC_varName', 'ERRC_argCount', 'ERRC_unreadableLine'
 	].forEach(o => msgDB[o] = null);
 	this.msgDB = msgDB;
