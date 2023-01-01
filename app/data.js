@@ -180,6 +180,7 @@ const Units = [
 	{v: [-1,1,-2,0,0,0,0,0], id: 'mmHg', name: {cz: 'milimetr rtuťového sloupce', en: 'milimetre of mercury'}, k:133.322387415, note: csts.Hgnote},
 	{v: [-1,1,-2,0,0,0,0,0], id: 'Torr', alias:['torr'], name: {cz: 'torr', en: 'torr'}, k:csts.atm/760, prefix: 'all', note: csts.Hgnote},
 	{v: [-1,1,-2,0,0,0,0,0], id: 'psi', name: {cz: 'libra na čtvereční palec', en: 'pound per square inch'}, k:6894.757293168362, prefix: 'all'},
+	{v: [-1,1,-2,0,0,0,0,0], id: 'inHg', name: {cz: 'palec rtuťového sloupce', en: 'inch of mercury'}, k:3386.388640341},
 
 	{v: [0,1,-2,-1,0,0,0,0], id: 'G', name: {cz: 'gauss', en: 'gauss'}, k:0.0001, SI: true, prefix: 'all'},
 
