@@ -33,22 +33,22 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	//there are six possible outcomes: we expectWarn or we don't, AND we get ok, warn or err
 	//normally only one test is logged. If we expectWarn and we get ok or warn, two tests are logged (eqApx, expectWarn)
 	function fullTest(input, target, expectNum, tol, expectWarn) {
-		const label = input+' > '+target+': ';
+		const label = `${input}${target ? ' > '+target : ''} ≅ ${String(expectNum)}`
 		res = convert.fullConversion(input, target);
 
-		(res.status === 0 || (expectWarn && res.status < 2)) ? eqApx(res.output.num, expectNum, tol, label+'eqApx') : log(false, res.messages[0], expectWarn || 'OK', label+'eqApx');
+		(res.status === 0 || (expectWarn && res.status < 2)) ? eqApx(res.output.num, expectNum, tol, label) : log(false, res.messages[0], expectWarn || 'OK', label);
 
 		if(expectWarn && res.status < 2) {
 			const match = res.messages[0].match(/[^\d]*(\d+)/); //try to match number of thrown warning
 			const correctWarn = res.status === 1 && match && match[1] === String(expectWarn); //is the correct warning
 			const text = 'warn'+expectWarn;
-			log(correctWarn, res.messages[0], text, label+text);
+			log(correctWarn, res.messages[0], text, '→ '+text);
 		}
 	}
 
 	//assertion of expected full conversion error with 'input' string, expected error number and description
 	function fullTestErr(input, target, expectErr, text) {
-		const label =`Err${expectErr} ${input} > ${target}: `;
+		const label =`Err${expectErr} ${input}${target ? ' > '+target : ''}: `;
 		res = convert.fullConversion(input, target);
 		const match = res.messages[0].match(/[^\d]*(\d+)/); //try to match number of thrown error
 		log(res.status === 2 && match && match[1] === String(expectErr), res.messages[0], 'error '+expectErr, label+text);
@@ -111,6 +111,7 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	fullTest('(3*(7-3)*2)', '', 24, 1e-6);
 	fullTest('3*(4*(5*(2+1)-1)', '', 168, 1e-6); //tolerance for missing closing brackets )
 	fullTest('0.5 ((5(6+(8)3)) 2·3', '15', 30, 1e-6); //spaces and cdots instead of *
+	fullTest('2²³', '', 64, 1e-6); //unicode support
 	fullTest('3(4+5)2 / (2*2^3*2) * 7*(2+2*2+2)', '', 94.5, 1e-6); //not even spaces, numbers right on brackets
 	fullTest('3m2*(4*5m)*2kPa', 'kg*m2 * s^(-2)', 120000, 1e-6);
 	fullTest(' -3.23e+4m2 * (42,77e-2*5m)  *2kPa1.0 ', 'MJ', -138.1471, 1e-2);

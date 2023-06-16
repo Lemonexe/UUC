@@ -21,7 +21,9 @@ function Convert_parse(convert, text) {
 		(text === '') && (text = '1');
 		text = text
 			.replace('·', '*') //process cdots
-			.replace(/,/g , '.'); //decimal commas to points
+			.replace(/,/g , '.') //decimal commas to points
+			.replace(/²/g, '^2') //hardcoded support for unicode superscript 2 and 3, because they are commonly used
+			.replace(/³/g, '^3');
 
 		//check bracket balance and add missing closing ) brackets
 		const count = char => text.split(char).length - 1;
