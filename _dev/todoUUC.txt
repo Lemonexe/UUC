@@ -1,1 +1,3 @@
-nothing to do :-)
+Remake macro as pure JS?
+Restyle with flex
+...rewrite the entire thing into TS, React, lol xD

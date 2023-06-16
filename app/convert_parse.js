@@ -11,7 +11,7 @@ function Convert_parse(convert, text) {
 	Units.forEach(o => o.alias && o.alias.forEach(a => UnitIdMap.push({id: a, ref: o}))); //and push all aliases
 
 	const idsOC = UnitIdMap.map(item => item.id); //map of unit ids in original case
-	const idsLC = UnitIdMap.map(item => item.id.toLowerCase()); //in lowercase
+	const idsLC = idsOC.map(item => item.toLowerCase()); //in lowercase
 	const prefs = Prefixes.map(item => item.id); //map of prefixes
 	text = syntaxCheck(text);
 	return crawl(text);
@@ -121,10 +121,12 @@ function Convert_parse(convert, text) {
 					o = o.slice(firstNum.length); //strip number from the unit
 					num = Number(firstNum);
 					if(isNaN(num) || !isFinite(num)) {throw convert.msgDB['ERR_NaN'](firstNum);} //this could occur with extremely large numbers (1e309)
-					arr2.push(Number(num)); arr2.push('*');
+					//if you have number and unit tightly together, they should have the same power; we achieve that by wrapping them in brackets array
+					arr2.push([Number(num), '*', parsePrefixUnitPower(o)]);
+					return;
 				}
 				//identification of the unit itself and its power
-				arr2.push(parseUnit(o));
+				arr2.push(parsePrefixUnitPower(o));
 			}
 		});
 		return arr2;
@@ -147,11 +149,11 @@ function Convert_parse(convert, text) {
 	function unprotectNumbers(text) {return text.replace(/\~/g, '-').replace(/\#/g, '+');}
 
 	//parse a unit string or throw an error. It may have a prefix at beginning, and a power number at the end (without ^, otherwise it would have been split away already)
-	function parseUnit(text) {
+	function parsePrefixUnitPower(text) {
 		let pow = 1, u = null; //unit power, the unit object
 
 		//try to find simply as {prefix + unit}
-		u = parseUnit2(text, pow);
+		u = parsePrefixUnit(text, pow);
 		if(u) {return u;}
 
 		//not found - try to find as {prefix + unit + power}
@@ -162,16 +164,16 @@ function Convert_parse(convert, text) {
 			text = text.slice(0, powIndex); //strip number from the unit
 		}
 
-		u = parseUnit2(text, pow);
+		u = parsePrefixUnit(text, pow);
 
 		//not found either, now try something else: case insensitive
-		if(!u) {u = parseUnit2(text, pow, true);} //note: at this point, pow could have been found, or it has defaulted to 1
+		if(!u) {u = parsePrefixUnit(text, pow, true);} //note: at this point, pow could have been found, or it has defaulted to 1
 		if(!u) {throw convert.msgDB['ERR_unknownUnit'](text);} //the unit is unknown
 		return u;
 	}
 
 	//parse a unit string. It may have a prefix it the beginning
-	function parseUnit2(text, pow, insensitive) {
+	function parsePrefixUnit(text, pow, insensitive) {
 		//first we try to find the unit in ids
 		let text2 = insensitive ? text.toLowerCase() : text;
 		let ids = insensitive ? idsLC : idsOC;

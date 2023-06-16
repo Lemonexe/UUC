@@ -207,14 +207,20 @@ function Convert() {
 	//generic function to process array with curly {}, returns [numerical input, Unitfun object]
 	this.processCurly = function(arr, curly) {
 		const Err113 = this.msgDB['ERR_cbrackets_illegal'];
+		const idsUF = Unitfuns.map(o => o.id); //map of Unitfuns id
+		
+		//fallback for the case when number is written tightly with unit, such as {3°C} instead of {3 °C}
+		if(!arr.find(o => o instanceof this.Unit && idsUF.includes(o.unit.id))) {
+			arr = arr.flat();
+		}
+
 		const units = arr.filter(o => o instanceof this.Unit); //all Unit objects within {expression}
 		const nums = arr.filter(o => typeof o === 'number' ); //all numbers within {expression}
 		const arrs = arr.filter(o => Array.isArray(o)); //all (arrays) within {expression}
-		const idsUF = Unitfuns.map(o => o.id); //map of Unitfuns id
 
 		//check appropriate use of {}
 		if(!curly || units.length !== 1 || units[0].power !== 1 || arrs.length > 1) {throw Err113;}
-		['+','-','/','^'].forEach(op => {if(arr.indexOf(op) > -1) {throw Err113;}});
+		['+','-','/','^'].forEach(op => {if(arr.includes(op)) {throw Err113;}});
 
 		//parse array if necessary
 		if(arrs.length > 0) {
@@ -224,8 +230,9 @@ function Convert() {
 		}
 		if(nums.length > 1) {throw Err113;}
 
-		//numerical x within {}, for input should be 1 num, but 0 is allowed; for target strictly 0 nums
-		const x = nums.length === 1 ? nums[0] : 0; //note: it even works to use {°C*3} lol
+		//numerical x within {}, defaults to 0 if none provided
+		//for input there should be 1 num, but 0 is allowed, while for target it must be strictly 0
+		const x = nums[0] ?? 0; //note: it even works to use {°C*3} lol
 
 		//find the unitfun
 		const i = idsUF.indexOf(units[0].unit.id);

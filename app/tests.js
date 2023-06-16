@@ -113,17 +113,19 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	fullTest('0.5 ((5(6+(8)3)) 2·3', '15', 30, 1e-6); //spaces and cdots instead of *
 	fullTest('2²³', '', 64, 1e-6); //unicode support
 	fullTest('3(4+5)2 / (2*2^3*2) * 7*(2+2*2+2)', '', 94.5, 1e-6); //not even spaces, numbers right on brackets
+	fullTest('km / 5min', 'km/h', 12, 1e-6); //number tightly with unit shall be interpreted as (5min)
 	fullTest('3m2*(4*5m)*2kPa', 'kg*m2 * s^(-2)', 120000, 1e-6);
 	fullTest(' -3.23e+4m2 * (42,77e-2*5m)  *2kPa1.0 ', 'MJ', -138.1471, 1e-2);
 	fullTest('3*(4*(5+2', '', 84, 1e-6);
 	fullTest('l^(1/3)', 'dm', 1, 1e-3);
 	fullTest('_e^(30 kJ/mol / (_R * 298 K))', '', 181309.23, 0.1);
 	fullTest('8 Mt/yr / (900 kg/m3)', 'kbbl/d', 153.07481, 1e-3);
-	fullTest('Da', 'u', 1, 1e-6);
+	fullTest('Da', 'u', 1, 1e-6); //aliases
 	fullTest('Nm3', 'Ncm', 1, 1e-6);
 	fullTest('Mpa*PPM', '', 1, 1e-3); //case-sensitive leniency
-	fullTest('{0°C}', 'K', csts.TC0, 1e-6);
-	fullTest('{°C 25}', 'K', 298.15, 1e-6); //this isn't even needed but it works too, lol
+	fullTest('{5°C}', 'K', csts.TC0+5, 1e-6);
+	fullTest('{5 °C}', 'K', csts.TC0+5, 1e-6);
+	fullTest('{°C*25}', 'K', csts.TC0+25, 1e-6); //this isn't even needed but it works too, lol
 	fullTest('{35 °API}', 'kg/l', 0.8498, 1e-3);
 	fullTest('1000 kg/m3', '{°API}', 10, 1e-3);
 	fullTest('atm * 28 g/mol / _R / {25°C}', '', 1.14447, 1e-4);
