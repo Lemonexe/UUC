@@ -105,7 +105,7 @@ function ECMA6test() {
 	}
 }
 
-//Maintenance function that cannot be accessed by GUI. Conflicts are written in debug div. Quadratic time complexity (in relation to Units)
+//Maintenance function that cannot be accessed by GUI. Quadratic time complexity (in relation to Units)
 function unitConflicts() {
 	//create another database that maps each id and alias to the original unit object (just like in convert_parse.js)
 	const UnitIdMap = Units.map(item => ({id: item.id, ref: item}));
@@ -148,5 +148,6 @@ function unitConflicts() {
 			(i !== u) && determineConflict(UnitIdMap[u], UnitIdMap[i]);
 		}
 	}
-	document.getElementById('debug').innerHTML = conflicts.length + ' conflicts<br>' + conflicts.join('<br>');
+	console.log('%cCONFLICTS:', 'font-size: 16px; font-weight: bold');
+	conflicts.forEach(item => console.log(item))
 }

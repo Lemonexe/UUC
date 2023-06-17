@@ -14,7 +14,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	//generate ng-style for inputCode textarea
 	$scope.textareaStyle = () => ({width: CS.inputCodeWidth || '350px', height: CS.inputCodeHeight || '150px'});
 	//generate ng-style for currently active tab button
-	$scope.tabButtonStyle = tab => CS.tab === tab ? ({'border-bottom': '3px solid white'}) : ({});
+	$scope.tabButtonStyle = tab => CS.tab === tab ? ({'border-bottom': '3px solid var(--border)'}) : ({});
 	//generate ng-style for tutorial window
 	$scope.tutorialStyle = () => ({top: CS.tutorial.top+'px', left: CS.tutorial.left+'px', width: CS.tutorial.width+'px'});
 
@@ -221,7 +221,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 
 			const USDk = res.data.rates['USD']; //because default base is EUR while UUC is USD-centric
 			const timestamp = new Date(res.data.timestamp * 1000);
-			$scope.currencyTimestamp = timestamp.toLocaleDateString() + ' ' + timestamp.toLocaleTimeString();
+			$scope.currencyTimestamp = timestamp.toLocaleDateString();
 
 			//fill values for all currencies
 			for(let c of Currencies) {
@@ -342,7 +342,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		},
 		//use an example
 		ex: function(key) {[CS.input, CS.target] = this.examples[key]; $scope.fullConversion();},
-		newWindow: {step: 0, top: 120, left: 400, width: 600}, //new tutorial window
+		newWindow: {step: 0, top: 120, left: 420, width: 600}, //new tutorial window
 
 		//examples as array [input, target]
 		examples: {
@@ -354,6 +354,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			brackets: ['4.186 J/(°C*g) ', 'Btu/(°F lb)'],
 			numbers: ['7,42e-3', '%'],
 			spaces: ['  4   CZK / ( kW *h)  ', '€ / MJ'],
+			tight: ['km / 5min', 'km/h'],
 			powers: ['kg * m2 * s^(-3)', 'W'],
 			radioactiveDecay: ['500 mg * _e^(-72 h / (8.0197 d))', 'mg'],
 			volumeABC: ['18mm * 6.5cm * 22cm  +  230 ml', 'l'],
@@ -363,7 +364,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			kgcm2: ['kg * _g / cm2 ', 'psi'],
 			poundal: ['lb * ft / s2 ', 'N'],
 			oersted: ['T / _mu', 'Oe'],
-			pi: ['45°', '_pi'],
+			pi: ['45°', 'π'],
 			targetNumber: ['96', '12'],
 			gasFlow: ['7000 Nm3 / h * 28 g/mol', 't/h'],
 			gasConc: ['25 mg / Nm3 / (34 g/mol)', 'ppm'],

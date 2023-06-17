@@ -1,75 +1,154 @@
-/*
-	This CSS
-	Is a mess
+/* DESIGN TOKENS  */
+:root {
+	--highlight: #ffa;
+	--border: #777;
+	--border-light: #aaa;
+	--border-dark: #444;
+	--headline: #555;
+	--background: #eee;
+}
 
-(a stylish haiku by Lemonexe)
-*/
-
-/*GENERIC*/
-body {font-family: Arial;}
-p {max-width: 1200px;}
+/* GENERIC */
 h1 {
 	font-size: 30px;
-	margin-top: 10px;
-	margin-bottom: 30px;
+	margin-top: 8px;
+	margin-bottom: 16px;
+	color: var(--headline);
 }
-h2 {
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-li {margin-bottom: 5px;}
+li {margin-bottom: 8px;}
 input[type="button"] {cursor: pointer;}
+.bigButton {
+    padding: 4px 8px 4px 8px;
+    font-size: 16px;
+    background-color: var(--background);
+    margin: 1px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+}
+.bigButton:hover {
+	background-color: var(--background);
+	margin: 0px;
+	border-width: 2px;
+}
 .fakeLink {
-	color: #0000ee;
+	color: #00e;
 	cursor: pointer;
 	text-decoration: underline;
 }
 .code {
 	font-family: 'Courier New', 'Courier', 'Consolas';
-	background-color: #f0f0f0;
+	background-color: var(--background);
 }
-.expandable {display: inline-block; width: 15px; margin-bottom: 10px}
+.subtle {color: var(--border)}
 
 
 
-/*CONVERT*/
-.inputBox {
-	margin-bottom: 15px;
-	width: 350px;
+/* LAYOUT */
+body {
+	display: flex;
+	font-family: Arial;
+	margin: 0px;
+	overflow-y: scroll;
+}
+#centeredContainer {
+	margin: auto;
+	max-width: 1000px;
+	flex-grow: 1;
+}
+#contentContainer {
+	position: relative;
+	padding: 16px;
+	padding-bottom: 40px; /* prevent overlap with footer */
+}
+
+#tabButtonContainer {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: row;
+	gap: 16px;
+	margin-bottom: 24px;
+	color: var(--headline);
+}
+.tabButton {
+	padding: 8px;
+	background-color: white;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+#lang {
+	z-index: 8;
+	position: absolute; top: 0px; right: 0px;
 	padding: 2px;
+}
+#lang > img {
+	width: 45px; height: 30px;
+	margin: 1px;
+	border: 1px solid var(--border-light);
+	cursor: pointer;
+}
+#lang > img:hover {
+	margin: 0px;
+	border: 2px solid var(--border-dark);
+}
+
+#footer {
+	position: fixed; left: 0px; bottom: 0px;
+	padding: 4px;
+	padding-left: 24px;
+	padding-right: 24px;
+	background-color: white;
+	border-top: 1px solid var(--border);
+}
+#githubLogo {
+	position: fixed; bottom: 0px; right: 0px;
+	margin-right: 4px;
+}
+
+
+
+/* CONVERT */
+.inputBox {
+	margin-bottom: 16px;
+	width: 350px;
+	padding: 4px;
 }
 .outputBox {
 	display: inline-block;
-	height: 17px;
-	min-width: 350px;
-	padding: 2px;
-	border: 1px solid #777777;
-	margin-bottom: 20px;
-	margin-right: -2px; /*because of Ctrl+C icon*/
-}
-#convertContainer {
-	float: left;
-	position: relative;
-	margin-right: 40px;
+	height: 17px; /* empirical to match textinput with .inputBox */
+	border: 1px solid var(--border);
+	margin-right: -2px; /* because of Ctrl+C icon */
 }
 #inputAutocomplete {
-	width: 20px; height: 23px; padding-left: 15px;
+	width: 20px; height: 27px; /* empirical to match textinput with .inputBox */
 }
-#paramContainer {
-	float: left;
-	padding: 5px;
-	padding-right: 0px;
+.convertContainer {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 20px;
 }
+.convertContainer > div {position: relative;}
 .numSelector {
 	border: none;
 	outline: none;
-	width: 35px;
+	width: 32px;
+}
+.expandable {
+	display: inline-block;
+	width: 16px;
+	margin-bottom: 12px;
 }
 /*status texts*/
 .ok {color: green;}
 .warn {color: darkorange;}
 .err {font-weight: bold; color: red;}
-.statusAppear {animation-name: appear; animation-timing-function: linear; animation-duration: 0.5s;}
+.statusAppear {
+	animation-name: appear;
+	animation-timing-function: linear;
+	animation-duration: 0.5s;
+}
 @keyframes appear {
 	0%   {opacity: 0;}
 	100% {opacity: 1;}
@@ -77,81 +156,47 @@ input[type="button"] {cursor: pointer;}
 
 
 
-/*REFERENCES*/
-.reference {white-space: pre-wrap;} /*just a dirty trick to allow angular generated line breaks even without ng-sanitize*/
-.highlight {background-color: #ffff90;}
-.example {
-	position: absolute;
-	left: 230px;
-	font-style: italic;
-}
+/* REFERENCES */
+.reference {white-space: pre-wrap;} /* just a dirty trick to allow angular generated line breaks even without ng-sanitize */
+.highlight {background-color: var(--highlight);}
 
 
 
-/*MISCELLANEOUS ELEMENTS*/
-#tabButtonContainer {
-	padding-left: 20px;
-	padding-bottom: 10px;
-	margin-bottom: 20px;
-	border-bottom: 2px solid #777777;
-}
-.tabButton {
-	padding: 10px;
-	margin-left: 8px;
-	background-color: white;
-	border: 2px solid #777777;
-	border-bottom: none;
-	cursor: pointer;
-}
-#footerDefense {height: 20px;}
-#footer {
-	position: fixed;
-	left: 0px;
-	bottom: 0px;
-	padding-left: 15px;
-	background-color: white;
-	border-top: 1px solid #777777;
-}
-#lang {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	padding: 3px;
-	cursor: pointer;
-}
-#lang > img {
-	width: 45px; height: 30px;
-	margin: 1px; border: 1px solid #dddddd;
-}
-#lang > img:hover {margin: 0px; border: 2px solid #999999;}
-#githubLogo {
-	position: fixed; bottom: 0px; right: 0px;
-	margin-right: 3px;
-}
+/* MISCELLANEOUS ELEMENTS */
 #tutorial {
 	position: absolute;
 	z-index: 10;
 	background-color: white;
-	border: 2px solid #777777;
+	border: 1px solid var(--border);
 }
 #tutorialBar {
 	width: 100%;
-	background-color: #d0d0d0;
-	border-bottom: 1px solid #777777;
-	cursor: move;
+	background-color: var(--background);
+	border-bottom: 1px solid var(--border);
 	text-align: center;
 	height: 21px;
+	cursor: move;
 }
-.tutorialSection {padding: 10px; padding-top: 0px;}
+.tutorialSection {
+	padding: 12px;
+	padding-top: 0px;
+}
+.Xbutton {
+	position: absolute; top:-1px; right: -1px;
+}
 #sharelinkBox {
 	z-index: 20;
 	position: absolute;
-	border: 1px solid #777777;
+	border: 1px solid var(--border);
 	background-color: rgba(250, 250, 250, 0.9);
-	padding: 5px;
+	padding: 8px;
 }
 .copyEffStatic {color: green; opacity: 0;}
-.copyEffect {animation-name: flick; animation-timing-function: linear; animation-duration: 1s;}
+.copyEffect {
+	animation-name: flick;
+	animation-timing-function: linear;
+	animation-duration: 1s;
+}
 @keyframes flick {
 	0%   {opacity: 0;}
 	15%  {opacity: 1;}
