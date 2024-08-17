@@ -51,7 +51,7 @@
 					<p>
 						<b>Poznámky:</b>
 						<ol>
-							<li>UUC je možné přidat do prohlížeče jako vyhledávač a mít jej tak rychle po ruce! <a class="fakeLink" ng-click="changeTab('searchEngine')">Návod (pro Chrome či Edge)</a></li>
+							<li>UUC je možné přidat do prohlížeče jako vyhledávač a mít jej tak rychle po ruce! <a class="fakeLink" ng-click="changeTab('searchEngine')">Návod</a></li>
 							<li>Pokud vám zde chybí vaše oblíbená jednotka či konstanta a rádi byste ji zde viděli, <a href="mailto:zbytek@gmail.com">kontaktujte mě</a></li>
 							<li>Pokud máte nápad na vylepšení této aplikace, neváhejte <a href="mailto:zbytek@gmail.com">mě kontaktovat</a></li>
 							<li>Pokud sami programujete a máte zájem o zdrojový kód, navštivte <a href="https://github.com/Lemonexe/UUC" target="_blank">Github repozitář</a></li>
@@ -68,7 +68,7 @@
 					<p>
 						<b>Notes:</b>
 						<ol>
-							<li>Now you can add UUC to your browser as a search engine so as to quickly access it! <a class="fakeLink" ng-click="changeTab('searchEngine')">Instructions (for Chrome or Edge)</a></li>
+							<li>Now you can add UUC to your browser as a search engine so as to quickly access it! <a class="fakeLink" ng-click="changeTab('searchEngine')">Instructions</a></li>
 							<li>If you are missing your favorite unit or constant and would like to see it here, you can <a href="mailto:zbytek@gmail.com">contact me</a></li>
 							<li>If you have an idea how to enhance the application, you can <a href="mailto:zbytek@gmail.com">contact me</a></li>
 							<li>If you are a programmer interested in the source code, see the <a href="https://github.com/Lemonexe/UUC" target="_blank">Github repository</a></li>
@@ -190,8 +190,12 @@
 						<span class="code">chrome://settings/searchEngines</span><br>
 						<span class="code">edge://settings/searchEngines</span></li>
 					<li><cz>Klepněte na tlačítko Přidat</cz><en>Click the Add button</en></li>
-					<li><cz>Do prvních dvou polí vyplňte</cz><en>Insert</en> <span class="code">uuc</span><cz>, do třetího vyplňte</cz><en> into the first two fields, into the third insert</en>
-						<span class="code">{{currentWebAddress + '/#%s'}}</span></li>
+					<li>
+						<cz>Do pole URL vložte</cz><en>Insert</en>
+						<span class="code">{{currentWebAddress + '/#%s'}}</span>
+						<cz>, do zbývajících vložte</cz><en> into the URL field, into the other fields insert</en>
+						<span class="code">uuc</span>
+					</li>
 					<li><cz>Dialog potvrďte tlačítkem Přidat</cz><en>Click the Add button to confirm the dialog</en></li>
 				</ol>
 
@@ -210,6 +214,29 @@
 						e.g. 3.7 kPa &nbsp;&gt;&nbsp; Torr
 					</p>
 				</en>
+
+				<p><b>Firefox</p></b>
+				<p>
+					<cz>Přidání vlastního vyhledávače je analogické ke Chrome, avšak nejprve je musíte povolit:</cz>
+					<en>Adding a custom search is analogical to Chrome, but you have to enable it first:</en>
+					<br>
+					<cz>Otevřete</cz><en>Open</en>
+					<span class="code">about:config</span>,
+					<cz>vyhledejte</cz><en>search for</en>
+					<span class="code">browser.urlbar.update2.engineAliasRefresh</span>
+					<cz>a přepněte jej na</cz><en>and toggle it to</en>
+					<span class="code">true</span>.
+				</p>
+				<p>
+					<cz>Nyní přejděte na</cz><en>Now navigate to</en>
+					<span class="code">about:preferences#search</span>
+					<cz>a viz kroky 2–4 pro Chrome</cz><en>and see steps 2–4 for Chrome</en>.
+				</p>
+				<p>
+					⚠
+					<cz>ve Firefoxu musíte psát vyhledávací výraz <u>bez mezer!</u></cz>
+					<en>in Firefox, the search input must be written <u>without spaces!</u></en>
+				</p>
 
 				<cz>
 					<p><b>Ostatní prohlížeče</p></b>
