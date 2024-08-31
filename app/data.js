@@ -15,6 +15,7 @@ const csts  = {
 	BTU: 1055.05585, //[J]
 	APIk: 141.5e3, //[1]
 	APIq: -131.5, //[m3/kg]
+	sat2btc: 1e-8,
 	dTnote: {cz: 'Viz °C pro důležitou poznámku.', en: 'See °C for an important note.'},
 	Hgnote: {cz: 'Mezi mmHg a Torr je nepatrný rozdíl.', en: 'There is a negligible difference between mmHg and Torr.'}
 };
@@ -257,7 +258,8 @@ const Currencies = [
 	{id: 'TRY', name: {cz: 'turecká lira', en: 'Turkish Lira'}},
 	{id: 'VND', name: {cz: 'vietnamský dong', en: 'Vietnamese Dong'}},
 	{id: 'ZAR', name: {cz: 'jihoafrický rand', en: 'South African Rand'}},
-	{id: 'BTC', name: {cz: 'bitcoin', en: 'Bitcoin'}}
+	{id: 'BTC', alias:['₿', 'bitcoin'], name: {cz: 'bitcoin', en: 'bitcoin'}, prefix: 'all'},
+	{id: 'SAT', alias:['satoshi'], name: {cz: 'satoshi', en: 'satoshi'}, prefix: '+'}
 ];
 
 //standard SI prefixes

@@ -226,13 +226,16 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 			//fill values for all currencies
 			for(let c of Currencies) {
 				if(!res.data.rates.hasOwnProperty(c.id)) {continue;}
-				c.k = USDk / res.data.rates[c.id];
-				c.v = [0,0,0,0,0,0,0,1];
-				c.prefix = '+';
-				if(!c.alias) {c.alias = [];}
-				c.alias.push(c.id.toLowerCase()); //for all currencies enable lowercase id, because there's not really a convention
-				Units.push(c);
+				const k = USDk / res.data.rates[c.id];
+				const v = [0,0,0,0,0,0,0,1];
+				const newCurrUnit = {prefix: '+', ...c, k, v}
+				Units.push(newCurrUnit);
 			}
+
+			// special value for sat
+			const bitcoinUnit = Units.find(item => item.id === 'BTC');
+			const satoshiUnit = Currencies.find(item => item.id === 'SAT');
+			bitcoinUnit && Units.push({...bitcoinUnit, ...satoshiUnit, k: bitcoinUnit.k*csts.sat2btc});
 
 			//update help
 			$scope.databaseCount = Units.length;

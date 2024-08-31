@@ -1,1 +1,10 @@
-Remake macro as pure JS?
+Total arch rewrite
+	use npm
+		eslint, prettier, vitest
+	lerna to split core & app?
+		publish
+
+Rewrite from Angular to React TS (core shall stay JS)
+	build script to bundle
+
+Remake macro as pure JS runtime, no attempt to create my own language at all.
