@@ -217,37 +217,29 @@
 
 				<p><b>Firefox</p></b>
 				<p>
-					<cz>Přidání vlastního vyhledávače je analogické ke Chrome, avšak nejprve je musíte povolit:</cz>
-					<en>Adding a custom search is analogical to Chrome, but you have to enable it first:</en>
-					<br>
-					<cz>Otevřete</cz><en>Open</en>
-					<span class="code">about:config</span>,
-					<cz>vyhledejte</cz><en>search for</en>
-					<span class="code">browser.urlbar.update2.engineAliasRefresh</span>
-					<cz>a přepněte jej na</cz><en>and toggle it to</en>
-					<span class="code">true</span>.
+					<cz>Zde je to ještě jednodušší, není ani třeba navštívit nastavení.</cz>
+					<en>It's even easier here, no need to even visit settings.</en>
 				</p>
+				<ol>
+					<li>
+						<cz>Uložte tuto stránku jako novou záložku.</cz>
+						<en>Save this page as a bookmark.</en>
+					</li>
+					<li>
+						<cz>Pak ji editujte a do pole URL vložte</cz>
+						<en>Then edit it and fill in</en>
+						<span class="code">{{currentWebAddress + '/#%s'}}</span>
+						<en>to the URL field</en>.
+					</li>
+					<li>
+						<cz>Do pole Klíčové slovo vložte</cz><en>Fill in</en>
+						<span class="code">uuc</span>
+						<en>to the UUC field</en>.
+					</li>
+				</ol>
 				<p>
-					<cz>Nyní přejděte na</cz><en>Now navigate to</en>
-					<span class="code">about:preferences#search</span>
-					<cz>a viz kroky 2–4 pro Chrome</cz><en>and see steps 2–4 for Chrome</en>.
+					<cz>A funguje to stejně jako ve Chrome</cz><en>And it works just like in Chrome</en> 🙂
 				</p>
-				<p>
-					⚠
-					<cz>ve Firefoxu musíte psát vyhledávací výraz <u>bez mezer!</u></cz>
-					<en>in Firefox, the search input must be written <u>without spaces!</u></en>
-				</p>
-
-				<cz>
-					<p><b>Ostatní prohlížeče</p></b>
-					<p>Bohužel, tyto prohlížeče neumožňují uživatelům definovat vlastní vyhledávač, avšak možná toho lze dosáhnout pomocí určitých doplňků.</p>
-					<p>Pokud takové doplňky využíváte, budete muset sami zjistit, jak definovat klíčové slovo uuc. Promiňte!</p>
-				</cz><en>
-					<p><b>Other browsers</p></b>
-					<p>Unfortunately, these browsers don't allow users to define a custom search engine, although you can probably achieve it using certain addons.</p>
-					<p>If you do use such an addon, you will have to figure out by yourself how to define the uuc keyword. Sorry about that!</p>
-				</en>
-
 			</div>
 		</div>
 
@@ -257,8 +249,8 @@
 </div>
 
 <div id="footer">
-	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2023 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a></cz>
-	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2023 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a></en>
+	<cz>Vytvořil <a href="http://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2025 pod <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a></cz>
+	<en>Made by <a href="http://jira.zby.cz/">Jiří Zbytovský</a> in years 2017-2025 under <a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">MIT License</a></en>
 </div>
 
 <a id="githubLogo" href="https://github.com/Lemonexe/UUC" target="_blank" title="github"><img src="res/GitHub-Mark-32px.png"></a>
