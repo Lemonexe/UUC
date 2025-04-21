@@ -132,7 +132,7 @@ const Units = [
 	{v: [3,0,0,0,0,0,0,0], id: 'pt', name: {cz: 'pinta', en: 'pint'}, k:568.261e-6},
 	{v: [3,0,0,0,0,0,0,0], id: 'gal', name: {cz: 'americký galon', en: 'US gallon'}, k:3.785412e-3},
 	{v: [3,0,0,0,0,0,0,0], id: 'bsh', name: {cz: 'americký bušl', en: 'US bushel'}, k:35.2391e-3},
-	{v: [3,0,0,0,0,0,0,0], id: 'ccm', name: {cz: 'kubický centimetr', en: 'cubic centimetr'}, k:1e-6},
+	{v: [3,0,0,0,0,0,0,0], id: 'ccm', name: {cz: 'kubický centimetr', en: 'cubic centimetre'}, k:1e-6},
 	{v: [3,0,0,0,0,0,0,0], id: 'bbl', name: {cz: 'barel ropy', en: 'oil barrel'}, k:csts.bbl, prefix: '+'},
 
 	{v: [3,0,-1,0,0,0,0,0], id: 'BPD', name: {cz: 'barel ropy za den', en: 'oil barrel per day'}, k:csts.bbl/3600/24, prefix: '+'},
@@ -178,7 +178,7 @@ const Units = [
 	{v: [-1,1,-2,0,0,0,0,0], id: 'atm', name: {cz: 'atmosféra', en: 'atmosphere'}, k:csts.atm, note: {
 		cz: 'Také slouží jako standardní tlak.',
 		en: 'Also serves as standard pressure.'}},
-	{v: [-1,1,-2,0,0,0,0,0], id: 'mmHg', name: {cz: 'milimetr rtuťového sloupce', en: 'milimetre of mercury'}, k:133.322387415, note: csts.Hgnote},
+	{v: [-1,1,-2,0,0,0,0,0], id: 'mmHg', name: {cz: 'milimetr rtuťového sloupce', en: 'millimetre of mercury'}, k:133.322387415, note: csts.Hgnote},
 	{v: [-1,1,-2,0,0,0,0,0], id: 'Torr', alias:['torr'], name: {cz: 'torr', en: 'torr'}, k:csts.atm/760, prefix: 'all', note: csts.Hgnote},
 	{v: [-1,1,-2,0,0,0,0,0], id: 'psi', name: {cz: 'libra na čtvereční palec', en: 'pound per square inch'}, k:6894.757293168362, prefix: 'all'},
 	{v: [-1,1,-2,0,0,0,0,0], id: 'inHg', name: {cz: 'palec rtuťového sloupce', en: 'inch of mercury'}, k:3386.388640341},
