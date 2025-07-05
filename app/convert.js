@@ -153,10 +153,10 @@ function Convert() {
 		function crawl(arr) {
 			//first element of section has to be either Q, or bracket expression array
 			if(!(arr[0] instanceof Q) && !Array.isArray(arr[0])) {throw that.msgDB['ERR_operator_misplaced'](arr[0]);}
-			let i, res;
+			let res;
 
 			//first enter all bracket expression arrays and get result (recursion) before continuing
-			for(i = 0; i < arr.length; i++) {
+			for(let i = 0; i < arr.length; i++) {
 				if(Array.isArray(arr[i])) {arr[i] = crawl(arr[i]);}
 			}
 
@@ -169,7 +169,7 @@ function Convert() {
 			//unlike subcrawl, there is no need for auxiliary array, this for creates the single Q object right away
 			if(!(arr[0] instanceof Q)) {throw that.msgDB['ERR_operator_misplaced'](arr[0]);}
 			res = arr[0];
-			for(i = 0; i < arr.length; i += 2) {
+			for(let i = 0; i < arr.length; i += 2) {
 				if(arr.hasOwnProperty(i+1)) {
 					if     (arr[i+1] === '+' && arr[i+2] instanceof Q) {res = that.add     (res, arr[i+2]);}
 					else if(arr[i+1] === '-' && arr[i+2] instanceof Q) {res = that.subtract(res, arr[i+2]);}
@@ -182,7 +182,7 @@ function Convert() {
 		//subcrawling ^ has similar code as * /, so this "subcrawl" function can do them all with callback
 		function subcrawl(arr, signs, callback) {
 			let res = null; let arr2 = []; //current result, new reduced array of Q
-			for(i = 0; i < arr.length; i += 2) {
+			for(let i = 0; i < arr.length; i += 2) {
 				if(!arr.hasOwnProperty(i+1)) {break;}
 				//is it the sign that we'd like to process right now?
 				if(signs.indexOf(arr[i+1]) > -1) {
