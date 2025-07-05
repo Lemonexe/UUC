@@ -180,7 +180,7 @@ function Convert() {
 
 		//subcrawling ^ has similar code as * /, so this "subcrawl" function can do them all with callback
 		function subcrawl(arr, signs, callback) {
-			let res = null; let arr2 = []; //current result, new reduced array of Q
+			let i; let res = null; let arr2 = []; //current result, new reduced array of Q
 			for(i = 0; i < arr.length; i += 2) {
 				if(!arr.hasOwnProperty(i+1)) {break;}
 				//is it the sign that we'd like to process right now?
