@@ -38,8 +38,8 @@ const Units = [
 	//EIGHT BASIC UNITS
 	{v: [1,0,0,0,0,0,0,0], id: 'm', name: {cz: 'metr', en: 'metre'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,1,0,0,0,0,0,0], id: 'kg', name: {cz: 'kilogram', en: 'kilogram'}, k:1, SI: true, basic: true, note: {
-		cz: 'To protože kilogram se obtížně programuje, neboť samo "kilo" je předpona. Proto jsem definoval také gram jako odvozenou jednotku SI, která může mít jakékoliv předpony.',
-		en: 'That\'s because kilogram is problematic to code, since the "kilo" itself is a prefix. Therefore I have also defined gram as a derived SI unit, which can have all prefixes.'}},
+		cz: 'To protože kilogram je výjimka; je základní jednotkou, ale s předponou "kilo". Proto je definován také gram jako odvozená jednotka SI (může mít jakékoliv předpony).',
+		en: 'That\'s because kilogram is an exception; it\'s a basic unit, but with prefix "kilo". Therefore, gram is also defined as a derived SI unit (can have all prefixes).'}},
 	{v: [0,0,1,0,0,0,0,0], id: 's', name: {cz: 'sekunda', en: 'second'}, k:1, SI: true, basic: true, prefix: '-'},
 	{v: [0,0,0,1,0,0,0,0], id: 'A', name: {cz: 'ampér', en: 'ampere'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,0,0,0,1,0,0,0], id: 'K', name: {cz: 'kelvin', en: 'kelvin'}, k:1, SI: true, basic: true, prefix: 'all'},
@@ -56,8 +56,8 @@ const Units = [
 	{v: [0,0,0,0,0,0,0,0], id: 'ppm', name: {cz: 'dílů na jeden milion', en: 'parts per million'}, k:1e-6},
 	{v: [0,0,0,0,0,0,0,0], id: 'ppb', name: {cz: 'dílů na jednu miliardu', en: 'parts per billion'}, k:1e-9},
 	{v: [0,0,0,0,0,0,0,0], id: 'rad', name: {cz: 'radián', en: 'radian'}, k:1, SI: true, prefix: '-', note: {
-		cz: 'Úhel považuji za bezrozměrné číslo, čili radián je identický s číslem 1.',
-		en: 'I consider angle units to be dimensionless, with radian being identical to number 1.'}},
+		cz: 'Úhel je považován za bezrozměrné číslo, čili radián je identický s číslem 1.',
+		en: 'Angle units are considered dimensionless, with radian being identical to number 1.'}},
 	{v: [0,0,0,0,0,0,0,0], id: '°', alias:['deg'], name: {cz: 'stupeň', en: 'degree'}, k:Math.PI/180},
 	{v: [0,0,0,0,0,0,0,0], id: 'gon', name: {cz: 'gradián', en: 'gradian'}, k:Math.PI/200},
 	{v: [0,0,-1,0,0,0,0,0], id: 'Hz', name: {cz: 'hertz', en: 'hertz'}, k:1, SI: true, prefix: 'all'},

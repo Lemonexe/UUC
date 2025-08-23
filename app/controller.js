@@ -25,6 +25,7 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	//switch language, switch tab
 	$scope.changeLang = function(lang) {
 		CS.lang = lang;
+        convert.lang = lang;
 		$scope.populateConvertMessages();
 	};
 	$scope.changeTab = function(tab) {

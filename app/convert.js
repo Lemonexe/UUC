@@ -11,6 +11,8 @@
 */
 
 function Convert() {
+    this.lang = 'en'; //default language for messages
+
 	//database of messages (strings or functions)
 	const msgDB = {};
 	//these messages must be supplied before using convert. Some of these are just strings, some are functions with specific arguments. See lang.js
@@ -63,8 +65,8 @@ function Convert() {
 		let iObj, tObj; //input & target object
 
 		//parse input & target strings into detailed nested objects, see convert_parse.js
-		iObj = Convert_parse(this, input);
-		tObj = Convert_parse(this, target);
+		iObj = Convert_parse(this, input, this.lang);
+		tObj = Convert_parse(this, target, this.lang);
 
 		const isTargetCurly = isTarget && Array.isArray(tObj[0]) && tObj[0][0] === '{}'; //whether curly is used in target (appropriately!)
 
@@ -389,7 +391,7 @@ function Convert() {
 	this.parseQ = function(text) {
 		try {
 			let id;
-			let obj = Convert_parse(this, text);
+			let obj = Convert_parse(this, text, this.lang);
 			(obj.length === 1 && obj[0] instanceof this.Unit) && (id = obj[0].unit.id); //expression consists of single unit - save the id!
 			obj = this.rationalizeField(obj, true);
 			obj = this.reduceField(obj);

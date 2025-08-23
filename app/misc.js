@@ -102,10 +102,12 @@ function ECMA6test() {
 }
 
 //Maintenance function that cannot be accessed by GUI. Quadratic time complexity (in relation to Units)
+//The only known and accepted hard conflicts are: k gram = kilogram (by design), P ar = pascal (unfortunately).
 function unitConflicts() {
 	//create another database that maps each id and alias to the original unit object (just like in convert_parse.js)
 	const UnitIdMap = Units.map(item => ({id: item.id, ref: item}));
-	Units.forEach(o => o.alias && o.alias.forEach(a => UnitIdMap.push({id: a, ref: o})));
+	Units.forEach(o => o.alias && o.alias.forEach(a => UnitIdMap.push({id: a, ref: o}))); //push aliases
+    Units.forEach(o => UnitIdMap.push({id: o.name[CS.lang], ref: o})); //and push all names in given language
 
 	//determine whether there is conflict between two given unit objects
 	const determineConflict = function(u, i) {
@@ -141,7 +143,7 @@ function unitConflicts() {
 	let conflicts = [];
 	for(let u = 0; u < UnitIdMap.length; u++) {
 		for(let i = 0; i < UnitIdMap.length; i++) {
-			(i !== u) && determineConflict(UnitIdMap[u], UnitIdMap[i]);
+			(UnitIdMap[i].id !== UnitIdMap[u].id) && determineConflict(UnitIdMap[u], UnitIdMap[i]);
 		}
 	}
 	console.log('%cCONFLICTS:', 'font-size: 16px; font-weight: bold');

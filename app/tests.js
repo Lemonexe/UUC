@@ -121,6 +121,8 @@ function tests(silent) {//optional argument to silence tests that have successfu
 	fullTest('_e^(30 kJ/mol / (_R * 298 K))', '', 181309.23, 0.1);
 	fullTest('8 Mt/yr / (900 kg/m3)', 'kbbl/d', 153.07481, 1e-3);
 	fullTest('Da', 'u', 1, 1e-6); //aliases
+	fullTest('watt', 'kg*m2/s3', 1, 1e-6); //display names
+	fullTest('bitcoin', 'sat', 1e8, 1e-6); //display names
 	fullTest('Nm3', 'Ncm', 1, 1e-6);
 	fullTest('Mpa*PPM', '', 1, 1e-3); //case-sensitive leniency
 	fullTest('{5°C}', 'K', csts.TC0+5, 1e-6);
