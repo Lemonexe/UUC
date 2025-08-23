@@ -54,7 +54,7 @@ function Convert() {
 		MAIN CONVERSION FUNCTIONS
 	*/
 	//the most important function - do a full conversion between input string and target string, and return an output object
-		//called from: fullConversion, Convert_macro
+		//called from fullConversion
 	this.convert = function(input, target) {
 		if(typeof target !== 'string') {target = '';}
 		input = this.beautify(input); target = this.beautify(target);
@@ -104,11 +104,8 @@ function Convert() {
 		return res;
 	};
 
-	//execute code input, the so called macro, see convert_macro.js
-	this.runCode = Convert_macro;
-
 	//recursively crawl through detailed nested object: transform units and numbers into Q instances (physical quantity)
-		//called from: parseQ, convert, convert_macro
+		//called from: parseQ, convert
 	this.rationalizeField = function(obj, curly) { //optional curly = if curly brackets are legal in their normal sense
 		const that = this;
 		return crawl(obj);

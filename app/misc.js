@@ -16,10 +16,6 @@ const CSdefault = {
 	history: [], //history of last 10 commands as {input: '', target: '', params:{}}
 	//specification of format type ('auto' || 'fixed' || 'digits'), number of sig digits, number of decimals, whether always exponential
 	params: {spec: 'auto', digits: 3, fixed: 2, exp: false},
-	//macro code text and size of textarea
-	inputCode: '',
-	inputCodeWidth: '350px',
-	inputCodeHeight: '150px'
 };
 
 const saveService = {

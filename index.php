@@ -1,5 +1,5 @@
 <?php //version of resources, to prevent caching of old .js and .html files when a new version is built
-	$v = 11;
+	$v = 12;
 ?>
 <!DOCTYPE html>
 <html ng-app="UUC" ng-controller="ctrl">
@@ -12,7 +12,6 @@
 		<!--these scripts just declare-->
 		<script src="app/convert.js?v=<?php echo $v;?>" type="text/javascript"></script>
 		<script src="app/convert_parse.js?v=<?php echo $v;?>" type="text/javascript"></script>
-		<script src="app/convert_macro.js?v=<?php echo $v;?>" type="text/javascript"></script>
 		<script src="app/lang.js?v=<?php echo $v;?>" type="text/javascript"></script>
 		<script src="app/data.js?v=<?php echo $v;?>" type="text/javascript"></script>
 		<!--these script start doing something-->
@@ -35,7 +34,6 @@
 			<span ng-click="changeTab('converter')" ng-style="tabButtonStyle('converter')" class="tabButton"><cz>Převodník</cz><en>Converter</en></span>
 			<span ng-click="changeTab('help')" ng-style="tabButtonStyle('help')" class="tabButton"><cz>Reference</cz><en>Reference</en></span>
 			<span ng-click="changeTab('intro')" ng-style="tabButtonStyle('intro')" class="tabButton"><cz>Úvod</cz><en>Intro</en></span>
-			<span ng-click="changeTab('macro')" ng-style="tabButtonStyle('macro')" class="tabButton" ng-show="CS.showMacroTab"><cz>Makro</cz><en>Macro</en></span>
 		</div>
 
 		<div ng-switch="CS.tab">
@@ -46,8 +44,6 @@
 					<p><b>Co je na UUC tak zvláštního?</b></p>
 					<p>Na internetu lze najít mnoho převodníků různých jednotek, avšak žádný, který by byl schopen převádět jednotky ve <i>zcela libovolných</i> rozměrech – tedy jako součin a podíl jednotek v různých mocninách.
 					S UUC už nebudete muset řešit, kterým číslem násobit či dělit, neboť program pochopí jakýkoliv fyzikální výraz a převede jej na libovolnou jednotku s odpovídajícím rozměrem.</p>
-					<p>Kromě prostého převodu jednotek nabízí UUC nové též makra, kde je možné provádět i jednoduché výpočty. To má tu výhodu oproti jiným nástrojům, že nezadáváte pouhá čísla, ale přímo fyzikální veličiny, které UUC správně zpracuje, sám převede jednotky a zkontroluje smysluplnost.<br>
-					Tato funkce zůstává skryta, zde ji můžete povolit: <input type="checkbox" ng-model="CS.showMacroTab"></p>
 					<p>
 						<b>Poznámky:</b>
 						<ol>
@@ -63,8 +59,6 @@
 					<p><b>What is so special about UUC?</b></p>
 					<p> While you can find lots of different converters for various units, there isn't one that could convert units <i>in any</i> dimension <i>whatsoever</i> – meaning a product of several units in various powers.
 					With UUC you'll never again have to ponder, which number you're supposed to mulitply or divide with, because this program will understand any physical quantity expression and convert it to a unit of choice with corresponding dimension.</p>
-					<p>In addition to simple conversion, UUC now also offers macros, where you can code simple calculations. The advantage over other programs is the possibility to actually enter physical quantities instead of just plain numbers, so UUC can automatically process them, convert units and check for consistency.<br>
-					This feature is initially hidden, here you can enable it: <input type="checkbox" ng-model="CS.showMacroTab"></p>
 					<p>
 						<b>Notes:</b>
 						<ol>
@@ -164,20 +158,6 @@
 					<br><b><cz>Stav:</cz><en>Status:</en></b><br>
 					<span ng-repeat="m in result.messages track by $index" ng-class="statusClass">{{m}}<br></span>
 				</div>
-			</div>
-
-		<!-- MACRO TAB (hidden from top menu until activated) -->
-			<div ng-switch-when="macro">
-				<p>
-					<cz>Zde můžete sestavit vlastní UUC "skript". Je to experimentální funkce, která je vlastně asi docela k ničemu.<br>Tlačítko Dokumentace vám vysvětlí podrobnosti.</cz>
-					<en>Here you can assemble your own UUC "script". It's an experimental feature, that imho proved to be quite useless.<br>The Documentation button will tell you more.</en>
-				</p>
-				<b><cz>Kód:</cz><en>Code:</en></b><br>
-				<textarea ng-model="CS.inputCode" ng-keyup="listenForRun($event)" ng-style="textareaStyle()" resize-observer autofocus spellcheck="false"></textarea><br>
-				<input type="button" ng-value="'Spustit (F2)'.trans()" ng-click="runCode()" class="bigButton">
-				<a target="_blank" ng-href="{{documentation}}"><input type="button" ng-value="'Dokumentace'.trans()" class="bigButton"></a><br><br>
-				<b><cz>Výstup:</cz><en>Output:</en></b><br>
-				<div ng-if="resultCode"><span ng-repeat="m in resultCode track by $index">{{m}}<br></span></div>
 			</div>
 
 		<!-- SEARCHENGINE TAB (hidden from topmenu) -->

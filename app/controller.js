@@ -11,8 +11,6 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	$scope.ctrl = {autocomplete: -1}; //temporary controller state
 	loadCurrencies(execHash);
 
-	//generate ng-style for inputCode textarea
-	$scope.textareaStyle = () => ({width: CS.inputCodeWidth || '350px', height: CS.inputCodeHeight || '150px'});
 	//generate ng-style for currently active tab button
 	$scope.tabButtonStyle = tab => CS.tab === tab ? ({'border-bottom': '3px solid var(--border)'}) : ({});
 	//generate ng-style for tutorial window
@@ -39,8 +37,6 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	$scope.currentWebAddress = window.location.origin.replace(/\/$/, '') + window.location.pathname.replace(/\/$/, '');
 	//list of available prefixes
 	$scope.prefixText = Prefixes.map(o => `${o.id} (${o.v})`).join(', ');
-	//link for github documentation on macros
-	$scope.documentation = 'https://github.com/Lemonexe/UUC/blob/master/_dev/macro.md';
 
 	//initialize conversion
 	$scope.fullConversion = function() {
@@ -100,9 +96,6 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 	//reset the currently selected history entry
 	$scope.autoforget = () => ($scope.ctrl.autocomplete = -1);
 
-	//this function, well, it runs a code
-	$scope.runCode = () => ($scope.resultCode = convert.runCode(CS.inputCode));
-
 	//populate database of messages with strings or functions in current language
 	$scope.populateConvertMessages = function() {Object.keys(convert.msgDB).forEach(key => (convert.msgDB[key] = langService.trans(key)));}
 	$scope.populateConvertMessages();
@@ -115,9 +108,6 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		else if(event.keyCode === 40 || event.key === 'ArrowDown') {$scope.autocomplete(1);}
 		else if(event.keyCode === 38 || event.key === 'ArrowUp') {$scope.autocomplete(2);}
 	};
-	//macro code field: run code on F2
-	$scope.listenForRun = event => (event.keyCode === 113 || event.key === 'F2') && $scope.runCode();
-
 
 	/*
 		HELP, this section of code is dedicated to Reference!
@@ -387,15 +377,3 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		}
 	};
 });
-
-//directive to give textarea an observer for resize
-app.directive('resizeObserver', () => ({restrict: 'A', link: function(scope, elem) {
-	elem = elem[0];
-	function callback() {
-		CS.inputCodeWidth = elem.style.width;
-		CS.inputCodeHeight = elem.style.height;
-	}
-	new MutationObserver(callback).observe(elem, {
-		attributes: true, attributeFilter: [ "style" ]
-	});
-}}));

@@ -48,7 +48,6 @@ langService.table = {
 	'Spustit (F2)': {en: 'Run (F2)'},
 	'Dále': {en: 'Next'},
 	'Zavřít': {en: 'Close'},
-	'Dokumentace': {en: 'Documentation'},
 
 	'Konstanta.': {en: 'Constant.'},
 	'Základní, ': {en: 'Basic, '},
@@ -151,29 +150,9 @@ langService.table = {
 		en: 'WARNING 205: Prefix ignored in curly braces {}'
 	},
 	'WARN_format_params': {
-		cz: 'VAROVÁNÍ 206: Formátovací parametry z adresy nebylo možné přečíst',
-		en: 'WARNING 206: Format params from address could not be parsed'
-	},
-
-
-	//MACRO CODE ERRORS 300
-	'ERRC_equalSigns': {
-		cz: line => 'CHYBA KÓDU 301: Více rovnítek na jednom řádku: ' + line,
-		en: line => 'CODE ERROR 301: Several equal signs on one line: ' + line
-	},
-	'ERRC_varName': {
-		cz: (line, varName) => `CHYBA KÓDU 302: Neplatný název proměnné "${varName}": ` + line,
-		en: (line, varName) => `CODE ERROR 302: Invalid variable name "${varName}": ` + line
-	},
-	'ERRC_argCount': {
-		cz: (line, fName, argsMin, argsMax, args) => `CHYBA KÓDU 303: Funkce "${fName}" požaduje ${argsMin}–${argsMax} argumentů, avšak nalezeno ${args}: ` + line,
-		en: (line, fName, argsMin, argsMax, args) => `CODE ERROR 303: Function "${fName}" requires ${argsMin}–${argsMax} arguments, but ${args} found: ` + line
-	},
-	'ERRC_unreadableLine': {
-		cz: line => 'CHYBA KÓDU 304: Řádek nečitelný: ' + line,
-		en: line => 'CODE ERROR 304: Line unreadable: ' + line
-	},
-
+        cz: 'VAROVÁNÍ 206: Formátovací parametry z adresy nebylo možné přečíst',
+        en: 'WARNING 206: Format params from address could not be parsed'
+    },
 
 	//what kind of project would it be without an easter egg?
 	'ERR_Secret': {
