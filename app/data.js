@@ -36,7 +36,7 @@ Units object is the database of all known units.
 
 const Units = [
 	//EIGHT BASIC UNITS
-	{v: [1,0,0,0,0,0,0,0], id: 'm', name: {cz: 'metr', en: 'metre'}, k:1, SI: true, basic: true, prefix: 'all'},
+	{v: [1,0,0,0,0,0,0,0], id: 'm', alias: ['metre'], name: {cz: 'metr', en: 'meter'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,1,0,0,0,0,0,0], id: 'kg', name: {cz: 'kilogram', en: 'kilogram'}, k:1, SI: true, basic: true, note: {
 		cz: 'To protože kilogram je výjimka; je základní jednotkou, ale s předponou "kilo". Proto je definován také gram jako odvozená jednotka SI (může mít jakékoliv předpony).',
 		en: 'That\'s because kilogram is an exception; it\'s a basic unit, but with prefix "kilo". Therefore, gram is also defined as a derived SI unit (can have all prefixes).'}},
@@ -128,7 +128,7 @@ const Units = [
 	{v: [2,0,0,0,0,0,0,0], id: 'ac', name: {cz: 'akr', en: 'acre'}, k:4046.872},
 	{v: [2,0,0,0,0,0,0,0], id: 'darcy', name: {cz: 'darcy', en: 'darcy'}, k: 9.869233e-13},
 
-	{v: [3,0,0,0,0,0,0,0], id: 'l', name: {cz: 'litr', en: 'litre'}, k:1e-3, SI: true, prefix: 'all'},
+	{v: [3,0,0,0,0,0,0,0], id: 'l', alias:['litre'], name: {cz: 'litr', en: 'liter'}, k:1e-3, SI: true, prefix: 'all'},
 	{v: [3,0,0,0,0,0,0,0], id: 'pt', name: {cz: 'pinta', en: 'pint'}, k:568.261e-6},
 	{v: [3,0,0,0,0,0,0,0], id: 'gal', name: {cz: 'americký galon', en: 'US gallon'}, k:3.785412e-3},
 	{v: [3,0,0,0,0,0,0,0], id: 'bsh', name: {cz: 'americký bušl', en: 'US bushel'}, k:35.2391e-3},
