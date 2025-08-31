@@ -1,0 +1,32 @@
+{
+  "name": "uuc-core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "test": "vitest",
+    "tsc": "tsc",
+    "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --fix --report-unused-disable-directives --max-warnings 0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "@rollup/plugin-typescript": "^12.1.4",
+    "eslint": "^9.34.0",
+    "prettier": "^3.6.2",
+    "rollup": "^4.50.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0",
+    "vitest": "^3.2.4"
+  }
+}
