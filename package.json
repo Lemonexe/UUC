@@ -1,6 +1,5 @@
 {
   "name": "uuc",
-  "version": "0.1.0",
   "description": "Ultimate Unit Converter, a useful tool for science and engineering",
   "homepage": "https://github.com/Lemonexe/UUC#readme",
   "author": "Jiri Zbytovsky",
@@ -17,7 +16,10 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "frontend": "npm -w=frontend run start",
+    "currencies": "cd packages/currencies && php -S localhost:3001",
+    "build": "npm -w=frontend run build",
+    "test": "npm -w=uuc-core run test"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
