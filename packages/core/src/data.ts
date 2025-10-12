@@ -3,21 +3,24 @@
 	contains all of the program constants, the unit database, and database of prefixes
 */
 
-//program constants
-const csts  = {
-	R: 8.3144598, //[J/K/mol]
-	TC0: 273.15, //[K]
-	TF0: 459.67*5/9, //[K]
-	atm: 101325, //[Pa]
-	mile: 1609.344, //[m]
-	bbl: 158.987294928e-3, //[m3]
-	q: 1.6021766208e-19, //[C]
-	BTU: 1055.05585, //[J]
-	APIk: 141.5e3, //[1]
-	APIq: -131.5, //[m3/kg]
+// program constants
+const csts = {
+	R: 8.3144598, // [J/K/mol]
+	TC0: 273.15, // [K]
+	TF0: (459.67 * 5) / 9, // [K]
+	atm: 101325, // [Pa]
+	mile: 1609.344, // [m]
+	bbl: 158.987294928e-3, // [m3]
+	q: 1.6021766208e-19, // [C]
+	BTU: 1055.05585, // [J]
+	APIk: 141.5e3, // [1]
+	APIq: -131.5, // [m3/kg]
 	sat2btc: 1e-8,
-	dTnote: {cz: 'Viz °C pro důležitou poznámku.', en: 'See °C for an important note.'},
-	Hgnote: {cz: 'Mezi mmHg a Torr je nepatrný rozdíl.', en: 'There is a negligible difference between mmHg and Torr.'}
+	dTnote: { cz: 'Viz °C pro důležitou poznámku.', en: 'See °C for an important note.' },
+	Hgnote: {
+		cz: 'Mezi mmHg a Torr je nepatrný rozdíl.',
+		en: 'There is a negligible difference between mmHg and Torr.',
+	},
 };
 
 /*
@@ -34,8 +37,9 @@ Units object is the database of all known units.
 	note: a note that conveys anything important beyond description - what is noteworthy or weird about this unit or its usage. Implemented as an object of strings for all language mutations.
 */
 
+// prettier-ignore
 const Units = [
-	//EIGHT BASIC UNITS
+	// EIGHT BASIC UNITS
 	{v: [1,0,0,0,0,0,0,0], id: 'm', alias: ['metre'], name: {cz: 'metr', en: 'meter'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,1,0,0,0,0,0,0], id: 'kg', name: {cz: 'kilogram', en: 'kilogram'}, k:1, SI: true, basic: true, note: {
 		cz: 'To protože kilogram je výjimka; je základní jednotkou, ale s předponou "kilo". Proto je definován také gram jako odvozená jednotka SI (může mít jakékoliv předpony).',
@@ -45,13 +49,13 @@ const Units = [
 	{v: [0,0,0,0,1,0,0,0], id: 'K', name: {cz: 'kelvin', en: 'kelvin'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,0,0,0,0,1,0,0], id: 'mol', name: {cz: 'mol', en: 'mole'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,0,0,0,0,0,1,0], id: 'cd', name: {cz: 'kandela', en: 'candela'}, k:1, SI: true, basic: true, prefix: 'all'},
-	//USD arbitrarily set as basic unit. Reference to this unit is harcoded in currency loading!
+	// USD arbitrarily set as basic unit. Reference to this unit is harcoded in currency loading!
 	{v: [0,0,0,0,0,0,0,1], id: 'USD', alias:['$', 'usd'], name: {cz: 'americký dolar', en: 'US dollar'}, k:1, basic: true, prefix: '+'},
 
 
 
-	//ALL OTHER UNITS as {id: 'identifier',v: [0,0,0,0,0,0,0], name: {cz: 'CZ', en: 'EN'}, k:1, SI: true, prefix: 'all'},
-	//SI derived
+	// ALL OTHER UNITS as {id: 'identifier',v: [0,0,0,0,0,0,0], name: {cz: 'CZ', en: 'EN'}, k:1, SI: true, prefix: 'all'},
+	// SI derived
 	{v: [0,0,0,0,0,0,0,0], id: '%', name: {cz: 'procento', en: 'percent'}, k:1e-2},
 	{v: [0,0,0,0,0,0,0,0], id: 'ppm', name: {cz: 'dílů na jeden milion', en: 'parts per million'}, k:1e-6},
 	{v: [0,0,0,0,0,0,0,0], id: 'ppb', name: {cz: 'dílů na jednu miliardu', en: 'parts per billion'}, k:1e-9},
@@ -86,7 +90,7 @@ const Units = [
 
 
 
-	//non-SI
+	// non-SI
 	{v: [0,0,0,0,0,1,0,0], id: 'Nm3', alias:['Ncm'], name: {cz: 'normální krychlový metr', en: 'normal cubic metre'}, k:csts.atm/csts.TC0/csts.R, note: {
 		cz: 'Definován při 0°C a 1 atm. Navzdory názvu je Nm3 jednotkou látkového množství, nikoliv objemu.',
 		en: 'Defined at 0°C and 1 atm. Despite the name, Nm3 is actually amount of substance, not volume.'}},
@@ -190,7 +194,7 @@ const Units = [
 
 
 
-	//constants
+	// constants
 	{v: [1,0,-2,0,0,0,0,0], id: '_g', name: {cz: 'normální tíhové zrychlení', en: 'standard gravity'}, k:9.80665, constant: true, note: {
 		cz: 'Nikoliv univerzální konstanta, nýbrž konvenční.',
 		en: 'Not a universal constant, but a conventional one.'}},
@@ -208,75 +212,102 @@ const Units = [
 
 
 
-	//special for Unitfuns, unusable without {}
-	{v: [3,-1,0,0,0,0,0,0], id: 'API', alias:['°API'], name: {cz: 'API hustota', en: 'API density'}, k:1/141.5e3, onlyUnitfuns: true}, //theoretically, without {} API = specific volume unit
+	// special for Unitfuns, unusable without {}
+	{v: [3,-1,0,0,0,0,0,0], id: 'API', alias:['°API'], name: {cz: 'API hustota', en: 'API density'}, k:1/141.5e3, onlyUnitfuns: true}, // theoretically, without {} API = specific volume unit
 	{v: [0,0,0,0,0,0,0,0], id: 'ln', alias:['log'], name: {cz: 'Přirozený logaritmus', en: 'Natural logarithm'}, k:NaN, onlyUnitfuns: true}
 ];
 
-//unitfuns - irregular units that have a conversion function instead of mere ratio
+// unitfuns - irregular units that have a conversion function instead of mere ratio
 //{id: link to regular unit, f: function UF => SI, fi: inverse function SI => UF, v: SI dimension (output when f, input when fi)}
 const Unitfuns = [
-	{id: '°C', f: UF => UF + csts.TC0, fi: SI => SI - csts.TC0, v: [0,0,0,0,1,0,0,0]},
-	{id: '°F', f: UF => 5/9*UF + csts.TF0, fi: SI => 9/5*(SI - csts.TF0), v: [0,0,0,0,1,0,0,0]},
-	{id: '°Re', f: UF => 1.25*UF + csts.TC0, fi: SI => 0.8*(SI - csts.TC0), v: [0,0,0,0,1,0,0,0]},
-	{id: 'API', f: UF => csts.APIk/(UF - csts.APIq), fi: SI => csts.APIk/SI + csts.APIq, v: [-3,1,0,0,0,0,0,0]},
-	{id: 'ln', f: UF => Math.log(UF), fi: SI => {throw '🏆 '+langService.trans('ERR_Secret');}, v: [0,0,0,0,0,0,0,0]}
+	{
+		id: '°C',
+		f: (UF) => UF + csts.TC0,
+		fi: (SI) => SI - csts.TC0,
+		v: [0, 0, 0, 0, 1, 0, 0, 0],
+	},
+	{
+		id: '°F',
+		f: (UF) => (5 / 9) * UF + csts.TF0,
+		fi: (SI) => (9 / 5) * (SI - csts.TF0),
+		v: [0, 0, 0, 0, 1, 0, 0, 0],
+	},
+	{
+		id: '°Re',
+		f: (UF) => 1.25 * UF + csts.TC0,
+		fi: (SI) => 0.8 * (SI - csts.TC0),
+		v: [0, 0, 0, 0, 1, 0, 0, 0],
+	},
+	{
+		id: 'API',
+		f: (UF) => csts.APIk / (UF - csts.APIq),
+		fi: (SI) => csts.APIk / SI + csts.APIq,
+		v: [-3, 1, 0, 0, 0, 0, 0, 0],
+	},
+	{
+		id: 'ln',
+		f: (UF) => Math.log(UF),
+		fi: (SI) => {
+			throw '🏆 ' + langService.trans('ERR_Secret');
+		},
+		v: [0, 0, 0, 0, 0, 0, 0, 0],
+	},
 ];
 
-//currencies - their conversion ratio to dollar is unknown and will be obtained by currencies.php
-//k and v will be filled later (v is always the same, k is obtained from API)
+// currencies - their conversion ratio to dollar is unknown and will be obtained by currencies.php
+// k and v will be filled later (v is always the same, k is obtained from API)
 const Currencies = [
-	{id: 'EUR', alias:['€'], name: {cz: 'euro', en: 'Euro'}},
-	{id: 'AED', name: {cz: 'dirham Spojených arabských emirátů', en: 'United Arab Emirates Dirham'}},
-	{id: 'ARS', name: {cz: 'argentinské peso', en: 'Argentine Peso'}},
-	{id: 'AUD', name: {cz: 'australský dolar', en: 'Australian Dollar'}},
-	{id: 'BGN', name: {cz: 'bulharský lev', en: 'Bulgarian Lev'}},
-	{id: 'BRL', name: {cz: 'braziliský real', en: 'Brazilian Real'}},
-	{id: 'CAD', name: {cz: 'kanadský dolar', en: 'Canadian Dollar'}},
-	{id: 'CHF', name: {cz: 'švýcarský frank', en: 'Swiss Franc'}},
-	{id: 'CNY', name: {cz: 'čínský juan', en: 'Chinese Yuan'}},
-	{id: 'CZK', alias:['Kč'], name: {cz: 'česká koruna', en: 'Czech Republic Koruna'}},
-	{id: 'DKK', name: {cz: 'dánská koruna', en: 'Danish Krone'}},
-	{id: 'GBP', alias:['£'], name: {cz: 'britská libra', en: 'British Pound Sterling'}},
-	{id: 'HKD', name: {cz: 'hongkongský dolar', en: 'Hong Kong Dollar'}},
-	{id: 'HRK', name: {cz: 'chorvatská kuna', en: 'Croatian Kuna'}},
-	{id: 'HUF', name: {cz: 'maďarský forint', en: 'Hungarian Forint'}},
-	{id: 'IDR', name: {cz: 'indonéská rupie', en: 'Indonesian Rupiah'}},
-	{id: 'ILS', name: {cz: 'nový izraelský šekel', en: 'Israeli New Sheqel'}},
-	{id: 'INR', name: {cz: 'indická rupie', en: 'Indian Rupee'}},
-	{id: 'JPY', alias: ['¥'], name: {cz: 'japonský jen', en: 'Japanese Yen'}},
-	{id: 'KRW', name: {cz: 'jihokorejský won', en: 'South Korean Won'}},
-	{id: 'MXN', name: {cz: 'mexické peso', en: 'Mexican Peso'}},
-	{id: 'NOK', name: {cz: 'norská koruna', en: 'Norwegian Krone'}},
-	{id: 'NZD', name: {cz: 'novozélandský dolar', en: 'New Zealand Dollar'}},
-	{id: 'PLN', name: {cz: 'polský zlotý', en: 'Polish Zloty'}},
-	{id: 'RON', name: {cz: 'rumunské leu', en: 'Romanian Leu'}},
-	{id: 'RUB', name: {cz: 'ruský rubl', en: 'Russian Ruble'}},
-	{id: 'SEK', name: {cz: 'švédská koruna', en: 'Swedish Krona'}},
-	{id: 'SGD', name: {cz: 'singapurský dolar', en: 'Singapore Dollar'}},
-	{id: 'THB', name: {cz: 'thajský baht', en: 'Thai Baht'}},
-	{id: 'TRY', name: {cz: 'turecká lira', en: 'Turkish Lira'}},
-	{id: 'VND', name: {cz: 'vietnamský dong', en: 'Vietnamese Dong'}},
-	{id: 'ZAR', name: {cz: 'jihoafrický rand', en: 'South African Rand'}},
-	{id: 'BTC', alias:['₿', 'bitcoin'], name: {cz: 'bitcoin', en: 'bitcoin'}, prefix: 'all'},
-	{id: 'SAT', alias:['satoshi'], name: {cz: 'satoshi', en: 'satoshi'}, prefix: '+'}
+	{ id: 'EUR', alias: ['€'], name: { cz: 'euro', en: 'Euro' } },
+	{ id: 'AED', name: { cz: 'dirham Spojených arabských emirátů', en: 'United Arab Emirates Dirham' } },
+	{ id: 'ARS', name: { cz: 'argentinské peso', en: 'Argentine Peso' } },
+	{ id: 'AUD', name: { cz: 'australský dolar', en: 'Australian Dollar' } },
+	{ id: 'BGN', name: { cz: 'bulharský lev', en: 'Bulgarian Lev' } },
+	{ id: 'BRL', name: { cz: 'braziliský real', en: 'Brazilian Real' } },
+	{ id: 'CAD', name: { cz: 'kanadský dolar', en: 'Canadian Dollar' } },
+	{ id: 'CHF', name: { cz: 'švýcarský frank', en: 'Swiss Franc' } },
+	{ id: 'CNY', name: { cz: 'čínský juan', en: 'Chinese Yuan' } },
+	{ id: 'CZK', alias: ['Kč'], name: { cz: 'česká koruna', en: 'Czech Republic Koruna' } },
+	{ id: 'DKK', name: { cz: 'dánská koruna', en: 'Danish Krone' } },
+	{ id: 'GBP', alias: ['£'], name: { cz: 'britská libra', en: 'British Pound Sterling' } },
+	{ id: 'HKD', name: { cz: 'hongkongský dolar', en: 'Hong Kong Dollar' } },
+	{ id: 'HRK', name: { cz: 'chorvatská kuna', en: 'Croatian Kuna' } },
+	{ id: 'HUF', name: { cz: 'maďarský forint', en: 'Hungarian Forint' } },
+	{ id: 'IDR', name: { cz: 'indonéská rupie', en: 'Indonesian Rupiah' } },
+	{ id: 'ILS', name: { cz: 'nový izraelský šekel', en: 'Israeli New Sheqel' } },
+	{ id: 'INR', name: { cz: 'indická rupie', en: 'Indian Rupee' } },
+	{ id: 'JPY', alias: ['¥'], name: { cz: 'japonský jen', en: 'Japanese Yen' } },
+	{ id: 'KRW', name: { cz: 'jihokorejský won', en: 'South Korean Won' } },
+	{ id: 'MXN', name: { cz: 'mexické peso', en: 'Mexican Peso' } },
+	{ id: 'NOK', name: { cz: 'norská koruna', en: 'Norwegian Krone' } },
+	{ id: 'NZD', name: { cz: 'novozélandský dolar', en: 'New Zealand Dollar' } },
+	{ id: 'PLN', name: { cz: 'polský zlotý', en: 'Polish Zloty' } },
+	{ id: 'RON', name: { cz: 'rumunské leu', en: 'Romanian Leu' } },
+	{ id: 'RUB', name: { cz: 'ruský rubl', en: 'Russian Ruble' } },
+	{ id: 'SEK', name: { cz: 'švédská koruna', en: 'Swedish Krona' } },
+	{ id: 'SGD', name: { cz: 'singapurský dolar', en: 'Singapore Dollar' } },
+	{ id: 'THB', name: { cz: 'thajský baht', en: 'Thai Baht' } },
+	{ id: 'TRY', name: { cz: 'turecká lira', en: 'Turkish Lira' } },
+	{ id: 'VND', name: { cz: 'vietnamský dong', en: 'Vietnamese Dong' } },
+	{ id: 'ZAR', name: { cz: 'jihoafrický rand', en: 'South African Rand' } },
+	{ id: 'BTC', alias: ['₿', 'bitcoin'], name: { cz: 'bitcoin', en: 'bitcoin' }, prefix: 'all' },
+	{ id: 'SAT', alias: ['satoshi'], name: { cz: 'satoshi', en: 'satoshi' }, prefix: '+' },
 ];
 
-//standard SI prefixes
+// standard SI prefixes
 const Prefixes = [
-	{id: 'a', v: -18},
-	{id: 'f', v: -15},
-	{id: 'p', v: -12},
-	{id: 'n', v: -9},
-	{id: 'u', v: -6},
-	{id: 'μ', v: -6},
-	{id: 'm', v: -3},
-	{id: 'c', v: -2},
-	{id: 'd', v: -1},
-	{id: 'h', v: 2},
-	{id: 'k', v: 3},
-	{id: 'M', v: 6},
-	{id: 'G', v: 9},
-	{id: 'T', v: 12},
-	{id: 'P', v: 15}
+	{ id: 'a', v: -18 },
+	{ id: 'f', v: -15 },
+	{ id: 'p', v: -12 },
+	{ id: 'n', v: -9 },
+	{ id: 'u', v: -6 },
+	{ id: 'μ', v: -6 },
+	{ id: 'm', v: -3 },
+	{ id: 'c', v: -2 },
+	{ id: 'd', v: -1 },
+	{ id: 'h', v: 2 },
+	{ id: 'k', v: 3 },
+	{ id: 'M', v: 6 },
+	{ id: 'G', v: 9 },
+	{ id: 'T', v: 12 },
+	{ id: 'P', v: 15 },
 ];
