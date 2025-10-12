@@ -1,10 +1,7 @@
-/*
-	data.js
-	contains all of the program constants, the unit database, and database of prefixes
-*/
+import type { CurrencyTemplate, Prefix, Unitfun } from './types.js';
+import { err } from './errors.js';
 
-// program constants
-const csts = {
+export const csts = {
 	R: 8.3144598, // [J/K/mol]
 	TC0: 273.15, // [K]
 	TF0: (459.67 * 5) / 9, // [K]
@@ -21,24 +18,12 @@ const csts = {
 		cz: 'Mezi mmHg a Torr je nepatrný rozdíl.',
 		en: 'There is a negligible difference between mmHg and Torr.',
 	},
-};
+} as const;
 
-/*
-Units object is the database of all known units.
-	v: [m,kg,s,A,K,mol,cd,$]      represents the vector of powers of basic units, for example N=kg*m/s^2, therefore v = [1,1,-2,0,0,0,0]
-	id: string                    something unique. You can use the UnitConflicts() global function to detect possible id conflicts
-	alias: array                  array of strings - other ids that reference the unit
-	name: object                  defines full name or even a short description for every language mutation
-	k: number                     this coeficient equates value of the unit in basic units. For example minute = 60 seconds, therefore min.k = 60
-	SI: true/false                self-explanatory. This attribute doesn't really do anything, it's merely informational. Perhaps it's redundant, since all SI derived units have k = 1
-	basic: true/false             whether it's basic SI unit or derived SI. Basic SI units are of utmost importance to the code, don't ever change them!
-	prefix: all/+/-/undefined     it means: all prefixes allowed / only bigger than one allowed / lesser than one / prefixes disallowed. It's not really a restriction, just a recommendation.
-	constant: true/undefined      whether it is a constant. If true, attributes SI, basic and prefix are ignored. Prefix is disallowed.
-	note: a note that conveys anything important beyond description - what is noteworthy or weird about this unit or its usage. Implemented as an object of strings for all language mutations.
-*/
-
+// Units object is the database of all known units.
+// Note that the basic: true units are absolutely essential, never change them!
 // prettier-ignore
-const Units = [
+export const units = [
 	// EIGHT BASIC UNITS
 	{v: [1,0,0,0,0,0,0,0], id: 'm', alias: ['metre'], name: {cz: 'metr', en: 'meter'}, k:1, SI: true, basic: true, prefix: 'all'},
 	{v: [0,1,0,0,0,0,0,0], id: 'kg', name: {cz: 'kilogram', en: 'kilogram'}, k:1, SI: true, basic: true, note: {
@@ -217,9 +202,8 @@ const Units = [
 	{v: [0,0,0,0,0,0,0,0], id: 'ln', alias:['log'], name: {cz: 'Přirozený logaritmus', en: 'Natural logarithm'}, k:NaN, onlyUnitfuns: true}
 ];
 
-// unitfuns - irregular units that have a conversion function instead of mere ratio
-//{id: link to regular unit, f: function UF => SI, fi: inverse function SI => UF, v: SI dimension (output when f, input when fi)}
-const Unitfuns = [
+// Irregular units that have a conversion function instead of mere ratio.
+export const unitfuns: Unitfun[] = [
 	{
 		id: '°C',
 		f: (UF) => UF + csts.TC0,
@@ -247,16 +231,15 @@ const Unitfuns = [
 	{
 		id: 'ln',
 		f: (UF) => Math.log(UF),
-		fi: (SI) => {
-			throw '🏆 ' + langService.trans('ERR_Secret');
+		fi: (_SI) => {
+			throw err('ERR_Secret');
 		},
 		v: [0, 0, 0, 0, 0, 0, 0, 0],
 	},
 ];
 
-// currencies - their conversion ratio to dollar is unknown and will be obtained by currencies.php
-// k and v will be filled later (v is always the same, k is obtained from API)
-const Currencies = [
+// Templates for currency units.
+export const currencies: CurrencyTemplate[] = [
 	{ id: 'EUR', alias: ['€'], name: { cz: 'euro', en: 'Euro' } },
 	{ id: 'AED', name: { cz: 'dirham Spojených arabských emirátů', en: 'United Arab Emirates Dirham' } },
 	{ id: 'ARS', name: { cz: 'argentinské peso', en: 'Argentine Peso' } },
@@ -293,21 +276,21 @@ const Currencies = [
 	{ id: 'SAT', alias: ['satoshi'], name: { cz: 'satoshi', en: 'satoshi' }, prefix: '+' },
 ];
 
-// standard SI prefixes
-const Prefixes = [
-	{ id: 'a', v: -18 },
-	{ id: 'f', v: -15 },
-	{ id: 'p', v: -12 },
-	{ id: 'n', v: -9 },
-	{ id: 'u', v: -6 },
-	{ id: 'μ', v: -6 },
-	{ id: 'm', v: -3 },
-	{ id: 'c', v: -2 },
-	{ id: 'd', v: -1 },
-	{ id: 'h', v: 2 },
-	{ id: 'k', v: 3 },
-	{ id: 'M', v: 6 },
-	{ id: 'G', v: 9 },
-	{ id: 'T', v: 12 },
-	{ id: 'P', v: 15 },
+// Standard SI prefixes
+export const prefixes: Prefix[] = [
+	{ id: 'a', e: -18 },
+	{ id: 'f', e: -15 },
+	{ id: 'p', e: -12 },
+	{ id: 'n', e: -9 },
+	{ id: 'u', e: -6 },
+	{ id: 'μ', e: -6 },
+	{ id: 'm', e: -3 },
+	{ id: 'c', e: -2 },
+	{ id: 'd', e: -1 },
+	{ id: 'h', e: 2 },
+	{ id: 'k', e: 3 },
+	{ id: 'M', e: 6 },
+	{ id: 'G', e: 9 },
+	{ id: 'T', e: 12 },
+	{ id: 'P', e: 15 },
 ];
