@@ -1,4 +1,4 @@
-import { err, UUCError } from './errors';
+import { err, type UUCError } from './errors.js';
 
 let e: UUCError;
 
@@ -33,3 +33,6 @@ e = err('ERR_brackets_mismatch', '(', '}', ']');
 e = err('ERR_brackets_mismatch');
 // @ts-expect-error
 e = err('ERR_brackets_mismatch', '(');
+
+// @ts-expect-error (unused variable)
+let _e = e;

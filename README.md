@@ -21,7 +21,7 @@ UUC is a monorepo of three packages:
 - [Frontend](packages/frontend/README.md) – the AngularJS web application providing the user interface
 - [Currencies](packages/currencies/README.md) – the currency exchange caching, which is used by the frontend
 
-### Common setup
+### Common dev setup
  
 ```bash
 nvm install

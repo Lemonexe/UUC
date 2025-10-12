@@ -5,6 +5,20 @@ It was created mainly for the UUC Frontend app, but is also available as a stand
 is written in TypeScript and can be transpiled to Javascript.
 Only distributed as ESM.
 
+## Usage
+TODO
+
+Note that languages are built-in to UUC.
+Currently only English (default) and Czech are supported.
+You may switch there and back any time during runtime:
+
+```javascript
+import { setLang } from 'uuc-core';
+setLang('cz')
+```
+Q: Why are language localizations part of the core library, shouldn't we do translate strings outside via a translation library of choice?  
+A: The parser has a feature that it can match a unit by its display name. So the unit database bears all translated strings and the core has to keep the state of language selection.
+
 ## Setup
 
 See [Common setup](../../README.md#common-setup).
