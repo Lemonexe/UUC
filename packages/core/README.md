@@ -16,6 +16,17 @@ The library can be imported directly as `.ts`, or you may build it to `.js` and 
 tsc
 ```
 
+## Development
+
+Standard commands:
+```bash
+npm -w=uuc-core run test
+npm -w=uuc-core run lint
+npm -w=uuc-core run prettier
+```
+
+You can use `npm -w=uuc-core run get-conflicts` to detect possible `id` conflicts with prefixes.
+
 ## Files
 
 **src/convert.js** defines the `Convert()` function, constructor for an object that acts as the application Model and contains all the main code related to `Q` arithmetic, unit conversion itself and subsequent calculations.
