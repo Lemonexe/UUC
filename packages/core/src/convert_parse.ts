@@ -1,21 +1,26 @@
+import { cfg } from './config.js';
+import { prefixes, units } from './data.js';
+
 /*
 	convert_parse.js
 	contains the convert parse function
 	which will parse an input string into a detailed nested structure with numbers, units and operators (always returns array)
 */
 
+
 // enter the Convert object as reference
-function Convert_parse(convert, text, lang) {
+export function Convert_parse(convert, text) {
+	const lang = cfg.lang
 	// create auxiliary database that maps each id and alias to the original unit object
-	const UnitIdMap = Units.map((item) => ({ id: item.id, ref: item })); // first just map the main ids
-	Units.forEach((o) => o.alias && o.alias.forEach((a) => UnitIdMap.push({ id: a, ref: o }))); // and push all aliases
+	const UnitIdMap = units.map((item) => ({ id: item.id, ref: item })); // first just map the main ids
+	units.forEach((o) => o.alias && o.alias.forEach((a) => UnitIdMap.push({ id: a, ref: o }))); // and push all aliases
 	if (lang !== undefined) {
-		Units.forEach((o) => UnitIdMap.push({ id: o.name[lang], ref: o })); // and push all names in given language
+		units.forEach((o) => UnitIdMap.push({ id: o.name[lang], ref: o })); // and push all names in given language
 	}
 
 	const idsOC = UnitIdMap.map((item) => item.id); // map of unit ids in original case
 	const idsLC = idsOC.map((item) => item.toLowerCase()); // in lowercase
-	const prefs = Prefixes.map((item) => item.id); // map of prefixes
+	const prefs = prefixes.map((item) => item.id); // map of prefixes
 	text = syntaxCheck(text);
 	return crawl(text);
 
@@ -229,8 +234,8 @@ function Convert_parse(convert, text, lang) {
 			if (i === -1 || j === -1) {
 				return null;
 			}
-			convert.checkPrefix(Prefixes[j], UnitIdMap[i].ref);
-			return new convert.Unit(Prefixes[j], UnitIdMap[i].ref, pow);
+			convert.checkPrefix(prefixes[j], UnitIdMap[i].ref);
+			return new convert.Unit(prefixes[j], UnitIdMap[i].ref, pow);
 		}
 		// unit was identified as is, and will be added with prefix equal to 1
 		return new convert.Unit(1, UnitIdMap[i].ref, pow);
