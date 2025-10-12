@@ -12,7 +12,7 @@
     }
   },
   "scripts": {
-    "test": "vitest",
+    "test": "vitest run",
     "tsc": "tsc",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",

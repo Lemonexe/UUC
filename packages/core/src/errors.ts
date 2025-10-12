@@ -3,9 +3,13 @@ import { cfg } from './config.js';
 
 export const errorMessages = {
 	// ERRORS 100
+	ERR_unexpected: {
+		cz: (str: string) => `NEČEKANÁ CHYBA 100: ${str}`,
+		en: (str: string) => `UNEXPECTED ERROR 100: ${str}`,
+	},
 	ERR_brackets_missing: {
-		cz: (n: string) => `CHYBA 101: Nevyrovnané závorky, ${n} ( chybí`,
-		en: (n: string) => `ERROR 101: Unbalanced brackets, ${n} ( missing`,
+		cz: (n: string | number) => `CHYBA 101: Nevyrovnané závorky, ${n} ( chybí`,
+		en: (n: string | number) => `ERROR 101: Unbalanced brackets, ${n} ( missing`,
 	},
 	ERR_operators: {
 		cz: (str: string) => `CHYBA 102: Více operátorů vedle sebe "${str}"`,
@@ -16,8 +20,8 @@ export const errorMessages = {
 		en: 'ERROR 103: Empty brackets ()',
 	},
 	ERR_NaN: {
-		cz: (str: string) => `CHYBA 104: Nelze zpracovat číslo "${str}"`,
-		en: (str: string) => `ERROR 104: Cannot parse number "${str}"`,
+		cz: (str: string | number) => `CHYBA 104: Nelze zpracovat číslo "${str}"`,
+		en: (str: string | number) => `ERROR 104: Cannot parse number "${str}"`,
 	},
 	ERR_unitPower: {
 		cz: (str: string) => `CHYBA 105: Nelze zpracovat mocninu jednotky "${str}"`,
@@ -67,6 +71,10 @@ export const errorMessages = {
 		cz: 'CHYBA 116: Zakázaná matematická operace',
 		en: 'ERROR 116: Illegal math operation',
 	},
+	ERR_curly_prefix: {
+		cz: 'CHYBA 117: Předpona složených závorkách {}',
+		en: 'ERROR 117: Prefix in curly braces {}',
+	},
 
 	// WARNINGS 200
 	WARN_prefixes: {
@@ -92,10 +100,6 @@ export const errorMessages = {
 	WARN_separators: {
 		cz: 'VAROVÁNÍ 204: Nalezeno příliš mnoho oddělovačů cílových jednotek (>, to nebo into). Pouze první definice cílových jednotek byla akceptována.',
 		en: 'WARNING 204: Too many target unit separators have been found (>, to or into). Only the first definiton of target units was accepted.',
-	},
-	WARN_curly_prefix: {
-		cz: 'VAROVÁNÍ 205: Ignorován prefix v složených závorkách {}',
-		en: 'WARNING 205: Prefix ignored in curly braces {}',
 	},
 	WARN_format_params: {
 		cz: 'VAROVÁNÍ 206: Formátovací parametry z adresy nebylo možné přečíst',

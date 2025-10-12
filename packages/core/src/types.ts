@@ -1,3 +1,5 @@
+import type { UUCError } from './errors.js';
+
 export type Lang = 'en' | 'cz';
 
 // Translated strings where `key` is language code ('en, 'cz') and value is the translated string
@@ -7,7 +9,7 @@ export type Translation = Record<Lang, string>;
 // For example Newton unit in SI is kg*m/s^2, therefore v = [1,1,-2,0,0,0,0]
 // [m, kg, s, A, K, mol, cd, $]
 // prettier-ignore
-export type V = [number,number,number,number,number,number,number,number];
+export type V = [number, number, number, number, number, number, number, number];
 
 // A database entry for one unit of measurement, or a constant.
 export type Unit = {
@@ -21,15 +23,17 @@ export type Unit = {
 	// This coefficient equates value of the unit in basic units. For example minute = 60 seconds, therefore minute has k = 60
 	k: number;
 	// Merely informational value whether this unit is a part of SI system (either basic or derived)
-	SI: boolean;
+	SI?: boolean;
 	// Whether it's basic SI unit or derived SI. Basic SI units are of utmost importance to the code, don't ever change them!
-	basic: boolean;
+	basic?: boolean;
 	// A note that conveys anything important beyond description - what is noteworthy or weird about this unit or its usage.
-	note: Translation;
+	note?: Translation;
 	// For a unit, it means: all prefixes allowed / only bigger than one allowed / lesser than one / prefixes disallowed. It's not really a restriction, just a recommendation.
 	prefix?: 'all' | '+' | '-' | 'none';
 	// Whether it is a universal/conventional constant rather than a unit. If true, then attributes SI, basic and prefix are ignored. Prefix is disallowed.
-	constant?: true;
+	constant?: boolean;
+	// Whether this unit is only available as unitfun (via {curly braces}) and not as a standalone unit.
+	onlyUnitfuns?: boolean;
 };
 
 // Template for currency units, where `k` and `v` will be filled later.
@@ -38,7 +42,7 @@ export type Unit = {
 export type CurrencyTemplate = Pick<Unit, 'id' | 'name' | 'alias' | 'prefix'>;
 
 // Irregular units that have a conversion function instead of mere ratio.
-// ID must link to an existing unit
+// id must link to an existing unit
 export type Unitfun = Pick<Unit, 'id' | 'v'> & {
 	// conversion from the unit to its SI counterpart (with the `v` dimension)
 	f: (UF: number) => number;
@@ -52,6 +56,52 @@ export type Prefix = {
 	e: number; // power of ten
 };
 
-export type Config = {
-	lang: Lang; // language code setting for messages and unit names
+// Unit possibly extended with an SI prefix and a power
+export class ExtUnit {
+	constructor(
+		public pref: Prefix | 1,
+		public unit: Unit,
+		public power: number
+	) {}
+}
+
+export type Operator = '+' | '-' | '*' | '/' | '^' | '{}'; // '{}' is a pseudo-operator marking that the following sequence {was in curly brackets}.
+
+// A physical quantity represented as numerical value 'n' and dimension vector 'v'
+export class Q {
+	constructor(
+		public n: number = 1,
+		public v: V = new Array(8).fill(0) as V
+	) {}
+}
+
+// Nested structure of sequence of numbers, units and operators, where a deeper level means a bracketed section.
+export type NestedSequenceArray = Array<number | ExtUnit | Operator | NestedSequenceArray>;
+
+// Nested structure of sequence of Q instances, where a deeper level means a bracketed section.
+export type NestedQArray = Array<Q | Operator | NestedQArray>;
+
+// Final conversion result
+type ResultBase = { messages: UUCError[] };
+export type ResultOK = ResultBase & {
+	status: 0 | 1; // 0 = OK, 1 = WARNING, 2 = ERROR
+	output: {
+		num: number | string; // printed number, possibly formatted as string
+		dim: string; // final printed dimensions as specified from target, or derived from input if no target specified
+	};
 };
+export type ResultError = ResultBase & {
+	status: 2;
+	output: null;
+};
+export type Result = ResultOK | ResultError;
+export type Status = Result['status'];
+export type OutputOK = ResultOK['output'];
+
+export type FormatParams = {
+	exp?: boolean; // whether to use exponential notation
+} & (
+	| { spec: 'none' } // pass through
+	| { spec: 'fixed'; fixed: number } // fixed number of decimal digits
+	| { spec: 'digits'; digits: number } // number of significant digits
+);
