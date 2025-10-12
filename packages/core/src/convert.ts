@@ -10,7 +10,19 @@
 		4. single Q() instance - enumerated expression with numeric value and dimension
 */
 
-function Convert() {
+import { UUCError } from './errors.js';
+import { Convert_parse } from './convert_parse.js';
+import { unitfuns, units } from './data.js';
+
+export type Res = {
+	// 0=ok, 1=warn, 2=error
+	status: 0 | 1 | 2;
+	// the result of conversion
+	output: { num: number; units: string };
+	messages: UUCError[];
+};
+
+export function Convert() {
 	this.lang = 'en'; // default language for messages
 
 	// database of messages (strings or functions)
@@ -43,10 +55,6 @@ function Convert() {
 		'WARN_separators',
 		'WARN_curly_prefix',
 		'WARN_format_params',
-		'ERRC_equalSigns',
-		'ERRC_varName',
-		'ERRC_argCount',
-		'ERRC_unreadableLine',
 	].forEach((o) => (msgDB[o] = null));
 	this.msgDB = msgDB;
 
@@ -285,7 +293,7 @@ function Convert() {
 	// generic function to process array with curly {}, returns [numerical input, Unitfun object]
 	this.processCurly = function (arr, curly) {
 		const Err113 = this.msgDB['ERR_cbrackets_illegal'];
-		const idsUF = Unitfuns.map((o) => o.id); // map of Unitfuns id
+		const idsUF = unitfuns.map((o) => o.id); // map of Unitfuns id
 
 		// fallback for the case when number is written tightly with unit, such as {3°C} instead of {3 °C}
 		if (!arr.find((o) => o instanceof this.Unit && idsUF.includes(o.unit.id))) {
@@ -333,7 +341,7 @@ function Convert() {
 			this.warn(this.msgDB['WARN_curly_prefix']);
 		}
 
-		return [x, Unitfuns[i]];
+		return [x, unitfuns[i]];
 	};
 
 	// process {target} detailed object - bypasses the rest of this.convert, because the functionality is very specific and intentionally limited
@@ -406,7 +414,7 @@ function Convert() {
 	this.checkDimension = function (source, target) {
 		let OK = true;
 		const corr = new Array(8).fill(0);
-		const basic = Units.filter((item) => item.basic);
+		const basic = units.filter((item) => item.basic);
 		const faults = []; // array of ids of dimensions that don't fit
 
 		// foreach dimension check if it is equal. If it isn't, it's not OK, so enumerate correction and add a fault
@@ -439,7 +447,7 @@ function Convert() {
 	//'properSyntax' is optional, will make the text valid for further processing if true
 	this.vector2text = function (v, properSyntax) {
 		let text = '';
-		const basic = Units.filter((item) => item.basic); // first filter all basic units
+		const basic = units.filter((item) => item.basic); // first filter all basic units
 
 		// foreach dimension of the vector check if its nonzero. If it is, find the corresponding basic unit and add its id. Add power if it isn't 1 and stick an asterisk at the end
 		for (let i = 0; i < v.length; i++) {

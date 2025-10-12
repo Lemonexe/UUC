@@ -1,131 +1,106 @@
-/*
-	tests.js
-	yes, UUC has tests now B-)
-	I don't know how to use those big fancy libraries cause I'm just a simple peasant, so I've grown my own code!
-*/
+import { describe, it, expect } from 'vitest';
+import { ErrorCode, UUCError } from '../errors.js';
+import { Convert, Res } from '../convert.js';
+import { Convert_parse } from '../convert_parse.js';
+import { csts } from '../data.js';
 
-function tests(silent) {
-	// optional argument to silence tests that have successfully passed
-	let passed = 0; // number of successful tests
-	let total = 0; // number of performed tests
+// Create a new UUCError without regard to message (only to match instance and code in test)
+const err = (code: ErrorCode) => new UUCError(code, 'Test error');
 
-	// assertion of plain equivalence
-	const eq = (arg1, arg2, text) => log(arg1 === arg2, arg1, arg2, text);
+// Are numbers approximately equal within tolerance?
+const isEqApx = (arg1: number, arg2: number, tol: number): boolean => Math.abs(arg1 - arg2) < tol;
 
-	// assertion of approximate number equivalence
-	const eqApx = (arg1, arg2, tol, text) => log(Math.abs(arg1 - arg2) < tol, arg1, arg2, text);
+const convert = new (Convert as any)(); // TODO types
 
-	// assertion of object equivalence
-	const eqObj = (arg1, arg2, text) =>
-		log(angular.equals(arg1, arg2), JSON.stringify(arg1), JSON.stringify(arg2), text);
-
-	// assertion of expected error number for a callback function f (but is not used for full conversion errors, because they are caught, see fullTestErr)
-	function expectErr(f, errNumber, text) {
-		text = 'Err' + errNumber + ' ' + text;
-		let pass = false;
-		try {
-			f();
-		} catch (err) {
-			let match = err.match(/[^\d]*(\d+)/); // try to match number of thrown error
-			if (match && match[1] === String(errNumber)) {
-				pass = true;
-			}
+// It expects a full conversion result with 'input' & 'target' strings, expected result number, numerical tolerance and optionally the expected warning.
+const fullTest = (input: string, target: string, expectNum: number, tol: number, expectWarn?: ErrorCode) =>
+	it(`${input} → ${target} ≅ ${String(expectNum)} ${expectWarn ? `(with ${expectWarn})` : ''}`, () => {
+		const res: Res = convert.fullConversion(input, target);
+		const { status } = res;
+		// Is not expected to ever throw any UUCError
+		if (status === 2) {
+			throw res.messages[0];
 		}
-		log(pass, '', 'error ' + errNumber, text);
-	}
 
-	// assertion of expected full conversion result with 'input' & 'target' strings, expected result number, numerical tolerance, OPTIONAL expected warn number
-	// there are six possible outcomes: we expectWarn or we don't, AND we get ok, warn or err
-	// normally only one test is logged. If we expectWarn and we get ok or warn, two tests are logged (eqApx, expectWarn)
-	function fullTest(input, target, expectNum, tol, expectWarn) {
-		const label = `${input}${target ? ' > ' + target : ''} ≅ ${String(expectNum)}`;
-		res = convert.fullConversion(input, target);
-
-		res.status === 0 || (expectWarn && res.status < 2)
-			? eqApx(res.output.num, expectNum, tol, label)
-			: log(false, res.messages[0], expectWarn || 'OK', label);
-
-		if (expectWarn && res.status < 2) {
-			const match = res.messages[0].match(/[^\d]*(\d+)/); // try to match number of thrown warning
-			const correctWarn = res.status === 1 && match && match[1] === String(expectWarn); // is the correct warning
-			const text = 'warn' + expectWarn;
-			log(correctWarn, res.messages[0], text, '→ ' + text);
+		if (expectWarn !== undefined) {
+			expect(status).toBe(1);
+			expect(res.messages.length).toBeGreaterThan(0);
+			expect(res.messages[0].code).toBe(expectWarn);
 		}
-	}
 
-	// assertion of expected full conversion error with 'input' string, expected error number and description
-	function fullTestErr(input, target, expectErr, text) {
-		const label = `Err${expectErr} ${input}${target ? ' > ' + target : ''}: `;
-		res = convert.fullConversion(input, target);
-		const match = res.messages[0].match(/[^\d]*(\d+)/); // try to match number of thrown error
-		log(
-			res.status === 2 && match && match[1] === String(expectErr),
-			res.messages[0],
-			'error ' + expectErr,
-			label + text
-		);
-	}
+		expect(isEqApx(res.output.num, expectNum, tol)).toBe(true);
+	});
 
-	// log the result of an assertion
-	function log(pass, actual, expected, text) {
-		total++;
-		pass && passed++;
-		pass
-			? !silent && console.log(`PASSED: ${text}`)
-			: console.error(`NOT PASSED: ${text}\nexpected: ${expected}\nactual: ${actual}`);
-	}
+// It expects a full conversion result with 'input' & 'target' strings and expected error.
+const fullTestErr = (input: string, target: string, code: ErrorCode) =>
+	it(`${input} → ${target} with ${code}`, () => {
+		const res: Res = convert.fullConversion(input, target);
+		const { status } = res;
+		expect(status).toBe(2);
+		expect(res.messages.length).toBeGreaterThan(0);
+		expect(res.messages[0].code).toBe(code);
+	});
 
-	// just a pretty console headline
-	function headline(str) {
-		!silent && console.log('%c\n' + str, 'font-size: 16px;');
-	}
+// expect(() => fn('aaa')).toThrowError(err('ERR_brackets_missing'));
 
-	/*
-		HERE COME THE ACTUAL TESTS
-	*/
+describe('Arithmetics', () => {
+	const q1 = new convert.Q(4, [-1, 1, -2, 0, 0, 0, 0, 0]); // 4 N
+	const q2 = new convert.Q(16, [-2, 2, -4, 0, 0, 0, 0, 0]); // (4 N)^2
+	const q3 = new convert.Q(7, [-1, 1, -2, 0, 0, 0, 0, 0]);
 
-	headline('Testing tests');
-	// I'm so sophisticated that even tests are tested
-	eqApx(4.789 ** 0.4, 1.8711, 1e-2, 'test(): eqApx');
-	eqObj({ a: '1', b: [2] }, { a: '1', b: [2] }, 'test(): eqObj');
+	it('Q instance', () => {
+		expect(q1).toEqual({ n: 4, v: [-1, 1, -2, 0, 0, 0, 0, 0] });
+	});
+	it('convert.power', () => {
+		expect(convert.power(q1, new convert.Q(2))).toEqual(q2);
+		// power must be dimensionless, but with tolerance
+		expect(convert.power(q1, new convert.Q(2, [1e-10]))).toEqual(q2);
+		expect(() => convert.power(q1, new convert.Q(2, [1]))).toThrowError(err('ERR_power_dim'));
+	});
+	it('convert.multiply', () => {
+		const res = new convert.Q(64, [-3, 3, -6, 0, 0, 0, 0, 0]);
+		expect(convert.multiply(q1, q2)).toEqual(res);
+	});
+	it('convert.divide', () => {
+		const res = new convert.Q(0.25, [1, -1, 2, 0, 0, 0, 0, 0]);
+		expect(convert.divide(q1, q2)).toEqual(res);
+	});
+	it('convert.add', () => {
+		const res = new convert.Q(11, [-1, 1, -2, 0, 0, 0, 0, 0]);
+		expect(convert.add(q1, q3)).toEqual(res);
+		expect(() => convert.add(q1, q2)).toThrowError(err('ERR_dim_mismatch'));
+	});
+	it('convert.subtract', () => {
+		const res = new convert.Q(-3, [-1, 1, -2, 0, 0, 0, 0, 0]);
+		expect(convert.subtract(q1, q3)).toEqual(res);
+		expect(() => convert.subtract(q1, q2)).toThrowError(err('ERR_dim_mismatch'));
+	});
+});
 
-	headline('Arithmetics');
-	let q1 = new convert.Q(4, [-1, 1, -2, 0, 0, 0, 0, 0]);
-	let q2 = new convert.Q(16, [-2, 2, -4, 0, 0, 0, 0, 0]);
-	eqObj(q1, { n: 4, v: [-1, 1, -2, 0, 0, 0, 0, 0] }, 'convert.Q');
+// TODO Convert_parse happy path tests with proper return value checks
+describe('Convert_parse', () => {
+	expect(Convert_parse(convert, '(2+(1+1))')).toBeTruthy();
+});
 
-	let pow = new convert.Q(2);
-	eqObj(convert.power(q1, pow), q2, 'convert.power');
+describe('Convert_parse errors', () => {
+	expect(() => Convert_parse(convert, '3*(4*5)*2)')).toThrowError(err('ERR_brackets_missing'));
+	expect(() => Convert_parse(convert, '2 * / 3')).toThrowError(err('ERR_operators'));
+	expect(() => Convert_parse(convert, '2//4')).toThrowError(err('ERR_operators'));
+	expect(() => Convert_parse(convert, '4*()*5')).toThrowError(err('ERR_brackets_empty'));
+	expect(() => Convert_parse(convert, '1e999')).toThrowError(err('ERR_NaN'));
+	expect(() => Convert_parse(convert, 'm..')).toThrowError(err('ERR_unitPower'));
+	expect(() => Convert_parse(convert, 'kPaa')).toThrowError(err('ERR_unknownUnit'));
+	expect(() => Convert_parse(convert, '3#4~5')).toThrowError(err('ERR_special_chars'));
+	expect(() => Convert_parse(convert, '{3°C')).toThrowError(err('ERR_cbrackets_missing'));
+	expect(() => Convert_parse(convert, '(2+{1+1)}')).toThrowError(err('ERR_brackets_mismatch'));
+});
 
-	pow = new convert.Q(2, [1e-10]);
-	eqObj(convert.power(q1, pow), q2, 'convert.power: with tolerance');
-
-	pow = new convert.Q(2, [1]);
-	expectErr(() => convert.power(q1, pow), 108, 'convert.power: detect dimension error');
-
-	let res = new convert.Q(64, [-3, 3, -6, 0, 0, 0, 0, 0]);
-	eqObj(convert.multiply(q1, q2), res, 'convert.multiply');
-
-	res = new convert.Q(0.25, [1, -1, 2, 0, 0, 0, 0, 0]);
-	eqObj(convert.divide(q1, q2), res, 'convert.divide');
-
-	q2 = new convert.Q(7, [-1, 1, -2, 0, 0, 0, 0, 0]);
-
-	res = new convert.Q(11, [-1, 1, -2, 0, 0, 0, 0, 0]);
-	eqObj(convert.add(q1, q2), res, 'convert.add');
-
-	res = new convert.Q(-3, [-1, 1, -2, 0, 0, 0, 0, 0]);
-	eqObj(convert.subtract(q1, q2), res, 'convert.subtract');
-
-	q2 = new convert.Q(7, [1, 1, -2, 0, 0, 0, 0, 0]);
-	expectErr(() => convert.subtract(q1, q2), 109, 'convert.add: detect dimension mismatch');
-
-	headline('Full conversions');
+describe('Full conversion', () => {
 	fullTest('3*(7-3)*2', '', 24, 1e-6);
 	fullTest('(3*(7-3)*2)', '', 24, 1e-6);
 	fullTest('3*(4*(5*(2+1)-1)', '', 168, 1e-6); // tolerance for missing closing brackets )
 	fullTest('0.5 ((5(6+(8)3)) 2·3', '15', 30, 1e-6); // spaces and cdots instead of *
-	fullTest('2²³', '', 64, 1e-6); // unicode support
+	fullTest('2²³', '', 64, 1e-6); // Unicode support
 	fullTest('3(4+5)2 / (2*2^3*2) * 7*(2+2*2+2)', '', 94.5, 1e-6); // not even spaces, numbers right on brackets
 	fullTest('km / 5min', 'km/h', 12, 1e-6); // number tightly with unit shall be interpreted as (5min)
 	fullTest('3m2*(4*5m)*2kPa', 'kg*m2 * s^(-2)', 120000, 1e-6);
@@ -141,84 +116,31 @@ function tests(silent) {
 	fullTest('Mpa*PPM', '', 1, 1e-3); // case-sensitive leniency
 	fullTest('{5°C}', 'K', csts.TC0 + 5, 1e-6);
 	fullTest('{5 °C}', 'K', csts.TC0 + 5, 1e-6);
-	fullTest('{°C*25}', 'K', csts.TC0 + 25, 1e-6); // this isn't even needed but it works too, lol
+	fullTest('{°C*25}', 'K', csts.TC0 + 25, 1e-6); // this isn't even needed, but it works too, lol
 	fullTest('{35 °API}', 'kg/l', 0.8498, 1e-3);
 	fullTest('1000 kg/m3', '{°API}', 10, 1e-3);
 	fullTest('atm * 28 g/mol / _R / {25°C}', '', 1.14447, 1e-4);
 	fullTest('{57°F}', '{°C}', 13.8889, 1e-3);
 	fullTest('{ln 1000}/{ln 10}', '1', 3, 1e-3);
 	fullTest('(27K - 32K) / ( {ln (27K/(32K)) } )', '°C', 29.4292, 1e-3);
+});
 
-	headline('Full conversion warnings');
-	fullTest('mt/ks', '', 1e-3, 1e-6, 201);
-	fullTest('m3', 'm2', 1, 1e-6, 202);
-	fullTest('6 km', '500 m', 12, 1e-6, 203);
+describe('Full conversion warnings', () => {
+	fullTest('mt/ks', '', 1e-3, 1e-6, 'WARN_prefixes');
+	fullTest('m3', 'm2', 1, 1e-6, 'WARN_target_dim_mismatch');
+	fullTest('6 km', '500 m', 12, 1e-6, 'WARN_targetNumber');
+});
 
-	headline('Full conversion errors');
-	fullTestErr('7*', '', 107, 'misplaced operator');
-	fullTestErr('3^m', '', 108, 'non-dimensionless power');
-	fullTestErr('7m + 4s', '', 109, 'addition dim mismatch');
-	fullTestErr('{7*3°C}', '', 113, 'more numbers in {}');
-	fullTestErr('{25°C * _R}', '', 113, 'more units in {}');
-	fullTestErr('{3+°C}', 'K', 113, 'forbidden operator {}');
-	fullTestErr('{3°C}', '{3°C}', 113, 'number in target {}');
-	fullTestErr('{3C}', '', 114, 'unsupported Unitfun');
-	fullTestErr('kJ', '{°C}', 115, 'target {} dim mismatch');
-	fullTestErr('(-1)^(.5)', '', 116, 'NaN: sq root < 0');
-	fullTestErr('{ln (-1)}', '', 116, 'NaN: logarithm < 0');
-
-	headline('Convert_parse errors');
-	expectErr(() => Convert_parse(convert, '3*(4*5)*2)'), 101, '3*(4*5)*2): missing bracket');
-	expectErr(() => Convert_parse(convert, '2 * / 3'), 102, '2 * / 3: illegal operator use');
-	expectErr(() => Convert_parse(convert, '4*()*5'), 103, '4*()*5: empty brackets');
-	expectErr(() => Convert_parse(convert, '1e999'), 104, '1e999: NaN');
-	expectErr(() => Convert_parse(convert, 'm..'), 105, 'm..: unknown power');
-	expectErr(() => Convert_parse(convert, 'kPaa'), 106, 'kPaa: unknown unit');
-	expectErr(() => Convert_parse(convert, '3#4~5'), 110, '3#4~5: reserved chars');
-	expectErr(() => Convert_parse(convert, '{3°C'), 111, '{3°C: unbalanced {}');
-	expectErr(() => Convert_parse(convert, '(2+{1+1)}'), 112, '(2+{1+1)}: {}() mismatch');
-
-	headline('location hash');
-	eqObj(parseLocationHash('#!#3 kPa to torr'), { input: '3 kPa', target: 'torr' }, 'parse simple location hash');
-	eqObj(
-		parseLocationHash('#!#3%20kPa%20to%20torr'),
-		{ input: '3 kPa', target: 'torr' },
-		'parse simple URIencoded location hash'
-	);
-	eqObj(
-		parseLocationHash('#!#3·%7B3°C%7D%2F(1e-1)%5E2*_g'),
-		{ input: '3·{3°C}/(1e-1)^2*_g', target: '' },
-		'parse complex location hash'
-	);
-	res = parseLocationHash('2m to cm > ft');
-	fullTest(res.input, res.target, 200, 1e-2, 204);
-	eqObj(
-		parseLocationHash('#!#_G&fixed,3'),
-		{ input: '_G', target: '', params: { spec: 'fixed', fixed: 3, exp: false } },
-		'parse location hash with format params #1'
-	);
-	eqObj(
-		parseLocationHash('#!#_G&digits,2,exp'),
-		{ input: '_G', target: '', params: { spec: 'digits', digits: 2, exp: true } },
-		'parse location hash with format params #2'
-	);
-	res = parseLocationHash('#!#_pi into 1 &auto,2.1');
-	fullTest(res.input, res.target, Math.PI, 1e-6, 206);
-
-	// TEST SUMMARY
-	const color = passed === total ? 'green' : 'red';
-	const text = ` FINISHED with ${passed}/${total} passed `;
-	const line = '-'.repeat(text.length);
-	console.log('%c' + line + '\n' + text + '\n' + line, 'color: ' + color + '; font-size: 16px; font-weight: bold');
-}
-
-/*
-"Unpublished" tests that should fail:
-fullTest('2//4', '', 0.5, 1e-6); // expect OK, got 102 → 1/1 failed
-fullTest('mt/ks', '', 1e-3, 1e-4); // expect OK, got 201 → 1/1 failed
-fullTest('7', '', 7, 1e-4, 200); // expect 200, got OK → 1/2 failed
-fullTest('2//4', '', 2e-3, 1e-6, 202); // expect 202, got error → 1/2 failed
-fullTest('mt/ks', '', 2e-3, 1e-6, 202); // expect 202, got wrong number + wrong warning → 2/2 failed
-fullTestErr('7*3', '', 107, 'misplaced operator'); // expect 107, got OK
-expectErr(() => Convert_parse(convert, '(2+(1+1))'), 112, '(2+{1+1)}: {}() mismatch'); // expect 112, got OK
-*/
+describe('Full conversion error', () => {
+	fullTestErr('7*', '', 'ERR_operator_misplaced');
+	fullTestErr('3^m', '', 'ERR_power_dim');
+	fullTestErr('7m + 4s', '', 'ERR_dim_mismatch');
+	fullTestErr('{7*3°C}', '', 'ERR_cbrackets_illegal');
+	fullTestErr('{25°C * _R}', '', 'ERR_cbrackets_illegal');
+	fullTestErr('{3+°C}', 'K', 'ERR_cbrackets_illegal');
+	fullTestErr('{3°C}', '{3°C}', 'ERR_cbrackets_illegal');
+	fullTestErr('{3C}', '', 'ERR_unknown_unitfun');
+	fullTestErr('kJ', '{°C}', 'ERR_cbrackets_dim_mismatch');
+	fullTestErr('(-1)^(.5)', '', 'ERR_NaN_result');
+	fullTestErr('{ln (-1)}', '', 'ERR_NaN_result');
+});
