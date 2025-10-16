@@ -1,4 +1,4 @@
-import { type UUCError, err } from './errors.js';
+import { type UUCError, err } from '../errors.js';
 
 let e: UUCError;
 

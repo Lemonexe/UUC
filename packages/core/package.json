@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "vitest run",
-    "tsc": "tsc",
+    "tsc": "tsc && rimraf dist/__tests__",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src --fix --report-unused-disable-directives --max-warnings 0",
@@ -23,6 +23,7 @@
     "@eslint/js": "^9.34.0",
     "eslint": "^9.34.0",
     "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0",
     "vitest": "^3.2.4"

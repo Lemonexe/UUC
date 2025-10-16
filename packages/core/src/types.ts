@@ -76,9 +76,9 @@ export class Q {
 }
 
 // Nested structure of sequence of numbers, units and operators, where a deeper level means a bracketed section.
-export type NestedSequenceArray = Array<number | ExtUnit | Operator | NestedSequenceArray>;
+export type NestedRichArray = Array<number | ExtUnit | Operator | NestedRichArray>;
 
-// Nested structure of sequence of Q instances, where a deeper level means a bracketed section.
+// Nested structure of sequence of Q instances and operators, where a deeper level means a bracketed section.
 export type NestedQArray = Array<Q | Operator | NestedQArray>;
 
 // Final conversion result
