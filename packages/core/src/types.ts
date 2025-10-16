@@ -1,6 +1,7 @@
+import { langs } from './config.js';
 import type { UUCError } from './errors.js';
 
-export type Lang = 'en' | 'cz';
+export type Lang = (typeof langs)[number];
 
 // Translated strings where `key` is language code ('en, 'cz') and value is the translated string
 export type Translation = Record<Lang, string>;

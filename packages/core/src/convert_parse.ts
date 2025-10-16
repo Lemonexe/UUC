@@ -1,7 +1,8 @@
 import { cfg } from './config.js';
-import { prefixes, units } from './data.js';
+import { prefixes } from './data.js';
 import { err } from './errors.js';
-import { ExtUnit, type NestedRichArray, type Operator, type Unit } from './types.js';
+import { ExtUnit, type NestedRichArray, type Operator } from './types.js';
+import { getUnitIdMap } from './utils.js';
 
 /**
  * This module concerns mainly with the convert_parse function,
@@ -9,26 +10,11 @@ import { ExtUnit, type NestedRichArray, type Operator, type Unit } from './types
  * by a sequence of numbers, extended unit objects and operators.
  */
 
-// Create a simple junction table that maps all possible matchable strings with the origin Unit reference.
-type UnitIdMapItem = { id: string; ref: Unit };
-export const getUnitIdMap = (): UnitIdMapItem[] => {
-	// Start with the main ids,
-	const unitIdMap = units.map((u: Unit) => ({ id: u.id, ref: u }));
-	// then push all aliases,
-	units.forEach((u) => u.alias && u.alias.forEach((a) => unitIdMap.push({ id: a, ref: u })));
-	// and push all names in the given language.
-	// This is why it has to be generated on the fly, because language can change during runtime...
-	if (cfg.lang !== undefined) {
-		units.forEach((u) => unitIdMap.push({ id: u.name[cfg.lang], ref: u }));
-	}
-	return unitIdMap;
-};
-
 export const convert_parse = (rawText: string) => {
-	const unitIdMap = getUnitIdMap();
-	const idsOC = unitIdMap.map(({ id }) => id); // map of unit ids in original case
-	const idsLC = idsOC.map((id) => id.toLowerCase()); //  map of unit ids in lowercase
-	const prefs = prefixes.map(({ id }) => id); // map of prefixes
+	const unitIdMap = getUnitIdMap([cfg.lang]); // map of all matchable strings only in the current language.
+	const idsOC = unitIdMap.map(({ id }) => id); // ordered list of unit ids in original case
+	const idsLC = idsOC.map((id) => id.toLowerCase()); // ordered list of unit ids in lowercase
+	const prefs = prefixes.map(({ id }) => id); // ordered list of prefixes
 	const cleanedText = syntaxCheck(rawText);
 	return crawl(cleanedText);
 
