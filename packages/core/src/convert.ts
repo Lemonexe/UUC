@@ -2,7 +2,7 @@ import { Q, checkZeros, divide } from './arithmetics.js';
 import { convert_parse } from './convert_parse.js';
 import { UUCError, err } from './errors.js';
 import { processCurly, recursivelyQ, reduceQ } from './reduceQ.js';
-import { ExtUnit, type NestedSequenceArray, type OutputOK, type Result, type Status } from './types.js';
+import { ExtUnit, type NestedRichArray, type OutputOK, type Result, type Status } from './types.js';
 import { balanceBrackets, checkPrefixWarning, dimensionCorrection, vector2text } from './utils.js';
 
 /*
@@ -46,23 +46,23 @@ export function convert(input: string, target: string): Result {
 		const targetClean = balanceBrackets(targetInner);
 
 		// parse input & target strings into detailed nested objects, see convert_parse.js
-		const iNestedSeq = convert_parse(inputClean);
-		const tNestedSeq = convert_parse(targetClean);
+		const iNestedRich = convert_parse(inputClean);
+		const tNestedRich = convert_parse(targetClean);
 
-		recursivelyCheckPrefixes(iNestedSeq);
+		recursivelyCheckPrefixes(iNestedRich);
 
-		const iNestedQ = recursivelyQ(iNestedSeq, true); // transform detailed nested object to nested Q object
+		const iNestedQ = recursivelyQ(iNestedRich, true); // transform detailed nested object to nested Q object
 		const iQ = reduceQ(iNestedQ); // reduce nested Q object to single Q
 
 		// Check whether curly is used in target (appropriately!)
-		const isTargetCurly = isTarget && Array.isArray(tNestedSeq[0]) && tNestedSeq[0][0] === '{}';
+		const isTargetCurly = isTarget && Array.isArray(tNestedRich[0]) && tNestedRich[0][0] === '{}';
 		// Then proces {target} and bypass everything else; the functionality is very specific and intentionally limited
 		if (isTargetCurly) {
-			return processTargetCurly(iQ, tNestedSeq);
+			return processTargetCurly(iQ, tNestedRich);
 		}
 
-		checkTargetNumbers(tNestedSeq);
-		const tNestedQ = recursivelyQ(tNestedSeq);
+		checkTargetNumbers(tNestedRich);
+		const tNestedQ = recursivelyQ(tNestedRich);
 		const tQ = reduceQ(tNestedQ);
 
 		// then the conversion itself is pretty simple!
@@ -82,8 +82,8 @@ export function convert(input: string, target: string): Result {
 	}
 
 	// process {target} detailed object - bypasses the rest of convert, because the functionality is very specific and intentionally limited
-	function processTargetCurly(iQ: Q, tNestedSeq: NestedSequenceArray) {
-		const [x, unitfun] = processCurly(tNestedSeq[0] as NestedSequenceArray, true);
+	function processTargetCurly(iQ: Q, arr: NestedRichArray) {
+		const [x, unitfun] = processCurly(arr[0] as NestedRichArray, true);
 		if (x !== 0) {
 			// no number in {target}
 			throw err('ERR_cbrackets_illegal');
@@ -98,7 +98,7 @@ export function convert(input: string, target: string): Result {
 		return { num: y, dim: unitfun.id };
 	}
 
-	function recursivelyCheckPrefixes(arr: NestedSequenceArray) {
+	function recursivelyCheckPrefixes(arr: NestedRichArray) {
 		for (const o of arr) {
 			if (o instanceof ExtUnit && typeof o.pref === 'object') {
 				const warning = checkPrefixWarning(o.pref, o.unit);
@@ -110,7 +110,7 @@ export function convert(input: string, target: string): Result {
 	}
 
 	// Check a detailed nested object for numbers (only shallow crawl), give a warning if number
-	function checkTargetNumbers(arr: NestedSequenceArray) {
+	function checkTargetNumbers(arr: NestedRichArray) {
 		// a single number is probably intentional, so don't emit warning
 		if (arr.length <= 1) return;
 		for (const o of arr) {
@@ -125,12 +125,12 @@ export function convert(input: string, target: string): Result {
 export const parseQ = (text: string): { q: Q | null; id?: string } => {
 	try {
 		let id: string | undefined;
-		const nestedSeq = convert_parse(text);
+		const nestedRich = convert_parse(text);
 		// expression consists of single unit - save the id!
-		if (nestedSeq.length === 1 && nestedSeq[0] instanceof ExtUnit) {
-			id = nestedSeq[0].unit.id;
+		if (nestedRich.length === 1 && nestedRich[0] instanceof ExtUnit) {
+			id = nestedRich[0].unit.id;
 		}
-		const nestedQ = recursivelyQ(nestedSeq, true);
+		const nestedQ = recursivelyQ(nestedRich, true);
 		const q = reduceQ(nestedQ);
 
 		return { q, id };

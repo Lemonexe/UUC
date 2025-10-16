@@ -1,7 +1,7 @@
 import { cfg } from './config.js';
 import { prefixes, units } from './data.js';
 import { err } from './errors.js';
-import { ExtUnit, type NestedSequenceArray, type Operator, type Unit } from './types.js';
+import { ExtUnit, type NestedRichArray, type Operator, type Unit } from './types.js';
 
 /**
  * This module concerns mainly with the convert_parse function,
@@ -80,8 +80,8 @@ export const convert_parse = (rawText: string) => {
 
 	// Recursively crawl current text to organize into a nested array of text sections around brackets, and a deeper array of the same kind within the brackets.
 	// The text sections around brackets are split right away, see split() function (of course, the text within brackets will be split in the deeper run).
-	function crawl(text: string): NestedSequenceArray {
-		let field: NestedSequenceArray[] = [];
+	function crawl(text: string): NestedRichArray {
+		let field: NestedRichArray[] = [];
 		let c = 0; // cursor
 		let c0 = 0; // cursor bookmark
 		let lvl = 0; // current bracket lvl
@@ -131,14 +131,14 @@ export const convert_parse = (rawText: string) => {
 
 	// Split a text section by * / ^ + -, and those operators will be included in the split array as well.
 	// While doing that, also process numbers, units and operators.
-	function split(text: string, IACB: boolean): NestedSequenceArray {
+	function split(text: string, IACB: boolean): NestedRichArray {
 		// Split into array of strings delimited by operators
 		const splitArray: string[] = protectNumbers(text, IACB)
 			.split(/([\^*/+-])/) // regex has parentheses to keep the delimiters (operators).
 			.filter((o) => o.length > 0)
 			.map(unprotectNumbers);
 
-		const arr2: NestedSequenceArray = [];
+		const arr2: NestedRichArray = [];
 		// Iterate through each operator-delimited section and parse them
 		splitArray.forEach((section) => {
 			// try if it's a number

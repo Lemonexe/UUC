@@ -1,12 +1,12 @@
 import { Q, add, checkZeros, divide, multiply, power, subtract } from './arithmetics.js';
 import { unitfuns } from './data.js';
 import { err } from './errors.js';
-import { ExtUnit, type NestedQArray, type NestedSequenceArray, type Operator, type Unitfun } from './types.js';
+import { ExtUnit, type NestedQArray, type NestedRichArray, type Operator, type Unitfun } from './types.js';
 
 /**
  * Generic function to process array with curly {}, returns [numerical input, Unitfun object]
  */
-export const processCurly = (arr: NestedSequenceArray, isCurlyAllowed = false): [number, Unitfun] => {
+export const processCurly = (arr: NestedRichArray, isCurlyAllowed = false): [number, Unitfun] => {
 	const idsUF = unitfuns.map((uf) => uf.id); // map of Unitfuns id
 
 	// fallback for the case when number is written tightly with unit, such as {3°C} instead of {3 °C}
@@ -60,11 +60,11 @@ export const processCurly = (arr: NestedSequenceArray, isCurlyAllowed = false): 
 /**
  * Recursively crawl through detailed nested object: transform units and numbers into Q instances (physical quantity)
  */
-export const recursivelyQ = (obj: NestedSequenceArray, isCurlyAllowed = false): NestedQArray => {
-	return crawl(obj);
+export const recursivelyQ = (nestedArr: NestedRichArray, isCurlyAllowed = false): NestedQArray => {
+	return crawl(nestedArr);
 
 	// crawl converts numbers & [pref, unit, power] objects into new Q() instances
-	function crawl(arr: NestedSequenceArray): NestedQArray {
+	function crawl(arr: NestedRichArray): NestedQArray {
 		// in case the array is a {expression}
 		if (arr[0] === '{}') {
 			const [x, unitfun] = processCurly(arr, isCurlyAllowed);
@@ -107,8 +107,8 @@ type QArray = Array<Q | Operator>;
  * Recursively reduce nested object of Q sequences into the one final Q.
  * Starting from the deepest brackets, it solves them and gradually gets higher.
  */
-export const reduceQ = (obj: NestedQArray): Q => {
-	return crawl(obj);
+export const reduceQ = (nestedArr: NestedQArray): Q => {
+	return crawl(nestedArr);
 
 	// crawl operates on an array and calculates it into a single Q
 	// operator precedence: first get () result, then do ^, then * /, then + - into the final Q
