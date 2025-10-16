@@ -1,7 +1,7 @@
-import { ExtUnit, type NestedQArray, type NestedSequenceArray, type Operator, type Unitfun } from './types.js';
-import { err } from './errors.js';
-import { Q, checkZeros, power, multiply, divide, add, subtract } from './arithmetics.js';
+import { Q, add, checkZeros, divide, multiply, power, subtract } from './arithmetics.js';
 import { unitfuns } from './data.js';
+import { err } from './errors.js';
+import { ExtUnit, type NestedQArray, type NestedSequenceArray, type Operator, type Unitfun } from './types.js';
 
 /**
  * Generic function to process array with curly {}, returns [numerical input, Unitfun object]
@@ -84,8 +84,8 @@ export const recursivelyQ = (obj: NestedSequenceArray, isCurlyAllowed = false): 
 			// is a unit: turn unit into a Q
 			else if (o instanceof ExtUnit) {
 				const prefNum = typeof o.pref === 'object' ? 10 ** o.pref.e : 1;
-				const obj = new Q(prefNum * o.unit.k, o.unit.v);
-				arr2.push(power(obj, new Q(o.power)));
+				const newQ = new Q(prefNum * o.unit.k, o.unit.v);
+				arr2.push(power(newQ, new Q(o.power)));
 			}
 			// is an array: recursion further
 			else if (Array.isArray(o)) {
@@ -159,7 +159,7 @@ export const reduceQ = (obj: NestedQArray): Q => {
 		// current result, new reduced array of Q
 		let i: number;
 		let res: Q | null = null;
-		let arr2: QArray = [];
+		const arr2: QArray = [];
 		for (i = 0; i < arr.length; i += 2) {
 			if (!arr.hasOwnProperty(i + 1)) {
 				break;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { vector2text, format, dimensionCorrection } from '../utils.js';
+import { dimensionCorrection, format, vector2text } from '../utils.js';
 import type { V } from '../types.js';
 
 describe(vector2text.name, () => {

@@ -24,13 +24,13 @@ export const getUnitIdMap = (): UnitIdMapItem[] => {
 	return unitIdMap;
 };
 
-export const convert_parse = (text: string) => {
+export const convert_parse = (rawText: string) => {
 	const unitIdMap = getUnitIdMap();
 	const idsOC = unitIdMap.map(({ id }) => id); // map of unit ids in original case
 	const idsLC = idsOC.map((id) => id.toLowerCase()); //  map of unit ids in lowercase
 	const prefs = prefixes.map(({ id }) => id); // map of prefixes
-	text = syntaxCheck(text);
-	return crawl(text);
+	const cleanedText = syntaxCheck(rawText);
+	return crawl(cleanedText);
 
 	// rationalize the input string
 	function syntaxCheck(text: string): string {
@@ -60,13 +60,13 @@ export const convert_parse = (text: string) => {
 			.replace(/([(){}])/g, ' $1 ') // pad () and {} to allow expression right next to it
 			.trim()
 			.replace(/ +/g, ' ') // reduce cumulated spaces
-			.replace(/ ?([\^*/+\-]+) ?/g, '$1') // trim operators
+			.replace(/ ?([\^*/+-]+) ?/g, '$1') // trim operators
 			.replace(/([({]+) ?/g, '$1') // right trim (
 			.replace(/ ?([)}]+)/g, '$1') // left trim )
 			.replace(/ /g, '*'); // the leftover spaces are truly multiplying signs
 
 		// check validity
-		const m = text.match(/[\^*/+\-]{2,}/);
+		const m = text.match(/[\^*/+-]{2,}/);
 		if (m) {
 			throw err('ERR_operators', m[0]);
 		}
@@ -134,7 +134,7 @@ export const convert_parse = (text: string) => {
 	function split(text: string, IACB: boolean): NestedSequenceArray {
 		// Split into array of strings delimited by operators
 		const splitArray: string[] = protectNumbers(text, IACB)
-			.split(/([\^*/+\-])/) // regex has parentheses to keep the delimiters (operators).
+			.split(/([\^*/+-])/) // regex has parentheses to keep the delimiters (operators).
 			.filter((o) => o.length > 0)
 			.map(unprotectNumbers);
 
@@ -149,7 +149,7 @@ export const convert_parse = (text: string) => {
 			}
 
 			// if it's an operator, let it be
-			if (section.match(/^[\^*/+\-]$/)) {
+			if (section.match(/^[\^*/+-]$/)) {
 				arr2.push(section as Operator);
 				return;
 			}
@@ -157,7 +157,7 @@ export const convert_parse = (text: string) => {
 			// else we'll assume it's a unit, so let's parse it or throw
 			else {
 				// identify number that is right before the unit (without space or *)
-				const firstNumMatch = section.match(/^[+\-]?[\d\.]+(?:e[+\-]?\d+)?/);
+				const firstNumMatch = section.match(/^[+-]?[\d.]+(?:e[+-]?\d+)?/);
 				if (firstNumMatch) {
 					const firstNum = firstNumMatch[0];
 					section = section.slice(firstNum.length); // strip number from the unit
@@ -183,18 +183,18 @@ export const convert_parse = (text: string) => {
 	function protectNumbers(text: string, IACB: boolean): string {
 		// first number in text section (beginning of whole input or beginning of brackets) can also have + - before it
 		// but NOT in a text section after closing brackets!
-		const firstNumMatch = text.match(/^[+\-]?[\d\.]+(?:e[+\-]?\d+)?/);
+		const firstNumMatch = text.match(/^[+-]?[\d.]+(?:e[+-]?\d+)?/);
 		if (firstNumMatch && !IACB) {
 			const firstNum = firstNumMatch[0];
-			text = text.replace(firstNum, firstNum.replace(/\-/g, '~').replace(/\+/g, '#'));
+			text = text.replace(firstNum, firstNum.replace(/-/g, '~').replace(/\+/g, '#'));
 		}
 		// match + - in all number exponents
-		const m = text.match(/[\d\.]+(?:e[+\-]?\d+)?/g);
-		m && m.forEach((m) => (text = text.replace(m, m.replace(/\-/g, '~').replace(/\+/g, '#'))));
+		const match = text.match(/[\d.]+(?:e[+-]?\d+)?/g);
+		match && match.forEach((m) => (text = text.replace(m, m.replace(/-/g, '~').replace(/\+/g, '#'))));
 		return text;
 	}
 	function unprotectNumbers(text: string): string {
-		return text.replace(/\~/g, '-').replace(/\#/g, '+');
+		return text.replace(/~/g, '-').replace(/#/g, '+');
 	}
 
 	// Parse an extended unit string or throw an error. It may have a prefix at beginning, and a power number at the end (without ^, otherwise it would have been split away already)
@@ -207,7 +207,7 @@ export const convert_parse = (text: string) => {
 		if (u) return u;
 
 		// not found - try to find as [prefix + unit + power]
-		const powIndex = text.search(/[\.\d]+$/);
+		const powIndex = text.search(/[.\d]+$/);
 		if (powIndex > -1) {
 			pow = Number(text.slice(powIndex));
 			if (isNaN(pow) || !isFinite(pow)) {
@@ -230,8 +230,8 @@ export const convert_parse = (text: string) => {
 	// Parse an extended unit string, but without any power (it may only have a prefix it the beginning)
 	function parsePrefixUnit(text: string, pow: number, insensitive: boolean) {
 		// first we try to find the unit in ids
-		let text2 = insensitive ? text.toLowerCase() : text;
-		let ids = insensitive ? idsLC : idsOC;
+		const text2 = insensitive ? text.toLowerCase() : text;
+		const ids = insensitive ? idsLC : idsOC;
 		let i = ids.indexOf(text2);
 		// not found? There might be a prefix. First letter is stripped and we search for units without it. We also search the prefixes for the first letter
 		if (i === -1) {

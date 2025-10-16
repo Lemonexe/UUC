@@ -1,7 +1,7 @@
-import type { FormatParams, OutputOK, V, Prefix, Unit } from './types.js';
-import { basicUnits } from './data.js';
 import { cfg } from './config.js';
-import { err, type UUCError } from './errors.js';
+import { basicUnits } from './data.js';
+import { type UUCError, err } from './errors.js';
+import type { FormatParams, OutputOK, Prefix, Unit, V } from './types.js';
 
 // Beautify the input string by balancing brackets.
 // Not as thorough as syntaxCheck in convert_parse.
@@ -34,7 +34,7 @@ export const format = (output: OutputOK | null, params: FormatParams): OutputOK 
 	}
 	if (params.spec === 'digits') {
 		const dp = params.digits;
-		let dn = Math.floor(Math.log10(rawNum)) + 1; // natural digits of the number. If greater than params.digits, don't use toPrecision, but round up manually to avoid exponential
+		const dn = Math.floor(Math.log10(rawNum)) + 1; // natural digits of the number. If greater than params.digits, don't use toPrecision, but round up manually to avoid exponential
 		const num =
 			dn > dp ? (Math.round(rawNum / 10 ** (dn - dp)) * 10 ** (dn - dp)).toFixed(0) : rawNum.toPrecision(dp);
 		return { num, dim };

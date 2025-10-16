@@ -8,7 +8,7 @@ export type Config = {
 };
 
 // Default config values
-export let cfg: Config = {
+export const cfg: Config = {
 	lang: 'en',
 	dimTolerance: 1e-3,
 };

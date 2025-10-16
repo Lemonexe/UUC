@@ -1,9 +1,9 @@
-import { err, UUCError } from './errors.js';
+import { Q, checkZeros, divide } from './arithmetics.js';
 import { convert_parse } from './convert_parse.js';
-import { checkZeros, divide, Q } from './arithmetics.js';
+import { UUCError, err } from './errors.js';
+import { processCurly, recursivelyQ, reduceQ } from './reduceQ.js';
 import { ExtUnit, type NestedSequenceArray, type OutputOK, type Result, type Status } from './types.js';
 import { balanceBrackets, checkPrefixWarning, dimensionCorrection, vector2text } from './utils.js';
-import { processCurly, recursivelyQ, reduceQ } from './reduceQ.js';
 
 /*
 	convert.js
@@ -32,22 +32,22 @@ export function convert(input: string, target: string): Result {
 	try {
 		const output = convertInner(input, target);
 		return { status, messages, output };
-	} catch (err: unknown) {
+	} catch (e: unknown) {
 		// downgrade status to 2 and only this one error message will be shown
 		status = 2;
-		messages = [err instanceof UUCError ? err : new UUCError('ERR_unexpected', String(err))];
+		messages = [e instanceof UUCError ? e : new UUCError('ERR_unexpected', String(e))];
 		return { status, messages, output: null };
 	}
 
 	// Inner function that does most of the work, and may throw exceptions.
-	function convertInner(input: string, target: string = ''): OutputOK {
-		input = balanceBrackets(input);
-		target = balanceBrackets(target);
-		const isTarget = target.length > 0;
+	function convertInner(inputInner: string, targetInner: string = ''): OutputOK {
+		const isTarget = targetInner.length > 0;
+		const inputClean = balanceBrackets(inputInner);
+		const targetClean = balanceBrackets(targetInner);
 
 		// parse input & target strings into detailed nested objects, see convert_parse.js
-		const iNestedSeq = convert_parse(input);
-		const tNestedSeq = convert_parse(target);
+		const iNestedSeq = convert_parse(inputClean);
+		const tNestedSeq = convert_parse(targetClean);
 
 		recursivelyCheckPrefixes(iNestedSeq);
 
@@ -70,7 +70,7 @@ export function convert(input: string, target: string): Result {
 		if (isNaN(num)) {
 			throw err('ERR_NaN_result');
 		}
-		let dim = isTarget ? target : vector2text(iQ.v); // if no target, then SI representation
+		let dim = isTarget ? targetClean : vector2text(iQ.v); // if no target, then SI representation
 
 		const dimCheck = dimensionCorrection(iQ.v, tQ.v);
 		if (!dimCheck.ok) {
@@ -99,7 +99,7 @@ export function convert(input: string, target: string): Result {
 	}
 
 	function recursivelyCheckPrefixes(arr: NestedSequenceArray) {
-		for (let o of arr) {
+		for (const o of arr) {
 			if (o instanceof ExtUnit && typeof o.pref === 'object') {
 				const warning = checkPrefixWarning(o.pref, o.unit);
 				if (warning) warn(warning);
@@ -113,7 +113,7 @@ export function convert(input: string, target: string): Result {
 	function checkTargetNumbers(arr: NestedSequenceArray) {
 		// a single number is probably intentional, so don't emit warning
 		if (arr.length <= 1) return;
-		for (let o of arr) {
+		for (const o of arr) {
 			if (typeof o === 'number' && o !== 1) {
 				return warn(err('WARN_targetNumber'));
 			}
@@ -134,7 +134,7 @@ export const parseQ = (text: string): { q: Q | null; id?: string } => {
 		const q = reduceQ(nestedQ);
 
 		return { q, id };
-	} catch (err) {
+	} catch {
 		return { q: null };
 	}
 };

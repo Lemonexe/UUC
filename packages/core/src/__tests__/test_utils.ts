@@ -7,7 +7,7 @@ export const isEqApx = (arg1: number, arg2: number, tol: number): boolean => Mat
 // Own function to test if a function throws a UUCError with specific error code.
 // vitest expect().toThrowError() works, but needs an exact error message match, which is cumbersome here.
 // mocking the message with expect.any(String) unfortunately does not work in toThrowError!
-export const expectToBeErrorCode = (fn: () => any, code: ErrorCode) => {
+export const expectToBeErrorCode = (fn: () => void, code: ErrorCode) => {
 	try {
 		fn();
 	} catch (e) {
