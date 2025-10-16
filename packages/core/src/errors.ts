@@ -1,5 +1,5 @@
-import type { Lang, Prefix, Unit } from './types.js';
 import { cfg } from './config.js';
+import type { Lang, Prefix, Unit } from './types.js';
 
 export const errorMessages = {
 	// ERRORS 100
@@ -84,7 +84,7 @@ export const errorMessages = {
 		},
 		en: (unit: Unit, kind: '+' | '-' | 'none', pref: Prefix) => {
 			const map = { '+': 'decreasing', '-': 'increasing', none: 'any' };
-			return `WARNING 201: Unit ${unit.id} (${unit.name[cfg.lang]}) doesn\'t usually have ${map[kind]} prefixes, yet ${pref.id} identified`;
+			return `WARNING 201: Unit ${unit.id} (${unit.name[cfg.lang]}) doesn't usually have ${map[kind]} prefixes, yet ${pref.id} identified`;
 		},
 	},
 	WARN_target_dim_mismatch: {
@@ -131,6 +131,7 @@ export class UUCError extends Error {
 // TypeScript magic will enforce extra parameters, if the message is a fn.
 export const err = <C extends ErrorCode, M extends (typeof errorMessages)[C][Lang]>(
 	code: C,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	...args: M extends string ? [] : M extends (...args: any) => any ? Parameters<M> : never
 ): UUCError => {
 	const { lang } = cfg;

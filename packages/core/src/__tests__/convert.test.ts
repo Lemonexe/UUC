@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { ErrorCode } from '../errors.js';
 import { convert } from '../convert.js';
 import { csts } from '../data.js';
 import { isEqApx } from './test_utils.js';
+import type { ErrorCode } from '../errors.js';
 import type { Result } from '../types.js';
 
 // It expects a full conversion result with 'input' & 'target' strings, expected result number, numerical tolerance and optionally the expected warning.

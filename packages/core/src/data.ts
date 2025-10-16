@@ -1,5 +1,5 @@
-import type { CurrencyTemplate, Prefix, Unit, Unitfun } from './types.js';
 import { err } from './errors.js';
+import type { CurrencyTemplate, Prefix, Unit, Unitfun } from './types.js';
 
 export const csts = {
 	R: 8.3144598, // [J/K/mol]
@@ -156,7 +156,7 @@ export const units: Unit[] = [
 
 	{v: [-1,0,0,1,0,0,0,0], id: 'Oe', name: {cz: 'oersted', en: 'oersted'}, k:1000/(4*Math.PI), prefix: 'all'},
 
-	{v: [2,1,-3,0,0,0,0,0], id: 'hp', name: {cz: 'imperiální koňská síla', en: 'imperial horsepower'}, k:745.69987158227022},
+	{v: [2,1,-3,0,0,0,0,0], id: 'hp', name: {cz: 'imperiální koňská síla', en: 'imperial horsepower'}, k:745.6998715822702},
 
 	{v: [-1,1,-1,0,0,0,0,0], id: 'P', name: {cz: 'poise', en: 'poise'}, k:0.1, SI: true, prefix: 'all'},
 	{v: [2,0,-1,0,0,0,0,0], id: 'St', name: {cz: 'stokes', en: 'stokes'}, k:1e-4, SI: true, prefix: 'all'},

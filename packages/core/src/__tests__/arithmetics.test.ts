@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { add, checkZeros, divide, multiply, power, Q, subtract } from '../arithmetics.js';
-import type { V } from '../types.js';
+import { Q, add, checkZeros, divide, multiply, power, subtract } from '../arithmetics.js';
 import { expectToBeErrorCode } from './test_utils.js';
+import type { V } from '../types.js';
 
 describe('Q arithmetics', () => {
 	const q1 = new Q(4, [-1, 1, -2, 0, 0, 0, 0, 0]); // 4 N

@@ -1,6 +1,6 @@
 import { cfg } from './config.js';
-import { type V, Q } from './types.js';
 import { err } from './errors.js';
+import { Q, type V } from './types.js';
 
 export { Q } from './types.js';
 
