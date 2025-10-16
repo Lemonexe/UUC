@@ -1,8 +1,24 @@
 import { cfg } from './config.js';
 import { basicUnits, csts, currencies, units } from './data.js';
 import { type UUCError, err } from './errors.js';
-import type { FormatParams, OutputOK, Prefix, Unit, V } from './types.js';
+import type { FormatParams, Lang, OutputOK, Prefix, Unit, V } from './types.js';
 
+// Create a simple junction table that maps all possible matchable strings n:1 with the origin Unit reference.
+export type UnitIdMapItem = { id: string; ref: Unit };
+export const getUnitIdMap = (langs: readonly Lang[]): UnitIdMapItem[] => {
+	// Start with the main ids,
+	const unitIdMap = units.map((u: Unit) => ({ id: u.id, ref: u }));
+	// then push all aliases,
+	units.forEach((u) => u.alias && u.alias.forEach((a) => unitIdMap.push({ id: a, ref: u })));
+	// and push all names in the given language.
+	// This is why it has to be generated on the fly, because configured language can change during runtime...
+	langs.forEach((lang) => {
+		units.forEach((u) => unitIdMap.push({ id: u.name[lang], ref: u }));
+	});
+	return unitIdMap;
+};
+
+// Populate currency units into the units database, based on the response from currency API.
 export const populateCurrencies = (currenciesResponse: Record<string, number>) => {
 	if (!currenciesResponse.hasOwnProperty('USD')) throw new Error('No USD in currency response');
 	// because default base may be other currency, e.g. EUR, while UUC is USD-centric, so normalize all to USD

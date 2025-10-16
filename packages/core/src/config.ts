@@ -1,6 +1,7 @@
 // Persistent global config
 
-import type { Lang } from './types.js';
+export const langs = ['en', 'cz'] as const;
+type Lang = (typeof langs)[number]; // local-only duplicate of types.ts to avoid circular dependency
 
 export type Config = {
 	lang: Lang; // language code setting for messages and unit names

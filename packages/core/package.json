@@ -17,7 +17,7 @@
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src --fix --report-unused-disable-directives --max-warnings 0",
-    "get-conflicts": "echo TODO: get conflicts"
+    "check-conflicts": "npm run tsc && node dist/dev/checkUnitConflicts.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
