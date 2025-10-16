@@ -210,23 +210,11 @@ app.controller('ctrl', function($scope, $http, $timeout) {
 		$http.get('app/currencies.php').then(function(res) {
 			if(res.status !== 200) {return;}
 
-			const USDk = res.data.rates['USD']; //because default base is EUR while UUC is USD-centric
+			// NEW IMPLEMENTATION
+			// populateCurrencies(res.data.rates)
+
 			const timestamp = new Date(res.data.timestamp * 1000);
 			$scope.currencyTimestamp = timestamp.toLocaleDateString();
-
-			//fill values for all currencies
-			for(let c of Currencies) {
-				if(!res.data.rates.hasOwnProperty(c.id)) {continue;}
-				const k = USDk / res.data.rates[c.id];
-				const v = [0,0,0,0,0,0,0,1];
-				const newCurrUnit = {prefix: '+', ...c, k, v}
-				Units.push(newCurrUnit);
-			}
-
-			// special value for sat
-			const bitcoinUnit = Units.find(item => item.id === 'BTC');
-			const satoshiUnit = Currencies.find(item => item.id === 'SAT');
-			bitcoinUnit && Units.push({...bitcoinUnit, ...satoshiUnit, k: bitcoinUnit.k*csts.sat2btc});
 
 			//update help
 			$scope.databaseCount = Units.length;

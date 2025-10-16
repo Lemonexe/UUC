@@ -1,7 +1,26 @@
 import { cfg } from './config.js';
-import { basicUnits } from './data.js';
+import { basicUnits, csts, currencies, units } from './data.js';
 import { type UUCError, err } from './errors.js';
 import type { FormatParams, OutputOK, Prefix, Unit, V } from './types.js';
+
+export const populateCurrencies = (currenciesResponse: Record<string, number>) => {
+	if (!currenciesResponse.hasOwnProperty('USD')) throw new Error('No USD in currency response');
+	// because default base may be other currency, e.g. EUR, while UUC is USD-centric, so normalize all to USD
+	const USDk = currenciesResponse['USD'];
+
+	for (const c of currencies) {
+		if (!currenciesResponse.hasOwnProperty(c.id)) continue;
+		const k = USDk / currenciesResponse[c.id];
+		const v: V = [0, 0, 0, 0, 0, 0, 0, 1];
+		const newCurrUnit = { prefix: '+' as const, ...c, k, v };
+		units.push(newCurrUnit);
+	}
+
+	// special value for sat
+	const bitcoinUnit = units.find((item) => item.id === 'BTC');
+	const satoshiUnit = currencies.find((item) => item.id === 'SAT');
+	bitcoinUnit && units.push({ ...bitcoinUnit, ...satoshiUnit, k: bitcoinUnit.k * csts.sat2btc });
+};
 
 // Beautify the input string by balancing brackets.
 // Not as thorough as syntaxCheck in convert_parse.

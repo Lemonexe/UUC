@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { convert } from '../convert.js';
 import { csts } from '../data.js';
+import { populateCurrencies } from '../utils.js';
 import { isEqApx } from './test_utils.js';
 import type { ErrorCode } from '../errors.js';
 import type { Result } from '../types.js';
@@ -50,9 +51,6 @@ describe('Full conversion', () => {
 	fullTest('8 Mt/yr / (900 kg/m3)', 'kbbl/d', 153.07481, 1e-3);
 	fullTest('Da', 'u', 1, 1e-6); // aliases
 	fullTest('watt', 'kg*m2/s3', 1, 1e-6); // display names
-
-	// TODO solve initialization of currencies in core, not in frontend!!!
-	// fullTest('bitcoin', 'sat', 1e8, 1e-6); // display names
 	fullTest('Nm3', 'Ncm', 1, 1e-6);
 	fullTest('Mpa*PPM', '', 1, 1e-3); // case-sensitive leniency
 	fullTest('{5°C}', 'K', csts.TC0 + 5, 1e-6);
@@ -84,4 +82,13 @@ describe('Full conversion error', () => {
 	fullTestErr('kJ', '{°C}', 'ERR_cbrackets_dim_mismatch');
 	fullTestErr('(-1)^(.5)', '', 'ERR_NaN_result');
 	fullTestErr('{ln (-1)}', '', 'ERR_NaN_result');
+});
+
+describe('Full conversion with currencies', () => {
+	const apiResponse = { USD: 1.5, EUR: 1, CZK: 26, BTC: 21e-6 };
+	populateCurrencies(apiResponse);
+	fullTest('bitcoin', 'sat', 1e8, 1e-6); // with display names
+	fullTest('$', '€', 1 / 1.5, 1e-6);
+	fullTest('Kč/kg', '$/t', (1.5 / 26) * 1000, 1e-3);
+	fullTest('btc', 'eur', 1e6 / 21, 1e-3);
 });
