@@ -1,5 +1,5 @@
 import { cfg } from './config.js';
-import type { Lang, Prefix, Unit } from './types.js';
+import type { Lang, Prefix, Unit } from './types.js'; // circular dependency, but type only, no runtime issue, see `npx madge --circular --extensions js dist`
 
 export const errorMessages = {
 	// ERRORS 100
