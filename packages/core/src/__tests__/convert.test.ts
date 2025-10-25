@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { setUUCLang } from '../config.js';
 import { convert } from '../convert.js';
 import { csts } from '../data.js';
 import { populateCurrencies } from '../utils.js';
 import { isEqApx } from './test_utils.js';
 import type { ErrorCode } from '../errors.js';
 import type { Result } from '../types.js';
+
+setUUCLang('en');
 
 // It expects a full conversion result with 'input' & 'target' strings, expected result number, numerical tolerance and optionally the expected warning.
 const fullTest = (input: string, target: string, expectNum: number, tol: number, expectWarn?: ErrorCode) =>
@@ -51,7 +54,7 @@ describe('Full conversion', () => {
 	fullTest('8 Mt/yr / (900 kg/m3)', 'kbbl/d', 153.07481, 1e-3);
 	fullTest('Da', 'u', 1, 1e-6); // aliases
 	fullTest('watt', 'kg*m2/s3', 1, 1e-6); // display names
-	fullTest('Nm3', 'Ncm', 1, 1e-6);
+	fullTest('Nm3', 'Ncm', 1, 1e-6); // aliases
 	fullTest('Mpa*PPM', '', 1, 1e-3); // case-sensitive leniency
 	fullTest('{5°C}', 'K', csts.TC0 + 5, 1e-6);
 	fullTest('{5 °C}', 'K', csts.TC0 + 5, 1e-6);

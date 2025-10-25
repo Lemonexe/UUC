@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { dimensionCorrection, format, vector2text } from '../utils.js';
+import { basicUnits, prefixes } from '../data.js';
+import { balanceBrackets, checkPrefixWarning, dimensionCorrection, format, vector2text } from '../utils.js';
 import type { V } from '../types.js';
+
+describe(balanceBrackets.name, () => {
+	it('returns the same string if brackets are balanced or cannot be balanced', () => {
+		expect(balanceBrackets(' m/ s )')).toBe('m/ s )');
+		expect(balanceBrackets('((kg*m)/(s^2))')).toBe('((kg*m)/(s^2))');
+	});
+	it('balances unbalanced opening brackets', () => {
+		expect(balanceBrackets('( m / s ')).toBe('( m / s)');
+		expect(balanceBrackets('((kg*m)/(s^2)')).toBe('((kg*m)/(s^2))');
+	});
+});
 
 describe(vector2text.name, () => {
 	it('converts a simple vector to text', () => {
@@ -47,7 +59,7 @@ describe(format.name, () => {
 	});
 });
 
-describe('dimensionCorrection', () => {
+describe(dimensionCorrection.name, () => {
 	it('returns ok for identical vectors (with tolerance)', () => {
 		// prettier-ignore
 		const v1: V = [1,      1, -3-9e-9, 0, -1, 0, 0, 7e-7];
@@ -65,5 +77,32 @@ describe('dimensionCorrection', () => {
 		expect(result.ok).toBe(false);
 		expect(result.corr).toEqual([0, 0, -1, 0, 1, 1, 0, 0]);
 		expect(result.faults).toEqual(['s', 'K', 'mol']);
+	});
+});
+
+describe(checkPrefixWarning.name, () => {
+	const mega = prefixes.find(({ id }) => id === 'M')!;
+	const nano = prefixes.find(({ id }) => id === 'n')!;
+	const m_all = basicUnits.find(({ id }) => id === 'm')!;
+	const USD_plus = basicUnits.find(({ id }) => id === 'USD')!;
+	const s_minus = basicUnits.find(({ id }) => id === 's')!;
+	const kg_none = basicUnits.find(({ id }) => id === 'kg')!;
+
+	it('returns undefined for allowed combinations', () => {
+		expect(checkPrefixWarning(mega, m_all)).toBeUndefined();
+		expect(checkPrefixWarning(nano, m_all)).toBeUndefined();
+		expect(checkPrefixWarning(mega, USD_plus)).toBeUndefined();
+		expect(checkPrefixWarning(nano, s_minus)).toBeUndefined();
+	});
+
+	it('returns UUC_Error 201 for disallowed combinations', () => {
+		const expect201 = (e: ReturnType<typeof checkPrefixWarning>) => {
+			expect(e).toBeDefined();
+			expect(e!.code).toBe('WARN_prefixes');
+		};
+		expect201(checkPrefixWarning(mega, kg_none));
+		expect201(checkPrefixWarning(nano, kg_none));
+		expect201(checkPrefixWarning(mega, s_minus));
+		expect201(checkPrefixWarning(nano, USD_plus));
 	});
 });
