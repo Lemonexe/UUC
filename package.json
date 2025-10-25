@@ -1,29 +1,29 @@
 {
-  "name": "uuc",
-  "description": "Ultimate Unit Converter, a useful tool for science and engineering",
-  "homepage": "https://github.com/Lemonexe/UUC#readme",
-  "author": "Jiri Zbytovsky",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Lemonexe/UUC.git"
-  },
-  "engines": {
-    "npm": ">=11.0.0",
-    "node": ">=22.0.0"
-  },
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "frontend": "npm -w=frontend run start",
-    "currencies": "cd packages/currencies && php -S localhost:3001",
-    "build": "npm -w=frontend run build",
-    "test": "npm -w=uuc-core run test"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "eslint-plugin-import": "^2.32.0",
-    "typescript-eslint": "^8.41.0"
-  }
+	"name": "uuc",
+	"description": "Ultimate Unit Converter, a useful tool for science and engineering",
+	"homepage": "https://github.com/Lemonexe/UUC#readme",
+	"author": "Jiri Zbytovsky",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Lemonexe/UUC.git"
+	},
+	"engines": {
+		"npm": ">=11.0.0",
+		"node": ">=22.0.0"
+	},
+	"workspaces": [
+		"packages/*"
+	],
+	"scripts": {
+		"frontend": "npm -w=frontend run start",
+		"currencies": "cd packages/currencies && php -S localhost:3001",
+		"build": "npm -w=frontend run build",
+		"test": "npm -w=uuc-core run test"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.34.0",
+		"eslint-plugin-import": "^2.32.0",
+		"typescript-eslint": "^8.41.0"
+	}
 }

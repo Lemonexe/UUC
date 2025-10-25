@@ -1,31 +1,31 @@
 {
-  "name": "uuc-core",
-  "version": "0.1.0",
-  "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "scripts": {
-    "test": "vitest run",
-    "tsc": "tsc && rimraf dist/__tests__",
-    "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint src --fix --report-unused-disable-directives --max-warnings 0",
-    "check-conflicts": "npm run tsc && node dist/dev/checkUnitConflicts.js"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "eslint": "^9.34.0",
-    "prettier": "^3.6.2",
-    "rimraf": "^6.0.1",
-    "typescript": "^5.9.2",
-    "typescript-eslint": "^8.41.0",
-    "vitest": "^3.2.4"
-  }
+	"name": "uuc-core",
+	"version": "0.1.0",
+	"type": "module",
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"scripts": {
+		"test": "vitest run",
+		"tsc": "tsc && rimraf dist/__tests__",
+		"prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+		"lint": "eslint src --report-unused-disable-directives --max-warnings 0",
+		"lint:fix": "eslint src --fix --report-unused-disable-directives --max-warnings 0",
+		"check-conflicts": "npm run tsc && node dist/dev/checkUnitConflicts.js"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.34.0",
+		"eslint": "^9.34.0",
+		"prettier": "^3.6.2",
+		"rimraf": "^6.0.1",
+		"typescript": "^5.9.2",
+		"typescript-eslint": "^8.41.0",
+		"vitest": "^3.2.4"
+	}
 }
