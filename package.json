@@ -1,5 +1,6 @@
 {
 	"name": "uuc",
+	"type": "module",
 	"description": "Ultimate Unit Converter, a useful tool for science and engineering",
 	"homepage": "https://github.com/Lemonexe/UUC#readme",
 	"author": "Jiri Zbytovsky",
@@ -10,7 +11,7 @@
 	},
 	"engines": {
 		"npm": ">=11.0.0",
-		"node": ">=22.0.0"
+		"node": ">=24.0.0"
 	},
 	"workspaces": [
 		"packages/*"
@@ -22,8 +23,8 @@
 		"test": "npm -w=uuc-core run test"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.34.0",
+		"@eslint/js": "^9.38.0",
 		"eslint-plugin-import": "^2.32.0",
-		"typescript-eslint": "^8.41.0"
+		"typescript-eslint": "^8.46.2"
 	}
 }

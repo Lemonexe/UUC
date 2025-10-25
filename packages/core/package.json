@@ -20,12 +20,12 @@
 		"check-conflicts": "npm run tsc && node dist/dev/checkUnitConflicts.js"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.34.0",
-		"eslint": "^9.34.0",
+		"@eslint/js": "^9.38.0",
+		"eslint": "^9.38.0",
 		"prettier": "^3.6.2",
 		"rimraf": "^6.0.1",
-		"typescript": "^5.9.2",
-		"typescript-eslint": "^8.41.0",
-		"vitest": "^3.2.4"
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.46.2",
+		"vitest": "^4.0.3"
 	}
 }
