@@ -6,11 +6,14 @@
 	"scripts": {
 		"dev": "vite",
 		"start": "vite",
-		"build": "tsc -b && vite build",
+		"build": "vite build && npm run build:api",
+		"build:api": "mkdir ./dist/api && cp ../currencies/currencies.php ./dist/api/ && cp ../currencies/API_key ./dist/api/",
+		"test": "vitest run",
 		"tsc": "tsc",
 		"prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
 		"lint": "eslint src --report-unused-disable-directives --max-warnings 0",
-		"lint:fix": "eslint src --fix --report-unused-disable-directives --max-warnings 0"
+		"lint:fix": "eslint src --fix --report-unused-disable-directives --max-warnings 0",
+		"validate": "npm run lint:fix && npm run prettier && npm run tsc && npm run test"
 	},
 	"dependencies": {
 		"react": "^19.2.0",
