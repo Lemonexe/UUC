@@ -7,7 +7,7 @@ Currencies backend API is consumed to populate currency units with their exchang
 Some data is persisted in local storage, namely the form state and the conversion history.  
 On initial load the app tries to parse a conversion command from hash, which can be used to share a conversion via link, or to bind UUC as a custom search engine.
 
-[Click here](http://jira.zby.cz/content/UUC/) for live application.
+[Click here](https://jira.zby.cz/content/UUC/) for live application.
 
 ## Setup
 
@@ -16,6 +16,7 @@ All commands are to be run in repository root.
 ```bash
 nvm install # or manually install nodeJS version as per the file .nvmrc
 npm i
+npm run build:core # internal dependency of Frontend
 ```
 
 ## Build

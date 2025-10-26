@@ -7,6 +7,7 @@ export default defineConfig({
 	base: './',
 	plugins: [react({ compiler: { reactCompiler: true } })],
 	build: {
+		target: 'baseline-widely-available', // the default
 		outDir: '../dist', // it is relative to root
 		emptyOutDir: true,
 	},

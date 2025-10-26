@@ -27,6 +27,9 @@ export default [
 					alphabetize: { order: 'asc' },
 				},
 			],
+
+			// I love this pattern dearly <3
+			'@typescript-eslint/no-unused-expressions': 'off',
 		},
 	},
 ];
