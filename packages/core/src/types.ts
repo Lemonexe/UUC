@@ -76,6 +76,14 @@ export class Q {
 	) {}
 }
 
+/*
+An expression with physical quantities can be represented by four kinds of data type:
+1. `string`: raw input/target text that is parsed, as well as final output stringified & formatted
+2. `NestedRichArray`: a deep nested array with numbers, operators, `ExtUnit` instances and arrays for bracket expressions
+3. `NestedQArray`: a NestedRichArray where all numbers and units were converted into `Q` instances
+4. `Q`: the whole expression is reduced into a single `Q` instance (enumerated and with final dimension)
+*/
+
 // Nested structure of sequence of numbers, units and operators, where a deeper level means a bracketed section.
 export type NestedRichArray = Array<number | ExtUnit | Operator | NestedRichArray>;
 

@@ -1,58 +1,104 @@
 # UUC Core library
 
-The core library contains the logic for parsing, converting and unit definitions.
-It was created mainly for the UUC Frontend app, but is also available as a standalone library at npm.
-is written in TypeScript and can be transpiled to Javascript.
-Only distributed as ESM.
+TODO npm badge
 
-## Usage
+The core library contains the logic for parsing, converting and unit definitions.
+It was created mainly for the [UUC Frontend app](../frontend/README.md), but is also available as a standalone library at npm.
+It is written in TypeScript, and is only distributed as ESM.
+
+This page documents the _usage_ of the library for end users, as distributed via npm.  
+If you wish to take part of the library development _(or fork it)_, please see [local dev setup instructions](./CONTRIBUTING.md).
+
+## Documentation basics
+
+This guide assumes that you are a user of the UUC App ([live here](http://jira.zby.cz/content/UUC/)), and are familiar with its features.  
+If not, please go through the Tutorial there, which will demonstrate typical use cases, i.e. what a typical conversion job looks like.  
+For implementation details, refer to [the source code](./src), particularly the TypeScript declarations and unit tests.
+
+### Installation
+
 TODO
 
-Note that languages are built-in to UUC.
-Currently only English (default) and Czech are supported.
-You may switch there and back any time during runtime:
+Install via npm or an alternative package manager of your choice:
+```bash
+npm install uuc-core
+```
+
+### Initialization
+
+All functions are pure and stateless, so you may import and use them right away.  
+Though if you wish to use currency units, initialize them first with an object of exchange rates to any base currency (see [Currencies backend](../currencies/README.md)):
+```javascript
+import { populateCurrencies } from 'uuc-core'
+populateCurrencies({ USD: 1.5, EUR: 1, CZK: 26, BTC: 21e-6 }) // any subset of available currencies may be populated, others will stay undefined
+```
+
+### Full conversion
+
+Standard use case: conversion from an input string, optionally a target string, into an output string, result status and possibly messages.  
+Status 0 means OK, 1 means warning, 2 means critical error.
 
 ```javascript
-import { setLang } from 'uuc-core';
+import { convert } from 'uuc-core'
+convert('7 min', '') // → { status: 0, output: { num: 420, dim: 's' }, messages: [] }
+convert('km / 5min', 'km/h') // → { status: 0, output: { num: 12, dim: 'km/h' }, messages: [] }
+convert('m3', 'm2') // → { status: 1, output: { num: 1, dim: 'm2*m' }, messages: [UUCError: WARNING 202] }
+convert('m*', '') // → { status: 2, output: null, messages: [UUCError: ERROR 107] }
+```
+
+### Formatting
+
+The `output` from `convert` result can be formatted:
+
+```javascript
+import { format } from 'uuc-core'
+format({ num: 1234.567, dim: 'm' }, { spec: 'fixed', fixed: 2 }) // → { num: '1234.57', dim: 'm' }
+format({ num: 1234.567, dim: 'm' }, { spec: 'digits', digits: 3 }) // → { num: '1230', dim: 'm' }
+format({ num: 1234.567, dim: 'm' }, { spec: 'none', exp: true }) // → { num: '1.234567e+3', dim: 'm' }
+format({ num: 1234.567, dim: 'm' }, { spec: 'fixed', fixed: 2, exp: true }) // → { num: '1.23e+3', dim: 'm' }
+format({ num: 1234.567, dim: 'm' }, { spec: 'digits', digits: 5, exp: true }) // → { num: '1.2346e+3', dim: 'm' }
+```
+
+### Languages
+
+Note that languages are built-in to UUC, so that the parser can match a unit by its display name in the selected language.
+Currently only English (default) and Czech are supported.  
+The current setting is globally persisted in UUC and you may switch there and back any time during runtime:
+
+```javascript
+import { setLang } from 'uuc-core'
 setLang('cz')
-```
-Q: Why are language localizations part of the core library, shouldn't we do translate strings outside via a translation library of choice?  
-A: The parser has a feature that it can match a unit by its display name. So the unit database bears all translated strings and the core has to keep the state of language selection.
-
-## Setup
-
-See [Common setup](../../README.md#common-setup).
-
-## Build
-
-The library can be imported directly as `.ts`, or you may build it to `.js` and `.d.ts` files with:
-```bash
-tsc
+setLang('en')
 ```
 
-## Development
+## Details
 
-Standard commands:
-```bash
-npm -w=uuc-core run test
-npm -w=uuc-core run lint
-npm -w=uuc-core run prettier
-```
+### Data representation & primitives
 
-You can use `npm -w=uuc-core run get-conflicts` to detect possible `id` conflicts with prefixes.
+An expression with physical quantities can be represented by four kinds of data type:
+1. `string`: raw input/target text that is parsed, as well as final output stringified & formatted
+2. `NestedRichArray`: a deep nested array with numbers, operators, `ExtUnit` instances and deeper arrays for bracket or curly bracket expressions
+3. `NestedQArray`: a deep nested array where all numbers and `ExtUnit`s were converted into `Q` instances, and curly bracket arrays were already resolved to `Q` instances
+4. Single `Q` instance: the whole expression is reduced into a one `Q` (enumerated and with final dimension)
 
-## Files
+- `Unit`: a unit definition from the database, most importantly with `id`, the SI conversion ratio `k`, and the dimension vector `v`
+- `Prefix`: an SI unit prefix with `id` and the exponent factor `e`
+- `V`: the vector of powers of basic units to form a particular dimension of physical quantity as [m, kg, s, A, K, mol, cd, $]
+- `Q`: a physical quantity represented by the numerical value in SI units `n` and its dimension vector `v`
+- `ExtUnit`: includes the `Prefix` (or 1 if none), reference to `Unit` definition and power
 
-**src/convert.js** defines the `Convert()` function, constructor for an object that acts as the application Model and contains all the main code related to `Q` arithmetic, unit conversion itself and subsequent calculations.
+### Low-level functions
 
-**src/convert_parse.js** defines the `Convert_parse()` function, which parses an input string into a detailed nested structure, which represents a mathematical expression with unit objects and numbers.
+- `convert_parse` parses an input `string` into a `NestedRichArray`
+- `reduceQ` recursively crawls through `NestedRichArray` to transform it to `NestedQArray`
+- `recursivelyQ` recursively crawls through `NestedQArray` to reduce it into a single `Q` instance
+- `parseQ` parses one string to a Q instance, and if it was a single unit, its id (useful for filtering units in reference)
+- `add, subtract, multiply, divide, power`: basic arithmetic operations on `Q` instances
+- `vector2text` converts unit vector `v` into its `string` representation
+and others...
 
-**src/data.js** contains all program data, which is divided into these objects:  
-`csts` contains application constants  
-`Units` is the unit database itself  
-`Prefixes` defines standard SI prefixes  
-`Currency` contains empty objects for currency units (to be filled with current values and merged with `Units`)  
-`Unitfuns` defines the special {substitution functions}
+### Errors
 
-**src/tests.js** defines the `tests()` function, which contains a DIY test infrastructure, and of course the unit tests themselves.
-Only the application model is considered complicated enough to deserve the luxury of test coverage.
+Exceptions as well as warnings are represented by the [UUCError](./src/errors.ts).
+Refer to its source code for all possible error/warning codes.
+The main `convert` function catches errors and includes them in status and messages, but lower-level function will throw them.

@@ -78,10 +78,7 @@ export const format = (output: OutputOK | null, params: FormatParams): OutputOK 
 	return { num, dim };
 };
 
-/**
- * Converts unit vector 'v' into its text representation, which is parsable again as an input expression.
- * @param v vector to convert
- */
+// Converts unit vector `v` into its text representation, which is parsable again as an input expression.
 export const vector2text = (v: V): string => {
 	let text = '1'; // expression will start 1*m or 1/m
 
