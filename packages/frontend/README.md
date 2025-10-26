@@ -1,6 +1,8 @@
 # UUC Frontend
 
-**TEMPORARY**, will be rewritten to React https://github.com/Lemonexe/UUC/issues/6
+[Click here](http://jira.zby.cz/content/UUC/) for live application.
+
+**TODO TEMPORARY**, will be rewritten to React https://github.com/Lemonexe/UUC/issues/6
 
 The front-end is written in ECMA6 Javascript and uses [AngularJS 1.7](https://angularjs.org/) framework.
 Almost whole HTML GUI is in **index.php**, except for the tutorial window, which is in *res/tutorial.html*.
@@ -9,18 +11,25 @@ All static CSS is stored in **app/style.css**, plus there are several ng-style d
 
 ## Setup
 
-See [Common setup](../../README.md#common-setup).
+All commands are to be run in repository root.
+
+```bash
+nvm install # or manually install nodeJS version as per the file .nvmrc
+npm i
+```
 
 ## Build
 
+Bundle the Frontend app using vite, including the Currencies PHP files, into `packages/frontend/dist` folder:
 ```bash
-npm run build
+npm run build:frontend
 ```
 
 ## Run
 
 ### Development
 
+Run the _optional_ Currencies backend and the Frontend vite dev server in separate sessions:
 ```bash
 npm run currencies
 npm run frontend
@@ -28,13 +37,14 @@ npm run frontend
 
 ### Production
 
-**TODO** script to make `dist` folder for convenience.
+**TODO** script to include currencies into `dist` folder for convenience.
+
 Deploy `dist` folder on a PHP server.
 
 ⚠️ Make sure to block the `API_key` file from public access, for example via `.htaccess` if using Apache.
 
 
-## Files
+## Files TODO delet this
 
 **src/angular.min.js**, the sole dependency of this project. Application was developed with AngularJS v1.7.6.
 

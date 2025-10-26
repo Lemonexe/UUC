@@ -19,7 +19,8 @@
 	"scripts": {
 		"frontend": "npm -w=frontend run start",
 		"currencies": "cd packages/currencies && php -S localhost:3001",
-		"build": "npm -w=frontend run build",
+		"build:frontend": "npm -w=frontend run build",
+		"build:core": "npm -w=uuc-core run tsc",
 		"test": "npm -w=uuc-core run test"
 	},
 	"devDependencies": {

@@ -5,18 +5,6 @@ import { processCurly, recursivelyQ, reduceQ } from './reduceQ.js';
 import { ExtUnit, type NestedRichArray, type OutputOK, type Result, type Status } from './types.js';
 import { balanceBrackets, checkPrefixWarning, dimensionCorrection, vector2text } from './utils.js';
 
-/*
-	convert.js
-	contains the convert object constructor
-	which does all of the heavy lifting except for parsing input strings (see convert_parse.js)
-
-	an expression can be represented by four kinds of data type:
-		1. text representation that is parsed from input and then recreated in the end
-		2. detailed nested object - an array with numbers, operators, Unit() instances and arrays for bracket expressions
-		3. nested Q object - where all numbers and units were converted into Q() instances
-		4. single Q() instance - enumerated expression with numeric value and dimension
-*/
-
 /**
  * THE MAIN FUNCTION - does a full conversion between input string and target string and return an output object.
  */

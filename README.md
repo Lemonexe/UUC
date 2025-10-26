@@ -2,6 +2,8 @@
 Ultimate Unit Converter, a useful tool for science and engineering.  
 [Click here](http://jira.zby.cz/content/UUC/) for live application.
 
+TODO npm badge
+
 You can find a lot of unit converters on the internet, so what makes this one stand out?
 Well, most online converters are limited only to conversion within predefined categories within a dimension.
 But what if you need to convert a complex unit, composed as a product of various units with different powers e.g. Btu/°F/lb → kJ/K/kg?
@@ -14,19 +16,12 @@ In fact, it can even perform simple calculations with automatic conversion and d
 
 _Contains:_ an abundance of units, including up-to-date world currencies as well as everlasting physical constants, an easy-to-use web interface, an interactive tutorial with examples and full coverage in English & Czech language ✨
 
-## Packages
+## Structure
 
 UUC is a monorepo of three packages:
 - [Core library](packages/core/README.md) – the core functionality, published at npm as a standalone library
 - [Frontend](packages/frontend/README.md) – the AngularJS web application providing the user interface
 - [Currencies](packages/currencies/README.md) – the currency exchange caching, which is used by the frontend
-
-### Common dev setup
- 
-```bash
-nvm install
-npm i
-```
 
 ## Philosophy
 
@@ -56,6 +51,6 @@ The above described procedure is so generalized and universal, it can handle any
 Non-linear units such as °C, °F are a simple problem with a complicated solution:
 in input, the {substitution functions} behave partially like (parentheses), but they are resolved by special functions that bypass parts of the main procedure.
 Moreover, this approach loses its original symmetry, as the whole procedure has to be bypassed when {} is used in target units.
- 
+
 And that's all – that's the spirit of UUC.
 Deeper insight can be gained by studying the [core package](packages/core) codebase.
