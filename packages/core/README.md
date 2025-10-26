@@ -11,7 +11,7 @@ If you wish to take part of the library development _(or fork it)_, please see [
 
 ## Documentation basics
 
-This guide assumes that you are a user of the UUC App ([live here](http://jira.zby.cz/content/UUC/)), and are familiar with its features.  
+This guide assumes that you are a user of the UUC App ([live here](https://jira.zby.cz/content/UUC/)), and are familiar with its features.  
 If not, please go through the Tutorial there, which will demonstrate typical use cases, i.e. what a typical conversion job looks like.  
 For implementation details, refer to [the source code](./src), particularly the TypeScript declarations and unit tests.
 

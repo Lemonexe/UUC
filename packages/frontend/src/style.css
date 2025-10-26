@@ -75,6 +75,9 @@ body {
 	font-weight: bold;
 	cursor: pointer;
 }
+.activeTab {
+    border-bottom: 3px solid var(--border);
+}
 
 #lang {
 	z-index: 8;
@@ -118,6 +121,13 @@ body {
 	height: 17px; /* empirical to match textinput with .inputBox */
 	border: 1px solid var(--border);
 	margin-right: -2px; /* because of Ctrl+C icon */
+}
+.flipButton {
+    position: absolute;
+    left: 365px;
+    top: 50px;
+    font-size: 18px;
+    cursor: pointer;
 }
 #inputAutocomplete {
 	width: 20px; height: 27px; /* empirical to match textinput with .inputBox */
@@ -168,6 +178,7 @@ body {
 	z-index: 10;
 	background-color: white;
 	border: 1px solid var(--border);
+    width: 600px;
 }
 #tutorialBar {
 	width: 100%;
@@ -175,7 +186,6 @@ body {
 	border-bottom: 1px solid var(--border);
 	text-align: center;
 	height: 21px;
-	cursor: move;
 }
 .tutorialSection {
 	padding: 12px;
@@ -190,8 +200,13 @@ body {
 	border: 1px solid var(--border);
 	background-color: rgba(250, 250, 250, 0.9);
 	padding: 8px;
+    min-width: 250px;
 }
-.copyEffStatic {color: green; opacity: 0;}
+.copyEffStatic {
+    color: green;
+    opacity: 0;
+    padding-left: 8px;
+}
 .copyEffect {
 	animation-name: flick;
 	animation-timing-function: linear;

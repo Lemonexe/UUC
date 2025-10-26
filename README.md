@@ -1,6 +1,6 @@
 # UUC
 Ultimate Unit Converter, a useful tool for science and engineering.  
-[Click here](http://jira.zby.cz/content/UUC/) for live application.
+[Click here](https://jira.zby.cz/content/UUC/) for live application.
 
 TODO npm badge
 

@@ -1,11 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { App } from './App';
+import { loadAndInit } from './state';
 
-import { App } from './App.tsx';
+import './style.css';
 
-fetch('./api/currencies.php').then((res) => {
-	res.json().then(console.log);
-});
+// ensure ps is loaded or constructed, so that React state can be initialized from its values
+loadAndInit();
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>

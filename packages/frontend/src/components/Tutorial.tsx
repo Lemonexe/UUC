@@ -1,0 +1,783 @@
+import { prefixes } from 'uuc-core';
+import { Cz, En } from '../lang';
+import {
+	type ExId,
+	type Step,
+	type StepId,
+	type StepProps,
+	type TutorialState,
+	examples,
+	steps,
+} from './tutorialConfig';
+import type { FullConversion, Route } from '../types';
+import type { Dispatch, FC, SetStateAction } from 'react';
+
+type TutorialProps = {
+	state: TutorialState;
+	setState: Dispatch<SetStateAction<TutorialState | null>>;
+	navigate: Dispatch<Route>;
+	setInput: Dispatch<string>;
+	setTarget: Dispatch<string>;
+	fullConversion: FullConversion;
+};
+
+const stepComponentMap: Record<StepId, FC<StepProps>> = {
+	intro: Intro,
+	reference: Reference,
+	dimAnalysis: DimAnalysis,
+	features: Features,
+	examples: Examples,
+	temperature: Temperature,
+	conclusion: Conclusion,
+};
+
+export const Tutorial = ({ state, setState, navigate, setInput, setTarget, fullConversion }: TutorialProps) => {
+	const { top, left } = steps[state.id];
+	const StepComponent = stepComponentMap[state.id];
+
+	const keys = Object.keys(steps);
+	const stepsTotal = keys.length;
+	const stepIndex = keys.indexOf(state.id);
+	const nextStepId = keys[stepIndex + 1] as StepId;
+	const goToNextStep = () => {
+		const step: Step = steps[nextStepId];
+		setState((prev) => ({ ...prev, id: nextStepId }));
+		step.route && navigate(step.route!);
+	};
+	const closeTutorial = () => setState(null);
+
+	const ex = (exId: ExId) => {
+		const { input, target } = examples[exId];
+		setInput(input);
+		setTarget(target);
+		fullConversion(input, target);
+	};
+
+	return (
+		<div id="tutorial" style={{ top, left }}>
+			<div id="tutorialBar">
+				{state.onlyExamples ? '' : `${stepIndex + 1}/${stepsTotal}`}
+				<input type="button" className="Xbutton" value="✕" onClick={closeTutorial} />
+			</div>
+			<div className="tutorialSection">
+				<StepComponent
+					navigate={navigate}
+					goToNextStep={goToNextStep}
+					closeTutorial={closeTutorial}
+					ex={ex}
+					onlyExamples={state.onlyExamples}
+				/>
+			</div>
+		</div>
+	);
+};
+
+const prefixText = prefixes.map((o) => `${o.id} (${o.e})`).join(', '); // printed list of all available SI prefixes
+
+const NextButton = ({ onClick }: { onClick: () => void }) => (
+	<button onClick={onClick} className="bigButton">
+		<Cz>Dále</Cz>
+		<En>Next</En>
+	</button>
+);
+const CloseButton = ({ onClick }: { onClick: () => void }) => (
+	<button onClick={onClick} className="bigButton">
+		<Cz>Zavřít</Cz>
+		<En>Close</En>
+	</button>
+);
+
+function Intro({ goToNextStep, ex }: StepProps) {
+	return (
+		<>
+			<Cz>
+				<p>
+					Právě se nacházíme v hlavní části UUC – záložce Převodník.
+					<br />
+					Zde můžete napsat výraz do textového pole Vstup a stisknout tlačítko Převést nebo klávesu Enter:{' '}
+					<a className="fakeLink" onClick={() => ex('SI')}>
+						příklad
+					</a>
+				</p>
+				<p>
+					Převod takto proběhne do základních jednotek SI, můžete však vyplnit textové pole Cílové jednotky
+					pro určení výstupních jednotek:{' '}
+					<a className="fakeLink" onClick={() => ex('simple')}>
+						příklad
+					</a>
+				</p>
+				<p>Jak je vidět, při převodu můžete (avšak nemusíte) specifikovat číslo.</p>
+				<p>
+					Mějte na paměti že jednotky jsou dle konvencí citlivé na VELIKOST PÍSMEN!
+					<br />
+					UUC se snaží porozumět i jinému zápisu:{' '}
+					<a className="fakeLink" onClick={() => ex('wrongCase')}>
+						příklad
+					</a>
+					, ale nemusí to fungovat vždy..
+				</p>
+			</Cz>
+			<En>
+				<p>
+					Currently we are in the main part of UUC – the Converter tab.
+					<br />
+					Here you can enter an expression into the Input text field and press the Convert button or Enter
+					key:{' '}
+					<a className="fakeLink" onClick={() => ex('SI')}>
+						example
+					</a>
+				</p>
+				<p>
+					Input will be converted into basic SI units by default, but you can fill out the Target units text
+					field in order to specify the output units:{' '}
+					<a className="fakeLink" onClick={() => ex('simple')}>
+						example
+					</a>
+				</p>
+				<p>As you can see, you may (but needn&apos;t) specify a number in the conversion.</p>
+				<p>
+					Bear in mind, that units are by convention case-SENSITIVE!
+					<br />
+					UUC tries to understand a different case:{' '}
+					<a className="fakeLink" onClick={() => ex('wrongCase')}>
+						example
+					</a>
+					, but it may not always work..
+				</p>
+			</En>
+			<NextButton onClick={goToNextStep} />
+		</>
+	);
+}
+
+function Reference({ goToNextStep }: StepProps) {
+	return (
+		<>
+			<Cz>
+				<p>V záložce Reference naleznete vyčerpávající seznam všech jednotek.</p>
+				<p>
+					Pro snažší vyhledávání lze seznam filtrovat pomocí rozměru 🔍
+					<br />
+					Do pole napište jednotku (např. kJ), výraz (N/m2) nebo název (dolar).
+				</p>
+				<p>
+					Ano, UUC obsahuje také většinu důležitých světových měn! 💰
+					<br />
+					Jejich směnné kurzy jsou aktualizovány každý den pomocí tohoto{' '}
+					<a target="_blank" href="https://fixer.io/" rel="noreferrer">
+						API
+					</a>
+					.
+				</p>
+				<p>
+					Jednotky lze použít se standardními předponami SI (v závorce exponenty):
+					<br />
+					{prefixText}
+				</p>
+			</Cz>
+			<En>
+				<p>In the Reference tab you&apos;ll find a comprehensive list of all units.</p>
+				<p>
+					To make things easier, you can filter the list by specifying a dimension 🔍
+					<br />
+					Enter a unit (kJ), expression (N/m2) or name (e.g. dollar) in the field.
+				</p>
+				<p>
+					Yes, UUC also contains the most important world currencies! 💰
+					<br />
+					Their exchange rates are updated daily using this public{' '}
+					<a target="_blank" href="https://fixer.io/" rel="noreferrer">
+						API
+					</a>
+					.
+				</p>
+				<p>
+					Units can be used with standard SI prefixes (exponents in brackets):
+					<br />
+					{prefixText}
+				</p>
+			</En>
+			<NextButton onClick={goToNextStep} />
+		</>
+	);
+}
+
+function DimAnalysis({ goToNextStep, ex }: StepProps) {
+	return (
+		<>
+			<Cz>
+				<p>
+					UUC pro vás provede rozměrovou analýzu a pokud vstup nesouhlasí s cílovými jednotkami, dostanete
+					varování. Výsledek výpočtu pak ignorujte.
+				</p>
+				<p>
+					To je často způsobeno záměnou symbolu jednotky – např. C a F je coulomb a farad, nikoliv stupeň
+					Celsia a Fahrenheita, ty jsou °C a °F:{' '}
+					<a className="fakeLink" onClick={() => ex('wrongSymbol')}>
+						příklad A
+					</a>
+					,{' '}
+					<a className="fakeLink" onClick={() => ex('okSymbol')}>
+						příklad B
+					</a>
+				</p>
+				<p>
+					Také to může být způsobeno syntaktickou chybou, např. mK znamená milikelvin, nikoliv metr krát
+					kelvin, ten by byl zapsán jako m*K nebo m K.
+				</p>
+				<p>
+					Pozn.: takto zapsaná veličina s rozměrem teploty je vždy zpracována jako <i>rozdíl</i> teploty,
+					nikoliv jako teplota. Jak převést teploty mezi sebou se dozvíte později.
+				</p>
+			</Cz>
+			<En>
+				<p>
+					UUC will perform dimensional analysis for you, and if the input doesn&apos;t match the target units,
+					you will get a warning. In that case ignore the conversion result.
+				</p>
+				<p>
+					That&apos;s often caused by a misunderstood unit symbol – e.g. C and F are coulomb and farad, not
+					degree Celsius and Fahrenheit, those are °C and °F:{' '}
+					<a className="fakeLink" onClick={() => ex('wrongSymbol')}>
+						example A
+					</a>
+					,{' '}
+					<a className="fakeLink" onClick={() => ex('okSymbol')}>
+						B
+					</a>
+				</p>
+				<p>
+					It can also be caused by a syntax error, e.g. mK means milikelvin, not metre times kelvin, which
+					would be written as m*K or m K.
+				</p>
+				<p>
+					Note: a quantity with dimension of temperature written this way will always be processed as
+					temperature <i>difference</i>, not as temperature. You will learn later how to convert temperatures.
+				</p>
+			</En>
+			<NextButton onClick={goToNextStep} />
+		</>
+	);
+}
+
+function Features({ goToNextStep, ex }: StepProps) {
+	return (
+		<>
+			<Cz>
+				<p>
+					<b>A jaké jsou další možnosti UUC?</b>
+				</p>
+				<ul>
+					<li>
+						Jednotky můžete skládat * násobením či / dělením:{' '}
+						<a className="fakeLink" onClick={() => ex('okSymbol')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Předchozí příklad je možné zpřehlednit použitím (závorek):{' '}
+						<a className="fakeLink" onClick={() => ex('brackets')}>
+							příklad
+						</a>
+						<br />
+						<i>mezery mohou nahradit * jako znak násobení</i>
+					</li>
+					<li>
+						Čísla mohou být zapsána s desetinnou čárkou i tečkou,
+						<br />
+						lze použít zápis e123 jako 10<sup>123</sup>:{' '}
+						<a className="fakeLink" onClick={() => ex('numbers')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Přebytečné mezery jsou prostě ignorovány:{' '}
+						<a className="fakeLink" onClick={() => ex('spaces')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Číslo psané těsně vedle jednotky je zkratkou pro (závorky):{' '}
+						<a className="fakeLink" onClick={() => ex('tight')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Jednotky lze umocňovat pomocí ^čísla nebo jen pomocí čísla:{' '}
+						<a className="fakeLink" onClick={() => ex('powers')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Mocninou může být i výraz v závorce, který však nutně musí být bezrozměrný, viz poločas rozpadu
+						jako{' '}
+						<a className="fakeLink" onClick={() => ex('radioactiveDecay')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Čísel může být ve výpočtu více a lze i sčítat a odčítat:{' '}
+						<a className="fakeLink" onClick={() => ex('volumeABC')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Cílovou jednotkou může být jen číslo, jedná se pak o dělení:{' '}
+						<a className="fakeLink" onClick={() => ex('targetNumber')}>
+							příklad
+						</a>
+					</li>
+				</ul>
+			</Cz>
+			<En>
+				<p>
+					<b>What about other features of UUC?</b>
+				</p>
+				<ul>
+					<li>
+						You can compose units by * multiplication or / division:{' '}
+						<a className="fakeLink" onClick={() => ex('okSymbol')}>
+							example
+						</a>
+					</li>
+					<li>
+						The previous example can be arranged using (brackets):{' '}
+						<a className="fakeLink" onClick={() => ex('brackets')}>
+							example
+						</a>
+						<br />
+						<i>spaces can replace * as a multiplication sign</i>
+					</li>
+					<li>
+						Both decimal point and comma are accepted,
+						<br />
+						you can use e123 notation as 10<sup>123</sup>:{' '}
+						<a className="fakeLink" onClick={() => ex('numbers')}>
+							example
+						</a>
+					</li>
+					<li>
+						Superfluous spaces are simply ignored:{' '}
+						<a className="fakeLink" onClick={() => ex('spaces')}>
+							example
+						</a>
+					</li>
+					<li>
+						Number written tightly next to unit is a shortcut for (brackets):{' '}
+						<a className="fakeLink" onClick={() => ex('tight')}>
+							example
+						</a>
+					</li>
+					<li>
+						You can raise units to power using ^number or just number:{' '}
+						<a className="fakeLink" onClick={() => ex('powers')}>
+							example
+						</a>
+					</li>
+					<li>
+						Even an expression in brackets can be a power, but it must be dimensionless, see radioactive
+						decay as an{' '}
+						<a className="fakeLink" onClick={() => ex('radioactiveDecay')}>
+							example
+						</a>
+					</li>
+					<li>
+						There can be multiple numbers, and you can add & subtract:{' '}
+						<a className="fakeLink" onClick={() => ex('volumeABC')}>
+							example
+						</a>
+					</li>
+					<li>
+						A mere number can be a target unit, which acts as division:{' '}
+						<a className="fakeLink" onClick={() => ex('targetNumber')}>
+							example
+						</a>
+					</li>
+				</ul>
+			</En>
+			<NextButton onClick={goToNextStep} />
+		</>
+	);
+}
+
+function Examples({ goToNextStep, closeTutorial, ex, onlyExamples }: StepProps) {
+	return (
+		<>
+			<Cz>
+				<p>
+					<b>Užitečné příklady na specifické použití:</b>
+				</p>
+				<ul>
+					<li>
+						Objem na charakteristický rozměr:{' '}
+						<a className="fakeLink" onClick={() => ex('charDim')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Pythagorova věta – rozměry na úhlopříčku:{' '}
+						<a className="fakeLink" onClick={() => ex('pythagor')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Librostopa na joule, kde _g je normální tíhové zrychlení:{' '}
+						<a className="fakeLink" onClick={() => ex('lbft')}>
+							příklad
+						</a>
+						<br />
+						<i>všechny konstanty v UUC jsou označeny znakem _</i>
+					</li>
+					<li>
+						Tíha kilogramu na centimetr čtvereční na psi:{' '}
+						<a className="fakeLink" onClick={() => ex('kgcm2')}>
+							příklad
+						</a>
+						<br />
+						<i>psi by stejnou logikou mohlo být zapsáno i jako lb*_g/in2</i>
+					</li>
+					<li>
+						Poundal na newton:{' '}
+						<a className="fakeLink" onClick={() => ex('poundal')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Přepočet magnetické indukce (B) na magnetickou intenzitu (H):{' '}
+						<a className="fakeLink" onClick={() => ex('oersted')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Úhel jako násobek pí:{' '}
+						<a className="fakeLink" onClick={() => ex('pi')}>
+							příklad
+						</a>{' '}
+						(prázdné pole cílové jednotky = radián)
+					</li>
+					<li>
+						Přetlak na absolutní tlak:{' '}
+						<a className="fakeLink" onClick={() => ex('gauge2abs')}>
+							příklad
+						</a>
+						,{' '}
+						<a className="fakeLink" onClick={() => ex('abs2gauge')}>
+							obráceně
+						</a>
+					</li>
+					<li>
+						Normální objemový tok plynu · mol. hmotnost → hmotnostní tok:{' '}
+						<a className="fakeLink" onClick={() => ex('gasFlow')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Hmotnostní koncentrace plynu / mol. hmotnost → ppm:{' '}
+						<a className="fakeLink" onClick={() => ex('gasConc')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Tlak ve výšce dle barometrické rovnice:{' '}
+						<a className="fakeLink" onClick={() => ex('barometric')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Úniková rychlost z planety:{' '}
+						<a className="fakeLink" onClick={() => ex('escape')}>
+							příklad
+						</a>
+					</li>
+					<li>
+						Poločas rozpadu:{' '}
+						<a className="fakeLink" onClick={() => ex('radioactiveDecay')}>
+							příklad
+						</a>
+					</li>
+				</ul>
+				<p>A jistě vás napadne spousta dalších!</p>
+				{!onlyExamples && (
+					<p>
+						💡 <i>V hlavní záložce je odkaz přímo sem, abyste nemuseli znovu do tutoriálu</i>
+					</p>
+				)}
+			</Cz>
+			<En>
+				<p>
+					<b>Useful examples for specific use:</b>
+				</p>
+				<ul>
+					<li>
+						Volume to characteristic dimension:{' '}
+						<a className="fakeLink" onClick={() => ex('charDim')}>
+							example
+						</a>
+					</li>
+					<li>
+						Pythagorean theorem – dimensions to diagonal:{' '}
+						<a className="fakeLink" onClick={() => ex('pythagor')}>
+							example
+						</a>
+					</li>
+					<li>
+						Foot pound-force to joule, where _g is standard gravity:{' '}
+						<a className="fakeLink" onClick={() => ex('lbft')}>
+							example
+						</a>
+						<br />
+						<i>all constants available in UUC are marked by _ sign</i>
+					</li>
+					<li>
+						Kilogram force per square cm to psi:{' '}
+						<a className="fakeLink" onClick={() => ex('kgcm2')}>
+							example
+						</a>
+						<br />
+						<i>psi could also be written as lb*_g/in2 by the same logic</i>
+					</li>
+					<li>
+						Poundal to newton:{' '}
+						<a className="fakeLink" onClick={() => ex('poundal')}>
+							example
+						</a>
+					</li>
+					<li>
+						Calculation of magnetic flux (B) to magnetic field (H):{' '}
+						<a className="fakeLink" onClick={() => ex('oersted')}>
+							example
+						</a>
+					</li>
+					<li>
+						Angle as a pi multiple:{' '}
+						<a className="fakeLink" onClick={() => ex('pi')}>
+							example
+						</a>{' '}
+						(empty target field is interpreted as radian)
+					</li>
+					<li>
+						Gauge pressure to absolute:{' '}
+						<a className="fakeLink" onClick={() => ex('gauge2abs')}>
+							example
+						</a>
+						,{' '}
+						<a className="fakeLink" onClick={() => ex('abs2gauge')}>
+							reverse
+						</a>
+					</li>
+					<li>
+						Normal volume flow of gas · mol. weight → mass flow:{' '}
+						<a className="fakeLink" onClick={() => ex('gasFlow')}>
+							example
+						</a>
+					</li>
+					<li>
+						Mass concentration of gas / mol. weight → ppm:{' '}
+						<a className="fakeLink" onClick={() => ex('gasConc')}>
+							example
+						</a>
+					</li>
+					<li>
+						Pressure at altitude using barometric equation:{' '}
+						<a className="fakeLink" onClick={() => ex('barometric')}>
+							example
+						</a>
+					</li>
+					<li>
+						Escape velocity from planet:{' '}
+						<a className="fakeLink" onClick={() => ex('escape')}>
+							example
+						</a>
+					</li>
+					<li>
+						Radioactive decay:{' '}
+						<a className="fakeLink" onClick={() => ex('radioactiveDecay')}>
+							example
+						</a>
+					</li>
+				</ul>
+				<p>And surely you&apos;ll think of many more!</p>
+				{!onlyExamples && (
+					<p>
+						💡{' '}
+						<i>In main tab there is a link to this list, so you don&apos;t have to open tutorial again</i>
+					</p>
+				)}
+			</En>
+			{onlyExamples ? <CloseButton onClick={closeTutorial} /> : <NextButton onClick={goToNextStep} />}
+		</>
+	);
+}
+
+function Temperature({ goToNextStep, ex }: StepProps) {
+	return (
+		<>
+			<Cz>
+				<p>
+					Jak již bylo zmíněno, program chápe <b>teplotu</b> jako teplotní <i>rozdíl</i>, nikoliv absolutní
+					teplotu (
+					<a className="fakeLink" onClick={() => ex('dC')}>
+						příklad
+					</a>
+					). Program by nemohl poznat, zda-li myslíte T či ΔT, proto se obecně pracuje s ΔT. Speciální zápis
+					pomocí &#123;složených závorek&#125; umožňuje interpretovat teplotu jako absolutní, např. takto:{' '}
+					<a className="fakeLink" onClick={() => ex('F2K')}>
+						°F na K
+					</a>{' '}
+					či{' '}
+					<a className="fakeLink" onClick={() => ex('F2C')}>
+						°F na °C
+					</a>
+				</p>
+				<p>
+					Další příklady: °API hustota na SI{' '}
+					<a className="fakeLink" onClick={() => ex('API')}>
+						tam
+					</a>{' '}
+					a{' '}
+					<a className="fakeLink" onClick={() => ex('API2')}>
+						zpět
+					</a>
+					,<br />
+					výpočet hustoty vzduchu pomocí{' '}
+					<a className="fakeLink" onClick={() => ex('airDenseK')}>
+						K
+					</a>
+					, či právě s využitím{' '}
+					<a className="fakeLink" onClick={() => ex('airDenseC')}>
+						&#123;°C&#125;
+					</a>
+				</p>
+				<p>
+					Pomocí &#123;&#125; lze též použít speciální funkci – přirozený{' '}
+					<a className="fakeLink" onClick={() => ex('ln')}>
+						logaritmus
+					</a>
+					, lze využít např. pro{' '}
+					<a className="fakeLink" onClick={() => ex('exchanger')}>
+						logΔT
+					</a>
+					.<i>Samozřejmě, ln není jednotka a proto nemůže být použit mimo &#123;&#125;</i>
+				</p>
+				<p className="subtle">Pozn. &#123;složené závorky&#125; na české klávesnici: pravý Alt + B, N</p>
+				<p className="subtle">
+					⚠ Mějte na paměti omezení:
+					<br />
+					Ve Vstupu může v &#123;&#125; být jen jedno číslo a jedna jednotka.
+					<br />
+					Cílové jednotky jsou ještě striktnější, nesmí v nich být <i>nic než</i> &#123;tento výraz&#125;, a
+					nesmí v něm být číslo. Nelze použít prefix ani mocninu. Místo čísla ovšem může být (bezrozměrný
+					výraz v závorce), viz logΔT výše.
+				</p>
+			</Cz>
+			<En>
+				<p>
+					As mentioned before, the program understands <b>temperature</b> as temp <i>difference</i>, not as
+					absolute temp (
+					<a className="fakeLink" onClick={() => ex('dC')}>
+						example
+					</a>
+					). The program couldn&apos;t tell if you want T or ΔT, that&apos;s why it generally operates with
+					ΔT. Special syntax with &#123;curly brackets&#125; allows to interpret temperature as absolute, like
+					this:{' '}
+					<a className="fakeLink" onClick={() => ex('F2K')}>
+						°F to K
+					</a>{' '}
+					or{' '}
+					<a className="fakeLink" onClick={() => ex('F2C')}>
+						°F to °C
+					</a>
+				</p>
+				<p>
+					More examples: °API density to SI{' '}
+					<a className="fakeLink" onClick={() => ex('API')}>
+						there
+					</a>{' '}
+					and{' '}
+					<a className="fakeLink" onClick={() => ex('API2')}>
+						back
+					</a>
+					,<br />
+					air density calculation using{' '}
+					<a className="fakeLink" onClick={() => ex('airDenseK')}>
+						K
+					</a>
+					, or using{' '}
+					<a className="fakeLink" onClick={() => ex('airDenseC')}>
+						&#123;°C&#125;
+					</a>
+				</p>
+				<p>
+					Using the &#123;&#125; you can also use a special function – the natural{' '}
+					<a className="fakeLink" onClick={() => ex('ln')}>
+						logarithm
+					</a>
+					, for example{' '}
+					<a className="fakeLink" onClick={() => ex('exchanger')}>
+						logΔT
+					</a>
+					.<i>Of course, ln is not a unit and cannot be used outside &#123;&#125;</i>
+				</p>
+				<p className="subtle">
+					Note: &#123;curly brackets&#125; on english keyboard: Shift + &#123; &#125; next to Enter
+				</p>
+				<p className="subtle">
+					⚠ Keep in mind the limitations:
+					<br />
+					In Input there can only be one number and one unit in &#123;&#125;.
+					<br />
+					Target units are even stricter, there can be <i>nothing else</i> but &#123;the expression&#125;, and
+					there mustn&apos;t be a number. Neither prefix nor power can be used. But instead of number you can
+					use (dimensionless bracket), see logΔT above.
+				</p>
+			</En>
+			<NextButton onClick={goToNextStep} />
+		</>
+	);
+}
+
+function Conclusion({ navigate, closeTutorial }: StepProps) {
+	return (
+		<>
+			<Cz>
+				<p>Poslední poznámky před dokončením tutoriálu:</p>
+				<p>
+					Po rozkliknutí <i>Formát výstupu</i> můžete výstupnímu číslu nastavit počet desetinných míst, popř.
+					další možnosti formátování.
+				</p>
+				<p>
+					Pokud chcete právě zadaný převod komukoliv poslat, stačí <i>Sdílet odkaz</i>.<br />
+					Pomocí ikony 📋 vedle výstupu můžete zkopírovat pouze výstup.
+				</p>
+				<p>
+					Pokud jste uživatelem Chrome nebo Edge, doporučuji pomocí tohoto{' '}
+					<a className="fakeLink" onClick={() => navigate('search')}>
+						návodu
+					</a>{' '}
+					nastavit UUC jako klíčové slovo vyhledávače, může to ušetřit dost času ⚡
+				</p>
+				<p>Toť vše! 🙂</p>
+			</Cz>
+			<En>
+				<p>Last notes before finishing the tutorial:</p>
+				<p>
+					After expanding <i>Output format</i> you can set decimal points of the output number, or use other
+					formatting options.
+				</p>
+				<p>
+					If you want to send the current conversion to anyone, just <i>Share link</i>.<br />
+					Using the 📋 icon next to output you can copy just the output.
+				</p>
+				<p>
+					If you are a Chrome or Edge user, I recommend following these{' '}
+					<a className="fakeLink" onClick={() => navigate('search')}>
+						instructions
+					</a>{' '}
+					to set UUC as a search engine keyword, it may save you a lot of time ⚡
+				</p>
+				<p>That&apos;s all! 🙂</p>
+			</En>
+			<CloseButton onClick={closeTutorial} />
+		</>
+	);
+}
