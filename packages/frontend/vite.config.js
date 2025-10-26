@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
 	root: './src',
 	base: './',
-	plugins: [react()],
+	plugins: [react({ compiler: { reactCompiler: true } })],
 	build: {
 		outDir: '../dist', // it is relative to root
 		emptyOutDir: true,
