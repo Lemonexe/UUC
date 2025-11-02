@@ -33,29 +33,36 @@ describe(vector2text.name, () => {
 });
 
 describe(format.name, () => {
-	const output = { num: 1234.567, dim: 'm' };
+	const out = { num: 1234.567, dim: 'm' };
 
 	it('formats with default spec', () => {
-		expect(format(output, { spec: 'none' })).toEqual({ num: '1234.567', dim: 'm' });
-		expect(format(output, { spec: 'none', exp: true })).toEqual({ num: '1.234567e+3', dim: 'm' });
+		expect(format(out, { spec: 'none' })).toEqual({ ...out, formattedNum: '1234.567' });
+		expect(format(out, { spec: 'none', exp: true })).toEqual({ ...out, formattedNum: '1.234567e+3' });
 	});
 
 	it('formats with fixed spec', () => {
-		expect(format(output, { spec: 'fixed', fixed: 2, exp: false })).toEqual({ num: '1234.57', dim: 'm' });
-		expect(format(output, { spec: 'fixed', fixed: 2, exp: true })).toEqual({ num: '1.23e+3', dim: 'm' });
+		expect(format(out, { spec: 'fixed', fixed: 2, exp: false })).toEqual({ ...out, formattedNum: '1234.57' });
+		expect(format(out, { spec: 'fixed', fixed: 2, exp: true })).toEqual({ ...out, formattedNum: '1.23e+3' });
 	});
 
 	it('formats with digits spec', () => {
-		expect(format(output, { spec: 'digits', digits: 3, exp: false })).toEqual({ num: '1230', dim: 'm' });
-		expect(format(output, { spec: 'digits', digits: 5, exp: true })).toEqual({ num: '1.2346e+3', dim: 'm' });
+		expect(format(out, { spec: 'digits', digits: 3, exp: false })).toEqual({ ...out, formattedNum: '1230' });
+		expect(format(out, { spec: 'digits', digits: 5, exp: true })).toEqual({ ...out, formattedNum: '1.2346e+3' });
 	});
 
-	it('returns null for null input', () => {
-		expect(format(null, { spec: 'none' })).toBeNull();
+	it('throws for falsy input', () => {
+		// @ts-expect-error non-allowed interface
+		expect(() => format(null, { spec: 'none' })).toThrow();
+		// @ts-expect-error non-allowed interface
+		expect(() => format(undefined, { spec: 'none' })).toThrow();
 	});
 
 	it('adds asterisk if dim starts with number', () => {
-		expect(format({ num: 1, dim: '2m' }, { spec: 'fixed', fixed: 0 })).toEqual({ num: '1', dim: ' * 2m' });
+		expect(format({ num: 1, dim: '2m' }, { spec: 'fixed', fixed: 0 })).toEqual({
+			num: 1,
+			formattedNum: '1',
+			dim: ' * 2m',
+		});
 	});
 });
 

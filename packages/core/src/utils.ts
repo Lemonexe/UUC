@@ -48,34 +48,33 @@ export const balanceBrackets = (text: string): string => {
 };
 
 // format 'output' object as {num: number, dim: string} into the same object but with properly formatted number string 'num2'
-export const format = (output: OutputOK | null, params: FormatParams): OutputOK | null => {
-	if (output === null) return null;
-
+export const format = (output: OutputOK, params: FormatParams): OutputOK => {
+	if (!output) throw new Error('Cannot format null output');
+	const { num } = output;
 	// When dim starts with a number, insert an asterisk, otherwise the numbers would be printed side by side
 	const dim = output.dim.search(/^\d/) > -1 ? ' * ' + output.dim : output.dim;
-	const rawNum = Number(output.num); // if formatted already, reparse to number
 
 	if (params.exp) {
 		let d: number | undefined;
 		params.spec === 'fixed' && (d = params.fixed || 0);
 		params.spec === 'digits' && (d = params.digits - 1);
-		const num = rawNum.toExponential(d);
-		return { num, dim };
+		const formattedNum = num.toExponential(d);
+		return { num, dim, formattedNum };
 	}
 	if (params.spec === 'fixed') {
 		const df = params.fixed;
-		const num = rawNum.toFixed(df || 0);
-		return { num, dim };
+		const formattedNum = num.toFixed(df || 0);
+		return { num, dim, formattedNum };
 	}
 	if (params.spec === 'digits') {
 		const dp = params.digits;
-		const dn = Math.floor(Math.log10(rawNum)) + 1; // natural digits of the number. If greater than params.digits, don't use toPrecision, but round up manually to avoid exponential
-		const num =
-			dn > dp ? (Math.round(rawNum / 10 ** (dn - dp)) * 10 ** (dn - dp)).toFixed(0) : rawNum.toPrecision(dp);
-		return { num, dim };
+		const dn = Math.floor(Math.log10(num)) + 1; // natural digits of the number. If greater than params.digits, don't use toPrecision, but round up manually to avoid exponential
+		const formattedNum =
+			dn > dp ? (Math.round(num / 10 ** (dn - dp)) * 10 ** (dn - dp)).toFixed(0) : num.toPrecision(dp);
+		return { num, dim, formattedNum };
 	}
-	const num = String(rawNum);
-	return { num, dim };
+	const formattedNum = String(num);
+	return { num, dim, formattedNum };
 };
 
 // Converts unit vector `v` into its text representation, which is parsable again as an input expression.
