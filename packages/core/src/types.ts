@@ -54,7 +54,8 @@ export type Unitfun = Pick<Unit, 'id' | 'v'> & {
 // SI prefixes, e.g. kilo, milli etc.
 export type Prefix = {
 	id: string;
-	e: number; // power of ten
+	// power of ten
+	e: number;
 };
 
 // Unit possibly extended with an SI prefix and a power
@@ -95,8 +96,12 @@ type ResultBase = { messages: UUCError[] };
 export type ResultOK = ResultBase & {
 	status: 0 | 1; // 0 = OK, 1 = WARNING, 2 = ERROR
 	output: {
-		num: number | string; // printed number, possibly formatted as string
-		dim: string; // final printed dimensions as specified from target, or derived from input if no target specified
+		// original number with no precision loss
+		num: number;
+		// formatted number as per formatParams, may be absent if there was no formatting applied
+		formattedNum?: string;
+		// final printed dimensions as specified from target, or derived from input if no target specified
+		dim: string;
 	};
 };
 export type ResultError = ResultBase & {
