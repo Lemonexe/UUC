@@ -1,6 +1,6 @@
 # UUC Core library
 
-TODO npm badge
+[![NPM](https://img.shields.io/npm/v/uuc-core.svg)](https://www.npmjs.org/package/uuc-core)
 
 The core library contains the logic for parsing, converting and unit definitions.
 It was created mainly for the [UUC Frontend app](../frontend/README.md), but is also available as a standalone library at npm.
@@ -17,9 +17,7 @@ For implementation details, refer to [the source code](./src), particularly the 
 
 ### Installation
 
-TODO
-
-Install via npm or an alternative package manager of your choice:
+Install via [npm](https://www.npmjs.org/package/uuc-core) or an alternative package manager of your choice:
 ```bash
 npm install uuc-core
 ```
