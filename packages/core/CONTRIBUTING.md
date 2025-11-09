@@ -32,3 +32,11 @@ When updating the units database, run this command to detect possible conflicts 
 ```bash
 npm -w=uuc-core run check-conflicts
 ```
+
+## Publishing
+
+```bash
+npm run build:core
+npm -w=uuc-core pack # to inspect the package contents
+npm -w=uuc-core publish --access public
+```

@@ -2,7 +2,7 @@
 Ultimate Unit Converter, a useful tool for science and engineering.  
 [Click here](https://jira.zby.cz/content/UUC/) for live application.
 
-TODO npm badge
+[![NPM](https://img.shields.io/npm/v/uuc-core.svg)](https://www.npmjs.org/package/uuc-core)
 
 You can find a lot of unit converters on the internet, so what makes this one stand out?
 Well, most online converters are limited only to conversion within predefined categories within a dimension.
