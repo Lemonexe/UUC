@@ -11,7 +11,7 @@ setUUCLang('en');
 
 // It expects a full conversion result with 'input' & 'target' strings, expected result number, numerical tolerance and optionally the expected warning.
 const fullTest = (input: string, target: string, expectNum: number, tol: number, expectWarn?: ErrorCode) =>
-	it(`${input} → ${target} ≅ ${String(expectNum)} ${expectWarn ? `(with ${expectWarn})` : ''}`, () => {
+	it(`'${input}' → '${target}' ≅ ${String(expectNum)} ${expectWarn ? `(with ${expectWarn})` : ''}`, () => {
 		const res: Result = convert(input, target);
 		const { status } = res;
 		// fullTest means it should pass without any UUCError, so rethrow
@@ -23,6 +23,9 @@ const fullTest = (input: string, target: string, expectNum: number, tol: number,
 			expect(status).toBe(1);
 			expect(res.messages.length).toBeGreaterThan(0);
 			expect(res.messages[0].code).toBe(expectWarn);
+		} else {
+			expect(status).toBe(0);
+			expect(res.messages).toEqual([]);
 		}
 
 		expect(isEqApx(Number(res.output.num), expectNum, tol)).toBe(true);
@@ -30,7 +33,7 @@ const fullTest = (input: string, target: string, expectNum: number, tol: number,
 
 // It expects a full conversion result with 'input' & 'target' strings and expected error.
 const fullTestErr = (input: string, target: string, code: ErrorCode) =>
-	it(`${input} → ${target} with ${code}`, () => {
+	it(`'${input}' → '${target}' with ${code}`, () => {
 		const res: Result = convert(input, target);
 		const { status } = res;
 		expect(status).toBe(2);
@@ -39,6 +42,7 @@ const fullTestErr = (input: string, target: string, code: ErrorCode) =>
 	});
 
 describe('Full conversion', () => {
+	fullTest('min', '', 60, 1e-6);
 	fullTest('3*(7-3)*2', '', 24, 1e-6);
 	fullTest('(3*(7-3)*2)', '', 24, 1e-6);
 	fullTest('3*(4*(5*(2+1)-1)', '', 168, 1e-6); // tolerance for missing closing brackets )

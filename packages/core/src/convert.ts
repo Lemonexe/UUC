@@ -60,10 +60,12 @@ export function convert(input: string, target: string): Result {
 		}
 		let dim = isTarget ? targetClean : vector2text(iQ.v); // if no target, then SI representation
 
-		const dimCheck = dimensionCorrection(iQ.v, tQ.v);
-		if (!dimCheck.ok) {
-			warn(err('WARN_target_dim_mismatch', dimCheck.faults));
-			dim += '*' + vector2text(dimCheck.corr);
+		if (isTarget) {
+			const dimCheck = dimensionCorrection(iQ.v, tQ.v);
+			if (!dimCheck.ok) {
+				warn(err('WARN_target_dim_mismatch', dimCheck.faults));
+				dim += '*' + vector2text(dimCheck.corr);
+			}
 		}
 
 		return { num, dim };
