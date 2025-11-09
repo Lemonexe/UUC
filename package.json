@@ -19,9 +19,9 @@
 	"scripts": {
 		"frontend": "npm -w=frontend run start",
 		"currencies": "cd packages/currencies && php -S localhost:3001",
-		"build:frontend": "npm -w=frontend run build",
 		"build:core": "npm -w=uuc-core run tsc",
-		"test": "npm -w=uuc-core run test"
+		"build:frontend": "npm -w=frontend run build",
+		"test": "npm run test --workspaces"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.38.0",
