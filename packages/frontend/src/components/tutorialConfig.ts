@@ -50,15 +50,15 @@ export type StepProps = {
 	onlyExamples?: boolean;
 };
 
-export type Step = { route?: Route; top?: string; left?: string };
+export type Step = { route?: Route; top?: number; left?: number };
 export const steps = {
-	intro: { top: '120px', left: '420px' },
-	reference: { route: 'reference', top: '120px', left: '480px' },
-	dimAnalysis: { route: 'converter', top: '120px', left: '420px' },
-	features: { top: '120px', left: '420px' },
-	examples: { top: '120px', left: '420px' },
-	temperature: { top: '120px', left: '420px' },
-	conclusion: { top: '350px', left: '420px' },
+	intro: { top: 120, left: 420 },
+	reference: { route: 'reference', top: 120, left: 480 },
+	dimAnalysis: { route: 'converter', top: 120, left: 420 },
+	features: { top: 120, left: 420 },
+	examples: { top: 120, left: 420 },
+	temperature: { top: 120, left: 420 },
+	conclusion: { top: 350, left: 420 },
 } as const satisfies Record<string, Step>;
 export type StepId = keyof typeof steps;
 

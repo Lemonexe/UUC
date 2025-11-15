@@ -36,6 +36,7 @@ npm -w=uuc-core run check-conflicts
 ## Publishing
 
 ```bash
+npm -w=uuc-core version patch # minor, major...
 npm run build:core
 npm -w=uuc-core pack # to inspect the package contents
 npm -w=uuc-core publish --access public

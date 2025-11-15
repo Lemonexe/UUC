@@ -179,6 +179,7 @@ body {
 	background-color: white;
 	border: 1px solid var(--border);
     width: 600px;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.20);
 }
 #tutorialBar {
 	width: 100%;
@@ -186,6 +187,7 @@ body {
 	border-bottom: 1px solid var(--border);
 	text-align: center;
 	height: 21px;
+	cursor: move;
 }
 .tutorialSection {
 	padding: 12px;

@@ -1,3 +1,4 @@
+import { type Dispatch, type FC, type SetStateAction, useRef, useState } from 'react';
 import { prefixes } from 'uuc-core';
 import { Cz, En } from '../lang';
 import {
@@ -9,8 +10,8 @@ import {
 	examples,
 	steps,
 } from './tutorialConfig';
+import { useDraggable } from './useDraggable';
 import type { FullConversion, Route } from '../types';
-import type { Dispatch, FC, SetStateAction } from 'react';
 
 type TutorialProps = {
 	state: TutorialState;
@@ -32,8 +33,11 @@ const stepComponentMap: Record<StepId, FC<StepProps>> = {
 };
 
 export const Tutorial = ({ state, setState, navigate, setInput, setTarget, fullConversion }: TutorialProps) => {
-	const { top, left } = steps[state.id];
+	const [[top, left], setPos] = useState<[number, number]>([steps[state.id].top, steps[state.id].left]);
 	const StepComponent = stepComponentMap[state.id];
+	const ref = useRef<HTMLDivElement>(null);
+
+	const handleDragStart = useDraggable({ ref, setPos });
 
 	const keys = Object.keys(steps);
 	const stepsTotal = keys.length;
@@ -54,7 +58,7 @@ export const Tutorial = ({ state, setState, navigate, setInput, setTarget, fullC
 	};
 
 	return (
-		<div id="tutorial" style={{ top, left }}>
+		<div id="tutorial" style={{ top, left }} onMouseDown={handleDragStart} ref={ref}>
 			<div id="tutorialBar">
 				{state.onlyExamples ? '' : `${stepIndex + 1}/${stepsTotal}`}
 				<input type="button" className="Xbutton" value="✕" onClick={closeTutorial} />
