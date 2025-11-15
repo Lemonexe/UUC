@@ -33,10 +33,17 @@ const ConverterForm = ({
 }: CommonProps) => {
 	const { wasCopiedNow, copyClass, doCopyUIEffect } = useCopyUIEffects();
 
-	// TODO use result to reconstruct properly, keeping number in input and flipping only dims
 	const flip = () => {
-		setTarget(input);
-		setInput(target);
+		if (result === null || result.output === null) {
+			setTarget(input);
+			setInput(target);
+			return; // Don't start full conversion, because this is considered a draft (no working output yet)
+		}
+		const newTarget = input.replace(/^[+-]?[\d.]+(?:e[+-]?\d+)?/, '').trim();
+		setTarget(newTarget);
+		const newInput = `${result.output.formattedNum ?? result.output.num} ${result.output.dim}`;
+		setInput(newInput);
+		fullConversion(newInput, newTarget); // Must convert to regenerate output, otherwise next flip would be nonsense
 	};
 
 	const printedResult = result?.output
