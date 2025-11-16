@@ -1,4 +1,5 @@
 import { Cz, En } from '../lang';
+import { purge } from '../state';
 import type { Route } from '../types';
 import type { Dispatch } from 'react';
 
@@ -30,15 +31,9 @@ export const Intro = ({ navigate, initTutorial }: IntroProps) => (
 					</a>
 				</li>
 				<li>
-					Pokud vám zde chybí vaše oblíbená jednotka či konstanta a rádi byste ji zde viděli,{' '}
+					Pokud vám zde chybí vaše oblíbená jednotka či konstanta či máte nápad na vylepšení aplikace,{' '}
 					<a href="https://github.com/Lemonexe/UUC/issues/new" target="_blank" rel="noreferrer">
 						kontaktujte mě
-					</a>
-				</li>
-				<li>
-					Pokud máte nápad na vylepšení této aplikace, neváhejte{' '}
-					<a href="https://github.com/Lemonexe/UUC/issues/new" target="_blank" rel="noreferrer">
-						mě kontaktovat
 					</a>
 				</li>
 				<li>
@@ -46,7 +41,18 @@ export const Intro = ({ navigate, initTutorial }: IntroProps) => (
 					<a href="https://github.com/Lemonexe/UUC" target="_blank" rel="noreferrer">
 						Github repozitář
 					</a>
-					{/*	TODO link to npm */}
+					<ul style={{ paddingTop: '0.4em' }}>
+						<li>
+							Jádro aplikace je dostupné jako{' '}
+							<a href="https://www.npmjs.org/package/uuc-core" target="_blank" rel="noreferrer">
+								npm balíček
+							</a>{' '}
+							🚀
+						</li>
+					</ul>
+				</li>
+				<li>
+					Můžete <a className="fakeLink" onClick={purge} children="vymazat svá data" /> pokud si přejete.
 				</li>
 			</ul>
 		</Cz>
@@ -75,13 +81,7 @@ export const Intro = ({ navigate, initTutorial }: IntroProps) => (
 					</a>
 				</li>
 				<li>
-					If you are missing your favorite unit or constant and would like to see it here, you can{' '}
-					<a href="https://github.com/Lemonexe/UUC/issues/new" target="_blank" rel="noreferrer">
-						contact me
-					</a>
-				</li>
-				<li>
-					If you have an idea how to enhance the application, you can{' '}
+					If you are missing your favorite unit or have an idea how to enhance the app, you can{' '}
 					<a href="https://github.com/Lemonexe/UUC/issues/new" target="_blank" rel="noreferrer">
 						contact me
 					</a>
@@ -91,6 +91,18 @@ export const Intro = ({ navigate, initTutorial }: IntroProps) => (
 					<a href="https://github.com/Lemonexe/UUC" target="_blank" rel="noreferrer">
 						Github repository
 					</a>
+					<ul style={{ paddingTop: '0.4em' }}>
+						<li>
+							The core functionality is available as{' '}
+							<a href="https://www.npmjs.org/package/uuc-core" target="_blank" rel="noreferrer">
+								an npm package
+							</a>{' '}
+							🚀
+						</li>
+					</ul>
+				</li>
+				<li>
+					You can <a className="fakeLink" onClick={purge} children="reset your data" /> if you wish.
 				</li>
 			</ul>
 		</En>

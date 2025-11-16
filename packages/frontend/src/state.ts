@@ -44,5 +44,3 @@ export const purge = () => {
 	localStorage.removeItem('UUC_userdata');
 	location.reload();
 };
-// TODO make button
-window.purge = purge;
