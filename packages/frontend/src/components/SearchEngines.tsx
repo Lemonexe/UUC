@@ -13,8 +13,8 @@ export const SearchEngines = ({ navigate }: SearchEnginesProps) => (
 			<En>(Go back)</En>
 		</a>
 		<h4>
-			Chrome, Edge <Cz>nebo</Cz>
-			<En>or</En> Brave
+			Chrome, Edge, Brave <Cz>apod.</Cz>
+			<En>etc.</En>
 		</h4>
 		<p>
 			<Cz>Není třeba nic instalovat, jen provést jednoduché nastavení:</Cz>

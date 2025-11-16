@@ -46,6 +46,7 @@ export const Tutorial = ({ state, setState, navigate, setInput, setTarget, fullC
 	const goToNextStep = () => {
 		const step: Step = steps[nextStepId];
 		setState((prev) => ({ ...prev, id: nextStepId }));
+		setPos([step.top ?? 0, step.left ?? 0]);
 		step.route && navigate(step.route!);
 	};
 	const closeTutorial = () => setState(null);
@@ -58,10 +59,10 @@ export const Tutorial = ({ state, setState, navigate, setInput, setTarget, fullC
 	};
 
 	return (
-		<div id="tutorial" style={{ top, left }} onMouseDown={handleDragStart} ref={ref}>
-			<div id="tutorialBar">
+		<div id="tutorial" style={{ top, left }} ref={ref}>
+			<div id="tutorialBar" onMouseDown={handleDragStart}>
 				{state.onlyExamples ? '' : `${stepIndex + 1}/${stepsTotal}`}
-				<input type="button" className="Xbutton" value="✕" onClick={closeTutorial} />
+				<input type="button" className="XButton" value="✕" onClick={closeTutorial} />
 			</div>
 			<div className="tutorialSection">
 				<StepComponent

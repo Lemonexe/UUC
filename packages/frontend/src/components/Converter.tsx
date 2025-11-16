@@ -110,6 +110,10 @@ const ConverterForm = ({
 					onChange={(e) => applyAutocomplete(parseInt(e.target.value))}
 					id="inputAutocomplete"
 				>
+					<option value={-1} disabled>
+						<Cz>historie:</Cz>
+						<En>history:</En>
+					</option>
 					{ps.history.map((opt, i) => (
 						<option key={`${opt.input}>${opt.input}:${i}`} value={i}>
 							{opt.input + (opt.target ? ' > ' + opt.target : '')}
@@ -167,11 +171,38 @@ const ConverterForm = ({
 	);
 };
 
+type ShareLinkProps = { shareLink: string; isEmpty: boolean; copyShareLink: () => void };
+const ShareLink = ({ shareLink, isEmpty, copyShareLink }: ShareLinkProps) => {
+	if (!isAvailableCtrlC) {
+		return (
+			<>
+				<Cz>❗ Schránka není dostupná, protože spojení je nezabezpečené. Zkuste otevřít v</Cz>
+				<En>❗ Clipboard is not available due to unsecured connection. Try opening in</En>
+				<a href={currentWebAddress.replace('http', 'https')}>https</a>
+			</>
+		);
+	}
+	return (
+		<>
+			<Cz>{isEmpty ? 'Není zadaná žádná konverze...' : 'Kliknutím zkopírujete odkaz na tuto konverzi'}</Cz>
+			<En>{isEmpty ? 'No conversion was done...' : 'Click to copy the link with this conversion'}</En>
+			<br />
+			<span onClick={copyShareLink} style={{ cursor: 'copy' }} title="Ctrl+C">
+				📋&nbsp;
+				<span className="fakeLink" style={{ cursor: 'copy' }}>
+					{shareLink}
+				</span>
+			</span>
+		</>
+	);
+};
+
 const Tools = ({ input, target, formatParams, showTutorialExamples, setResult, setFormatParams }: CommonProps) => {
 	const { spec } = formatParams;
 	const [showParams, setShowParams] = useState(false);
 	const [showShareLink, setShowShareLink] = useState(false);
 	const shareLink = getShareLink({ input, target, formatParams });
+	const isEmpty = input.trim() === '' && target.trim() === '';
 	const { wasCopiedNow, copyClass, doCopyUIEffect } = useCopyUIEffects();
 	const copyShareLink = () => {
 		setShowShareLink(false);
@@ -260,26 +291,8 @@ const Tools = ({ input, target, formatParams, showTutorialExamples, setResult, s
 			)}
 			<br />
 			{showShareLink && (
-				<div id="sharelinkBox">
-					{isAvailableCtrlC ? (
-						<div>
-							<Cz>Kliknutím zkopírujete do schránky odkaz na tuto konverzi</Cz>
-							<En>Click to copy the link with this conversion to clipboard</En>
-							<br />
-							<span onClick={copyShareLink} style={{ cursor: 'copy' }} title="Ctrl+C">
-								📋{' '}
-								<span className="fakeLink" style={{ cursor: 'copy' }}>
-									{shareLink}
-								</span>
-							</span>
-						</div>
-					) : (
-						<div>
-							<Cz>❗ Schránka není dostupná, protože spojení je nezabezpečené. Zkuste otevřít v</Cz>
-							<En>❗ Clipboard is not available due to unsecured connection. Try opening in</En>
-							<a href={currentWebAddress.replace('http', 'https')}>https</a>
-						</div>
-					)}
+				<div id="shareLinkBox">
+					<ShareLink shareLink={shareLink} isEmpty={isEmpty} copyShareLink={copyShareLink} />
 				</div>
 			)}
 		</div>

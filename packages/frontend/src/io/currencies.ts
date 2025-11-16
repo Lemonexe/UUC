@@ -25,7 +25,7 @@ export const loadCurrencies = async ({ setCurrencyTimestamp }: LoadCurrenciesPar
 			return;
 		}
 		const json = (await res.json()) as CurrenciesResponse;
-		const timestamp = new Date(json.timestamp * 1000).toLocaleDateString();
+		const timestamp = new Date(json.timestamp * 1000).toLocaleString();
 		populateCurrencies(json.rates);
 		setCurrencyTimestamp(timestamp);
 	} catch (err) {

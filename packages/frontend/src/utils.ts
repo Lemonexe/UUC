@@ -24,7 +24,6 @@ export const add2history = ({ input, target, formatParams }: FormState) => {
 		.slice(0, HISTORY_MAX_LENGTH);
 };
 
-// TODO return null if empty, then don't show share link button
 // Generate a shareable link representing the current form state
 export const getShareLink = ({ input, target, formatParams }: FormState): string => {
 	const i = input.trim();
