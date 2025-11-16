@@ -1,5 +1,8 @@
 import type { PersistedState, Route } from './types';
 
+export const KEY_USERDATA = 'UUC_userdata';
+export const KEY_CACHE = 'UUC_currencies_cache';
+
 export const initialRoute: Route = 'converter';
 
 // Global variable for persistent state
@@ -15,7 +18,7 @@ window.ps = ps; // just read-only for easier debug
 export const defaultFixed = 2;
 export const defaultDigits = 3;
 
-export const save = () => localStorage.setItem('UUC_userdata', JSON.stringify(ps));
+export const save = () => localStorage.setItem(KEY_USERDATA, JSON.stringify(ps));
 
 export const loadAndInit = () => {
 	window.onbeforeunload = save;
@@ -23,24 +26,31 @@ export const loadAndInit = () => {
 	// estimate default language from browser
 	ps.lang = window.navigator.language.slice(0, 2) === 'cs' ? 'cz' : 'en';
 
-	const data = localStorage.getItem('UUC_userdata');
-	if (data) {
-		ps.hideTutorialLink = true; // if data, it was definitely visited before
-		const json: PersistedState = JSON.parse(data);
+	try {
+		const data = localStorage.getItem(KEY_USERDATA);
+		if (data) {
+			ps.hideTutorialLink = true; // if data, it was definitely visited before
+			const json: PersistedState = JSON.parse(data);
 
-		json.lang && (ps.lang = json.lang);
-		json.input && (ps.input = json.input);
-		json.target && (ps.target = json.target);
-		json.history && (ps.history = json.history);
-		json.formatParams && (ps.formatParams = json.formatParams);
+			json.lang && (ps.lang = json.lang);
+			json.input && (ps.input = json.input);
+			json.target && (ps.target = json.target);
+			json.history && (ps.history = json.history);
+			json.formatParams && (ps.formatParams = json.formatParams);
+		}
+
+		// persist the initialized data, marking the app as visited
+		save();
+	} catch (e) {
+		// Malformed data?
+		console.error('Failed to parse persisted userdata, purging...', e);
+		localStorage.removeItem(KEY_USERDATA);
 	}
-
-	// persist the initialized data, marking the app as visited
-	save();
 };
 
 export const purge = () => {
 	window.onbeforeunload = null;
-	localStorage.removeItem('UUC_userdata');
+	localStorage.removeItem(KEY_CACHE);
+	localStorage.removeItem(KEY_USERDATA);
 	location.reload();
 };

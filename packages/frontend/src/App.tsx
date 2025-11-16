@@ -64,7 +64,6 @@ export const App = () => {
 
 	useEffect(() => {
 		loadCurrencies({ setCurrencyTimestamp }).then(() => {
-			// TODO Promise.race with currencies cached in local storage
 			execHash({ setInput, setTarget, setFormatParams, fullConversion });
 		});
 	}, []);
