@@ -1,5 +1,4 @@
 import type { Route } from '../types';
-import type { Dispatch } from 'react';
 
 type Example = { input: string; target: string };
 export const examples = {
@@ -37,14 +36,6 @@ export const examples = {
 	ln: { input: '(27K - 32K) / ( {ln (27K/(32K)) } )', target: '°C' },
 } as const satisfies Record<string, Example>;
 export type ExId = keyof typeof examples;
-
-export type StepProps = {
-	navigate: Dispatch<Route>;
-	goToNextStep: () => void;
-	closeTutorial: () => void;
-	ex: (exId: ExId) => void;
-	onlyExamples?: boolean;
-};
 
 export type Step = { route?: Route; top?: number; left?: number };
 export const steps = {

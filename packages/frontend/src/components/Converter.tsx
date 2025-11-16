@@ -121,11 +121,8 @@ const ConverterForm = ({
 					))}
 				</select>
 			)}
-			<a onClick={flip} className="flipButton" role="button">
-				⇅
-			</a>
+			<a onClick={flip} className="flipButton" role="button" children="⇅" />
 			<br />
-
 			<b>
 				<Cz>Cílové jednotky:</Cz>
 				<En>Target units:</En>
@@ -189,9 +186,7 @@ const ShareLink = ({ shareLink, isEmpty, copyShareLink }: ShareLinkProps) => {
 			<br />
 			<span onClick={copyShareLink} style={{ cursor: 'copy' }} title="Ctrl+C">
 				📋&nbsp;
-				<span className="fakeLink" style={{ cursor: 'copy' }}>
-					{shareLink}
-				</span>
+				<span className="fakeLink" style={{ cursor: 'copy' }} children={shareLink} />
 			</span>
 		</>
 	);
