@@ -8,10 +8,9 @@ export const examples = {
 	wrongCase: { input: '45 kPA', target: 'torr' },
 	wrongSymbol: { input: '4.186 J/C/g ', target: 'Btu/F/lb' },
 	okSymbol: { input: '4.186 J/°C/g ', target: 'Btu/°F/lb' },
-	brackets: { input: '4.186 J/(°C*g) ', target: 'Btu/(°F lb)' },
+	brackets: { input: ' 4.186 J    / (°C* g) ', target: 'Btu / ( °F lb ) ' },
 	numbers: { input: '7,42e-3', target: '%' },
-	// TODO what if no currencies ??
-	spaces: { input: '  4   CZK / ( kW *h)  ', target: '€ / MJ' },
+	currencies: { input: ' 0.32 $ / (kWh) ', target: 'EUR / cal' },
 	tight: { input: 'km / 5min', target: 'km/h' },
 	powers: { input: 'kg * m2 * s^(-3)', target: 'W' },
 	radioactiveDecay: { input: '500 mg * _e^(-72 h / (8.0197 d))', target: 'mg' },
@@ -33,12 +32,9 @@ export const examples = {
 	dC: { input: '°C', target: 'K' },
 	F2K: { input: '{131°F}', target: 'K' },
 	F2C: { input: '{131°F}', target: '{°C}' },
-	API: { input: '{10°API}', target: 'kg/m3' },
-	API2: { input: '1000 kg/m3', target: '{API}' },
 	airDenseK: { input: 'atm * 28 g/mol / _R / (298.15 K)', target: 'kg/m3' },
 	airDenseC: { input: 'atm * 28 g/mol / _R / {25°C}', target: 'kg/m3' },
-	ln: { input: '{ln 10000} / {ln 10}', target: '' },
-	exchanger: { input: '(27K - 32K) / ( {ln (27K/(32K)) } )', target: '°C' },
+	ln: { input: '(27K - 32K) / ( {ln (27K/(32K)) } )', target: '°C' },
 } as const satisfies Record<string, Example>;
 export type ExId = keyof typeof examples;
 

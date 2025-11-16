@@ -1,5 +1,5 @@
 import { type Dispatch, type FC, type SetStateAction, useRef, useState } from 'react';
-import { prefixes } from 'uuc-core';
+import { prefixes, units } from 'uuc-core';
 import { Cz, En } from '../lang';
 import {
 	type ExId,
@@ -12,6 +12,9 @@ import {
 } from './tutorialConfig';
 import { useDraggable } from './useDraggable';
 import type { FullConversion, Route } from '../types';
+
+// EUR is referenced in the 'currencies' example. Meanwhile, USD is a basic unit so it's guaranteed.
+const isEUR = () => units.some(({ id }) => id === 'EUR');
 
 type TutorialProps = {
 	state: TutorialState;
@@ -97,7 +100,7 @@ function Intro({ goToNextStep, ex }: StepProps) {
 		<>
 			<Cz>
 				<p>
-					Právě se nacházíme v hlavní části UUC – záložce Převodník.
+					Záložka <b>Převodník</b> je hlavní částí UUC.
 					<br />
 					Zde můžete napsat výraz do textového pole Vstup a stisknout tlačítko Převést nebo klávesu Enter:{' '}
 					<a className="fakeLink" onClick={() => ex('SI')}>
@@ -111,9 +114,9 @@ function Intro({ goToNextStep, ex }: StepProps) {
 						příklad
 					</a>
 				</p>
-				<p>Jak je vidět, při převodu můžete (avšak nemusíte) specifikovat číslo.</p>
+				<p>Jak je vidět, při převodu můžete (avšak nemusíte) specifikovat číslo na vstupu.</p>
 				<p>
-					Mějte na paměti že jednotky jsou dle konvencí citlivé na VELIKOST PÍSMEN!
+					Mějte na paměti že jednotky jsou dle konvencí citlivé na VELIKOST písmen!
 					<br />
 					UUC se snaží porozumět i jinému zápisu:{' '}
 					<a className="fakeLink" onClick={() => ex('wrongCase')}>
@@ -124,7 +127,7 @@ function Intro({ goToNextStep, ex }: StepProps) {
 			</Cz>
 			<En>
 				<p>
-					Currently we are in the main part of UUC – the Converter tab.
+					The <b>Converter</b> tab is the main part of UUC.
 					<br />
 					Here you can enter an expression into the Input text field and press the Convert button or Enter
 					key:{' '}
@@ -139,7 +142,7 @@ function Intro({ goToNextStep, ex }: StepProps) {
 						example
 					</a>
 				</p>
-				<p>As you can see, you may (but needn&apos;t) specify a number in the conversion.</p>
+				<p>As you can see, you may (but needn&apos;t) specify a number in the conversion input.</p>
 				<p>
 					Bear in mind, that units are by convention case-SENSITIVE!
 					<br />
@@ -159,45 +162,47 @@ function Reference({ goToNextStep }: StepProps) {
 	return (
 		<>
 			<Cz>
-				<p>V záložce Reference naleznete vyčerpávající seznam všech jednotek.</p>
+				<p>
+					V záložce <b>Reference</b> naleznete vyčerpávající seznam všech jednotek.
+				</p>
 				<p>
 					Pro snažší vyhledávání lze seznam filtrovat pomocí rozměru 🔍
 					<br />
-					Do pole napište jednotku (např. kJ), výraz (N/m2) nebo název (dolar).
+					Do pole napište jednotku (např. kJ), výraz (N/m2) nebo název ({isEUR() ? 'dolar' : 'yard'}).
 				</p>
+				{isEUR() && (
+					<p>
+						Počkat, dolar? Ano, UUC obsahuje také většinu důležitých světových měn! 💰
+						<br />
+						Jejich směnné kurzy jsou aktualizovány každý den pomocí tohoto {/* prettier-ignore */}
+						<a target="_blank" href="https://fixer.io/" rel="noreferrer">API</a>.
+					</p>
+				)}
 				<p>
-					Ano, UUC obsahuje také většinu důležitých světových měn! 💰
-					<br />
-					Jejich směnné kurzy jsou aktualizovány každý den pomocí tohoto{' '}
-					<a target="_blank" href="https://fixer.io/" rel="noreferrer">
-						API
-					</a>
-					.
-				</p>
-				<p>
-					Jednotky lze použít se standardními předponami SI (v závorce exponenty):
+					Jednotky lze použít se standardními předponami SI (exponenty):
 					<br />
 					{prefixText}
 				</p>
 			</Cz>
 			<En>
-				<p>In the Reference tab you&apos;ll find a comprehensive list of all units.</p>
+				<p>
+					In the <b>Reference</b> tab you&apos;ll find a comprehensive list of all units.
+				</p>
 				<p>
 					To make things easier, you can filter the list by specifying a dimension 🔍
 					<br />
-					Enter a unit (kJ), expression (N/m2) or name (e.g. dollar) in the field.
+					Enter a unit (kJ), expression (N/m2) or name (e.g. {isEUR() ? 'dollar' : 'yard'}) in the field.
 				</p>
+				{isEUR() && (
+					<p>
+						Wait, dollar? Yes, UUC also contains the most important world currencies! 💰
+						<br />
+						Their exchange rates are updated daily using this public {/* prettier-ignore */}
+						<a target="_blank" href="https://fixer.io/" rel="noreferrer">API</a>.
+					</p>
+				)}
 				<p>
-					Yes, UUC also contains the most important world currencies! 💰
-					<br />
-					Their exchange rates are updated daily using this public{' '}
-					<a target="_blank" href="https://fixer.io/" rel="noreferrer">
-						API
-					</a>
-					.
-				</p>
-				<p>
-					Units can be used with standard SI prefixes (exponents in brackets):
+					Units can be used with standard SI prefixes (exponents):
 					<br />
 					{prefixText}
 				</p>
@@ -216,23 +221,20 @@ function DimAnalysis({ goToNextStep, ex }: StepProps) {
 					varování. Výsledek výpočtu pak ignorujte.
 				</p>
 				<p>
-					To je často způsobeno záměnou symbolu jednotky – např. C a F je coulomb a farad, nikoliv stupeň
-					Celsia a Fahrenheita, ty jsou °C a °F:{' '}
+					To je často způsobeno záměnou symbolu jednotky,
+					<br />
+					např. coulomb &amp; farad vs. stupeň Celsia &amp; Fahrenheita:{' '}
 					<a className="fakeLink" onClick={() => ex('wrongSymbol')}>
-						příklad A
+						špatně
 					</a>
-					,{' '}
+					,&nbsp;
 					<a className="fakeLink" onClick={() => ex('okSymbol')}>
-						příklad B
+						správně
 					</a>
 				</p>
 				<p>
 					Také to může být způsobeno syntaktickou chybou, např. mK znamená milikelvin, nikoliv metr krát
 					kelvin, ten by byl zapsán jako m*K nebo m K.
-				</p>
-				<p>
-					Pozn.: takto zapsaná veličina s rozměrem teploty je vždy zpracována jako <i>rozdíl</i> teploty,
-					nikoliv jako teplota. Jak převést teploty mezi sebou se dozvíte později.
 				</p>
 			</Cz>
 			<En>
@@ -241,23 +243,20 @@ function DimAnalysis({ goToNextStep, ex }: StepProps) {
 					you will get a warning. In that case ignore the conversion result.
 				</p>
 				<p>
-					That&apos;s often caused by a misunderstood unit symbol – e.g. C and F are coulomb and farad, not
-					degree Celsius and Fahrenheit, those are °C and °F:{' '}
+					That&apos;s often caused by a misunderstood unit symbol,
+					<br />
+					e.g. coulomb &amp; farad vs. degree Celsius &amp; Fahrenheit:{' '}
 					<a className="fakeLink" onClick={() => ex('wrongSymbol')}>
-						example A
+						wrong
 					</a>
-					,{' '}
+					,&nbsp;
 					<a className="fakeLink" onClick={() => ex('okSymbol')}>
-						B
+						correct
 					</a>
 				</p>
 				<p>
 					It can also be caused by a syntax error, e.g. mK means milikelvin, not metre times kelvin, which
 					would be written as m*K or m K.
-				</p>
-				<p>
-					Note: a quantity with dimension of temperature written this way will always be processed as
-					temperature <i>difference</i>, not as temperature. You will learn later how to convert temperatures.
 				</p>
 			</En>
 			<NextButton onClick={goToNextStep} />
@@ -269,9 +268,7 @@ function Features({ goToNextStep, ex }: StepProps) {
 	return (
 		<>
 			<Cz>
-				<p>
-					<b>A jaké jsou další možnosti UUC?</b>
-				</p>
+				<h4>A jaké jsou další možnosti UUC?</h4>
 				<ul>
 					<li>
 						Jednotky můžete skládat * násobením či / dělením:{' '}
@@ -289,18 +286,19 @@ function Features({ goToNextStep, ex }: StepProps) {
 					</li>
 					<li>
 						Čísla mohou být zapsána s desetinnou čárkou i tečkou,
-						<br />
-						lze použít zápis e123 jako 10<sup>123</sup>:{' '}
+						<br />a lze použít zápis e123 jako 10<sup>123</sup>:{' '}
 						<a className="fakeLink" onClick={() => ex('numbers')}>
 							příklad
 						</a>
 					</li>
-					<li>
-						Přebytečné mezery jsou prostě ignorovány:{' '}
-						<a className="fakeLink" onClick={() => ex('spaces')}>
-							příklad
-						</a>
-					</li>
+					{isEUR() && (
+						<li>
+							Světové měny lze využít k převodu měrných cen:{' '}
+							<a className="fakeLink" onClick={() => ex('currencies')}>
+								příklad
+							</a>
+						</li>
+					)}
 					<li>
 						Číslo psané těsně vedle jednotky je zkratkou pro (závorky):{' '}
 						<a className="fakeLink" onClick={() => ex('tight')}>
@@ -335,9 +333,7 @@ function Features({ goToNextStep, ex }: StepProps) {
 				</ul>
 			</Cz>
 			<En>
-				<p>
-					<b>What about other features of UUC?</b>
-				</p>
+				<h4>What about other features of UUC?</h4>
 				<ul>
 					<li>
 						You can compose units by * multiplication or / division:{' '}
@@ -356,17 +352,19 @@ function Features({ goToNextStep, ex }: StepProps) {
 					<li>
 						Both decimal point and comma are accepted,
 						<br />
-						you can use e123 notation as 10<sup>123</sup>:{' '}
+						and you can use e123 notation as 10<sup>123</sup>:{' '}
 						<a className="fakeLink" onClick={() => ex('numbers')}>
 							example
 						</a>
 					</li>
-					<li>
-						Superfluous spaces are simply ignored:{' '}
-						<a className="fakeLink" onClick={() => ex('spaces')}>
-							example
-						</a>
-					</li>
+					{isEUR() && (
+						<li>
+							World currencies can be used for unit price conversions:{' '}
+							<a className="fakeLink" onClick={() => ex('currencies')}>
+								example
+							</a>
+						</li>
+					)}
 					<li>
 						Number written tightly next to unit is a shortcut for (brackets):{' '}
 						<a className="fakeLink" onClick={() => ex('tight')}>
@@ -409,9 +407,7 @@ function Examples({ goToNextStep, closeTutorial, ex, onlyExamples }: StepProps) 
 	return (
 		<>
 			<Cz>
-				<p>
-					<b>Užitečné příklady na specifické použití:</b>
-				</p>
+				<h4>Užitečné příklady na specifické použití:</h4>
 				<ul>
 					<li>
 						Objem na charakteristický rozměr:{' '}
@@ -420,7 +416,7 @@ function Examples({ goToNextStep, closeTutorial, ex, onlyExamples }: StepProps) 
 						</a>
 					</li>
 					<li>
-						Pythagorova věta – rozměry na úhlopříčku:{' '}
+						Pythagorova věta: rozměry na úhlopříčku:{' '}
 						<a className="fakeLink" onClick={() => ex('pythagor')}>
 							příklad
 						</a>
@@ -431,7 +427,7 @@ function Examples({ goToNextStep, closeTutorial, ex, onlyExamples }: StepProps) 
 							příklad
 						</a>
 						<br />
-						<i>všechny konstanty v UUC jsou označeny znakem _</i>
+						<i>_ značí univerzální konstanty</i>
 					</li>
 					<li>
 						Tíha kilogramu na centimetr čtvereční na psi:{' '}
@@ -509,9 +505,7 @@ function Examples({ goToNextStep, closeTutorial, ex, onlyExamples }: StepProps) 
 				)}
 			</Cz>
 			<En>
-				<p>
-					<b>Useful examples for specific use:</b>
-				</p>
+				<h4>Useful examples for specific use:</h4>
 				<ul>
 					<li>
 						Volume to characteristic dimension:{' '}
@@ -520,7 +514,7 @@ function Examples({ goToNextStep, closeTutorial, ex, onlyExamples }: StepProps) 
 						</a>
 					</li>
 					<li>
-						Pythagorean theorem – dimensions to diagonal:{' '}
+						Pythagorean theorem: dimensions to diagonal:{' '}
 						<a className="fakeLink" onClick={() => ex('pythagor')}>
 							example
 						</a>
@@ -531,7 +525,7 @@ function Examples({ goToNextStep, closeTutorial, ex, onlyExamples }: StepProps) 
 							example
 						</a>
 						<br />
-						<i>all constants available in UUC are marked by _ sign</i>
+						<i>_ marks universal constants</i>
 					</li>
 					<li>
 						Kilogram force per square cm to psi:{' '}
@@ -615,76 +609,81 @@ function Examples({ goToNextStep, closeTutorial, ex, onlyExamples }: StepProps) 
 }
 
 function Temperature({ goToNextStep, ex }: StepProps) {
+	const [showCurlyRules, setShowCurlyRules] = useState(false);
+	const handleToggle = () => setShowCurlyRules((prev) => !prev);
+
 	return (
 		<>
 			<Cz>
+				<h4>Ale co teplota?</h4>
 				<p>
-					Jak již bylo zmíněno, program chápe <b>teplotu</b> jako teplotní <i>rozdíl</i>, nikoliv absolutní
-					teplotu (
+					Ta je běžně chápána jako teplotní <i>rozdíl</i>, nikoliv absolutní teplota (
 					<a className="fakeLink" onClick={() => ex('dC')}>
 						příklad
 					</a>
-					). Program by nemohl poznat, zda-li myslíte T či ΔT, proto se obecně pracuje s ΔT. Speciální zápis
-					pomocí &#123;složených závorek&#125; umožňuje interpretovat teplotu jako absolutní, např. takto:{' '}
+					). Program by nemohl poznat, zda-li myslíte T či ΔT, proto se obecně pracuje s ΔT{' '}
+					<i>(jak jste mohli vidět v minulých příkladech)</i>.
+				</p>
+				<p>
+					Avšak speciální zápis pomocí &#123;složených závorek&#125; umožňuje zadat teplotu jako absolutní,
+					např. takto:{' '}
 					<a className="fakeLink" onClick={() => ex('F2K')}>
 						°F na K
 					</a>{' '}
-					či{' '}
+					nebo{' '}
 					<a className="fakeLink" onClick={() => ex('F2C')}>
 						°F na °C
 					</a>
 				</p>
 				<p>
-					Další příklady: °API hustota na SI{' '}
-					<a className="fakeLink" onClick={() => ex('API')}>
-						tam
-					</a>{' '}
-					a{' '}
-					<a className="fakeLink" onClick={() => ex('API2')}>
-						zpět
-					</a>
-					,<br />
-					výpočet hustoty vzduchu pomocí{' '}
-					<a className="fakeLink" onClick={() => ex('airDenseK')}>
-						K
-					</a>
-					, či právě s využitím{' '}
+					To lze různě kombinovat, např. výpočet hustoty vzduchu s{' '}
 					<a className="fakeLink" onClick={() => ex('airDenseC')}>
 						&#123;°C&#125;
+					</a>{' '}
+					a ekvivalent{' '}
+					<a className="fakeLink" onClick={() => ex('airDenseK')}>
+						s K
 					</a>
+					.
 				</p>
 				<p>
-					Pomocí &#123;&#125; lze též použít speciální funkci – přirozený{' '}
+					Pomocí &#123;&#125; lze též použít speciální funkci –{' '}
 					<a className="fakeLink" onClick={() => ex('ln')}>
-						logaritmus
+						přirozený logaritmus
 					</a>
-					, lze využít např. pro{' '}
-					<a className="fakeLink" onClick={() => ex('exchanger')}>
-						logΔT
-					</a>
-					.<i>Samozřejmě, ln není jednotka a proto nemůže být použit mimo &#123;&#125;</i>
+					.
 				</p>
-				<p className="subtle">Pozn. &#123;složené závorky&#125; na české klávesnici: pravý Alt + B, N</p>
-				<p className="subtle">
-					⚠ Mějte na paměti omezení:
-					<br />
-					Ve Vstupu může v &#123;&#125; být jen jedno číslo a jedna jednotka.
-					<br />
-					Cílové jednotky jsou ještě striktnější, nesmí v nich být <i>nic než</i> &#123;tento výraz&#125;, a
-					nesmí v něm být číslo. Nelze použít prefix ani mocninu. Místo čísla ovšem může být (bezrozměrný
-					výraz v závorce), viz logΔT výše.
-				</p>
+				<p>📝 &#123;složené závorky&#125; na české klávesnici: pravý Alt + B, N</p>
+				{showCurlyRules ? (
+					<ul className="subtle">
+						<li>Uvnitř &#123;&#125; je dovoleno jen jedno číslo a jedna jednotka.</li>
+						<li>Jednotka nesmí mít prefix či mocninu.</li>
+						<li>Číslo však může být (bezrozměrný výraz v závorce), viz příklad výše.</li>
+						<li>
+							V Cílových jednotkách je ještě přísnější omezení: v poli nesmí být <i>nic než</i>{' '}
+							&#123;jednotka&#125;, a žádné číslo.
+						</li>
+						<li>Logaritmus není jednotka, nelze jej tedy použít mimo &#123;&#125;.</li>
+					</ul>
+				) : (
+					<p className="subtle fakeLink" onClick={handleToggle}>
+						👉 Má to však omezení...
+					</p>
+				)}
 			</Cz>
 			<En>
+				<h4>But what about temperature?</h4>
 				<p>
-					As mentioned before, the program understands <b>temperature</b> as temp <i>difference</i>, not as
-					absolute temp (
+					It is normally understood as temp <i>difference</i>, not as absolute temp (
 					<a className="fakeLink" onClick={() => ex('dC')}>
 						example
 					</a>
-					). The program couldn&apos;t tell if you want T or ΔT, that&apos;s why it generally operates with
-					ΔT. Special syntax with &#123;curly brackets&#125; allows to interpret temperature as absolute, like
-					this:{' '}
+					). The program couldn&apos;t tell if you want T or ΔT, that&apos;s why it generally operates with ΔT{' '}
+					<i>(as you could see in previous examples)</i>.
+				</p>
+				<p>
+					However, a special syntax with &#123;curly brackets&#125; allows you to specify temperature as
+					absolute, like this:{' '}
 					<a className="fakeLink" onClick={() => ex('F2K')}>
 						°F to K
 					</a>{' '}
@@ -694,47 +693,40 @@ function Temperature({ goToNextStep, ex }: StepProps) {
 					</a>
 				</p>
 				<p>
-					More examples: °API density to SI{' '}
-					<a className="fakeLink" onClick={() => ex('API')}>
-						there
-					</a>{' '}
-					and{' '}
-					<a className="fakeLink" onClick={() => ex('API2')}>
-						back
-					</a>
-					,<br />
-					air density calculation using{' '}
-					<a className="fakeLink" onClick={() => ex('airDenseK')}>
-						K
-					</a>
-					, or using{' '}
+					You can freely combine it, e.g. calculate air density with{' '}
 					<a className="fakeLink" onClick={() => ex('airDenseC')}>
 						&#123;°C&#125;
+					</a>{' '}
+					and equiv.{' '}
+					<a className="fakeLink" onClick={() => ex('airDenseK')}>
+						with K
 					</a>
+					.
 				</p>
 				<p>
-					Using the &#123;&#125; you can also use a special function – the natural{' '}
+					Using the &#123;&#125; you can also use a special function –{' '}
 					<a className="fakeLink" onClick={() => ex('ln')}>
-						logarithm
+						the natural logarithm
 					</a>
-					, for example{' '}
-					<a className="fakeLink" onClick={() => ex('exchanger')}>
-						logΔT
-					</a>
-					.<i>Of course, ln is not a unit and cannot be used outside &#123;&#125;</i>
+					.
 				</p>
-				<p className="subtle">
-					Note: &#123;curly brackets&#125; on english keyboard: Shift + &#123; &#125; next to Enter
-				</p>
-				<p className="subtle">
-					⚠ Keep in mind the limitations:
-					<br />
-					In Input there can only be one number and one unit in &#123;&#125;.
-					<br />
-					Target units are even stricter, there can be <i>nothing else</i> but &#123;the expression&#125;, and
-					there mustn&apos;t be a number. Neither prefix nor power can be used. But instead of number you can
-					use (dimensionless bracket), see logΔT above.
-				</p>
+				<p>📝 &#123;curly brackets&#125; on english keyboard: Shift + &#123; &#125; next to Enter</p>
+				{showCurlyRules ? (
+					<ul className="subtle">
+						<li>Within &#123;&#125; only one number and unit is allowed.</li>
+						<li>The unit may have neither prefix nor power.</li>
+						<li>The number can be (a dimensionless expression in brackets), see above.</li>
+						<li>
+							Target units are even stricter, there can be <i>nothing else</i> but &#123;the unit&#125; in
+							the field, and no number.
+						</li>
+						<li>Logarithm is not a unit, so it cannot be used outside &#123;&#125;.</li>
+					</ul>
+				) : (
+					<p className="subtle fakeLink" onClick={handleToggle}>
+						👉 There are limitations though...
+					</p>
+				)}
 			</En>
 			<NextButton onClick={goToNextStep} />
 		</>
@@ -745,17 +737,17 @@ function Conclusion({ navigate, closeTutorial }: StepProps) {
 	return (
 		<>
 			<Cz>
-				<p>Poslední poznámky před dokončením tutoriálu:</p>
+				<h4>Závěrečné poznámky</h4>
 				<p>
 					Po rozkliknutí <i>Formát výstupu</i> můžete výstupnímu číslu nastavit počet desetinných míst, popř.
 					další možnosti formátování.
 				</p>
+				<p>Pomocí ikony 📋 vedle výstupu můžete zformátovaný výstup zkopírovat.</p>
 				<p>
-					Pokud chcete právě zadaný převod komukoliv poslat, stačí <i>Sdílet odkaz</i>.<br />
-					Pomocí ikony 📋 vedle výstupu můžete zkopírovat pouze výstup.
+					Pokud chcete celý právě zadaný převod komukoliv poslat, stačí <i>Sdílet odkaz</i>.
 				</p>
 				<p>
-					Pokud jste uživatelem Chrome nebo Edge, doporučuji pomocí tohoto{' '}
+					Doporučuji pomocí tohoto{' '}
 					<a className="fakeLink" onClick={() => navigate('search')}>
 						návodu
 					</a>{' '}
@@ -764,17 +756,17 @@ function Conclusion({ navigate, closeTutorial }: StepProps) {
 				<p>Toť vše! 🙂</p>
 			</Cz>
 			<En>
-				<p>Last notes before finishing the tutorial:</p>
+				<h4>Final remarks</h4>
 				<p>
 					After expanding <i>Output format</i> you can set decimal points of the output number, or use other
 					formatting options.
 				</p>
+				<p>Using the 📋 icon next to output you can copy the formatted output.</p>
 				<p>
-					If you want to send the current conversion to anyone, just <i>Share link</i>.<br />
-					Using the 📋 icon next to output you can copy just the output.
+					If you want to send the whole current conversion to anyone, just <i>Share link</i>.<br />
 				</p>
 				<p>
-					If you are a Chrome or Edge user, I recommend following these{' '}
+					I recommend following these{' '}
 					<a className="fakeLink" onClick={() => navigate('search')}>
 						instructions
 					</a>{' '}
