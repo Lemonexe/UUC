@@ -122,8 +122,7 @@ function getUnitList(filter: string): GetUnitListResult {
 function buildUnitEntry(unit: Unit) {
 	const aliases = unit.alias ? ', ' + unit.alias.join(', ') : '';
 	let text = ` (${unit.id + aliases}) `;
-	let dim = vector2text(unit.v);
-	dim = dim === '1' ? '' : dim;
+	const dim = vector2text(unit.v);
 	text += unit.basic || isNaN(unit.k) ? '' : ` = ${unit.k} ${dim}\n`;
 
 	if (unit.constant) {

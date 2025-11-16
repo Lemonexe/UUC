@@ -16,6 +16,7 @@ describe(balanceBrackets.name, () => {
 
 describe(vector2text.name, () => {
 	it('converts a simple vector to text', () => {
+		expect(vector2text([0, 0, 0, 0, 0, 0, 0, 0])).toBe('');
 		expect(vector2text([0, 1, 0, 0, 0, 0, 0, 0])).toBe('kg');
 		expect(vector2text([0, 0, 0, 0, 0, 0, -1, 0])).toBe('1/cd');
 	});

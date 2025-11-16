@@ -94,6 +94,7 @@ export const vector2text = (v: V): string => {
 		if (v[i] > 0) text += v[i];
 		else if (v[i] < 0) text += -v[i];
 	}
+	if (text === '1') return ''; // dimensionless; representing it would be superfluous
 	return text.replace(/^1\*/, ''); // remove leading 1*, we need only leading 1/
 };
 
