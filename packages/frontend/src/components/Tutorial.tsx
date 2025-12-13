@@ -353,6 +353,9 @@ function Examples() {
 						Úhel jako násobek pí: <Ex id="pi" label="příklad" /> (prázdné pole cílové jednotky = radián)
 					</li>
 					<li>
+						Výška v stopách+palcích: <Ex id="ft_in" label="příklad" />
+					</li>
+					<li>
 						Přetlak na absolutní tlak: <Ex id="gauge2abs" label="příklad" />,{' '}
 						<Ex id="abs2gauge" label="obráceně" />
 					</li>
@@ -408,6 +411,9 @@ function Examples() {
 					<li>
 						Angle as a pi multiple: <Ex id="pi" label="example" /> (empty target field is interpreted as
 						radian)
+					</li>
+					<li>
+						Height in feet+inches: <Ex id="ft_in" label="example" />
 					</li>
 					<li>
 						Gauge pressure to absolute: <Ex id="gauge2abs" label="example" />,{' '}

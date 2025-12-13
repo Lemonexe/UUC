@@ -21,6 +21,7 @@ export const examples = {
 	poundal: { input: 'lb * ft / s2 ', target: 'N' },
 	oersted: { input: 'T / _mu', target: 'Oe' },
 	pi: { input: '45°', target: 'π' },
+	ft_in: { input: '6\'+1"', target: 'cm' },
 	targetNumber: { input: '96', target: '12' },
 	gasFlow: { input: '7000 Nm3 / h * 28 g/mol', target: 't/h' },
 	gasConc: { input: '25 mg / Nm3 / (34 g/mol)', target: 'ppm' },
