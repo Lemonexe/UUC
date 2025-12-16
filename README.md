@@ -18,10 +18,9 @@ _Contains:_ an abundance of units, including up-to-date world currencies as well
 
 ## Structure
 
-UUC is a monorepo of three packages:
+UUC is a monorepo of two packages:
 - [Core library](packages/core/README.md) – the core functionality, published at npm as a standalone library
 - [Frontend](packages/frontend/README.md) – the AngularJS web application providing the user interface
-- [Currencies](packages/currencies/README.md) – the currency exchange caching, which is used by the frontend
 
 ## Philosophy
 

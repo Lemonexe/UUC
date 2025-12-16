@@ -20,9 +20,8 @@ export const getUnitIdMap = (langs: readonly Lang[]): UnitIdMapItem[] => {
 
 // Populate currency units into the units database, based on the response from currency API.
 export const populateCurrencies = (currenciesResponse: Record<string, number>) => {
-	if (!currenciesResponse.hasOwnProperty('USD')) throw new Error('No USD in currency response');
 	// because default base may be other currency, e.g. EUR, while UUC is USD-centric, so normalize all to USD
-	const USDk = currenciesResponse['USD'];
+	const USDk = currenciesResponse['USD'] ?? 1;
 
 	for (const c of currencies) {
 		if (!currenciesResponse.hasOwnProperty(c.id)) continue;

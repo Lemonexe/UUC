@@ -148,7 +148,7 @@ function Reference() {
 						Počkat, dolar? Ano, UUC obsahuje také většinu důležitých světových měn! 💰
 						<br />
 						Jejich směnné kurzy jsou aktualizovány každý den pomocí tohoto {/* prettier-ignore */}
-						<a target="_blank" href="https://fixer.io/" rel="noreferrer">API</a>.
+						<a target="_blank" href="https://frankfurter.dev/" rel="noreferrer">API</a>.
 					</p>
 				)}
 				<p>
@@ -171,7 +171,7 @@ function Reference() {
 						Wait, dollar? Yes, UUC also contains the most important world currencies! 💰
 						<br />
 						Their exchange rates are updated daily using this public {/* prettier-ignore */}
-						<a target="_blank" href="https://fixer.io/" rel="noreferrer">API</a>.
+						<a target="_blank" href="https://frankfurter.dev/" rel="noreferrer">API</a>.
 					</p>
 				)}
 				<p>

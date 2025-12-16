@@ -6,8 +6,7 @@
 	"scripts": {
 		"dev": "vite",
 		"start": "vite",
-		"build": "vite build && npm run build:api",
-		"build:api": "mkdir ./dist/api && cp ../currencies/currencies.php ./dist/api/ && cp ../currencies/API_key ./dist/api/",
+		"build": "vite build",
 		"test": "vitest run",
 		"tsc": "tsc",
 		"prettier": "prettier --write \"src/**/*.{ts,tsx}\"",

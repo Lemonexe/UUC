@@ -25,7 +25,7 @@ npm install uuc-core
 ### Initialization
 
 All functions are pure and stateless, so you may import and use them right away.  
-Though if you wish to use currency units, initialize them first with an object of exchange rates to any base currency (see [Currencies backend](../currencies/README.md)):
+Though if you wish to use currency units, initialize them first with an object of exchange rates to any base currency (see [API used by Frontend](../frontend/src/io/currencies.ts)):
 ```javascript
 import { populateCurrencies } from 'uuc-core'
 populateCurrencies({ USD: 1.5, EUR: 1, CZK: 26, BTC: 21e-6 }) // any subset of available currencies may be populated, others will stay undefined

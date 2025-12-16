@@ -39,7 +39,7 @@ export type Unit = {
 
 // Template for currency units, where `k` and `v` will be filled later.
 // `v` is always the same = [0,0,0,0,0,0,0,1]
-// `k` the currency conversion ratio to dollar, it is initially unknown and will be obtained by currencies.php from API.
+// `k` the currency conversion ratio to dollar, it is initially unknown and will be obtained from API.
 export type CurrencyTemplate = Pick<Unit, 'id' | 'name' | 'alias' | 'prefix'>;
 
 // Irregular units that have a conversion function instead of mere ratio.
