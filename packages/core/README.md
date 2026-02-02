@@ -3,17 +3,17 @@
 [![NPM](https://img.shields.io/npm/v/uuc-core.svg)](https://www.npmjs.org/package/uuc-core)
 
 The core library contains the logic for parsing, converting and unit definitions.
-It was created mainly for the [UUC Frontend app](../frontend/README.md), but is also available as a standalone library at npm.
+It was created mainly for the [UUC Frontend app](https://github.com/Lemonexe/UUC/blob/master/packages/frontend/README.md), but is also available as a standalone library at npm.
 It is written in TypeScript, and is only distributed as ESM.
 
 This page documents the _usage_ of the library for end users, as distributed via npm.  
-If you wish to take part of the library development _(or fork it)_, please see [local dev setup instructions](./CONTRIBUTING.md).
+If you wish to take part of the library development _(or fork it)_, please see [local dev setup instructions](https://github.com/Lemonexe/UUC/blob/master/packages/core/CONTRIBUTING.md).
 
 ## Documentation basics
 
 This guide assumes that you are a user of the UUC App ([live here](https://jira.zby.cz/content/UUC/)), and are familiar with its features.  
 If not, please go through the Tutorial there, which will demonstrate typical use cases, i.e. what a typical conversion job looks like.  
-For implementation details, refer to [the source code](./src), particularly the TypeScript declarations and unit tests.
+For implementation details, refer to [the source code](https://github.com/Lemonexe/UUC/blob/master/packages/core/src), particularly the TypeScript declarations and unit tests.
 
 ### Installation
 
@@ -25,7 +25,7 @@ npm install uuc-core
 ### Initialization
 
 All functions are pure and stateless, so you may import and use them right away.  
-Though if you wish to use currency units, initialize them first with an object of exchange rates to any base currency (see [API used by Frontend](../frontend/src/io/currencies.ts)):
+Though if you wish to use currency units, initialize them first with an object of exchange rates to any base currency (see [API used by Frontend](https://github.com/Lemonexe/UUC/blob/master/packages/frontend/src/io/currencies.ts)):
 ```javascript
 import { populateCurrencies } from 'uuc-core'
 populateCurrencies({ USD: 1.5, EUR: 1, CZK: 26, BTC: 21e-6 }) // any subset of available currencies may be populated, others will stay undefined
@@ -97,6 +97,6 @@ and others...
 
 ### Errors
 
-Exceptions as well as warnings are represented by the [UUCError](./src/errors.ts).
+Exceptions as well as warnings are represented by the [UUCError](https://github.com/Lemonexe/UUC/blob/master/packages/core/src/errors.ts).
 Refer to its source code for all possible error/warning codes.
 The main `convert` function catches errors and includes them in status and messages, but lower-level function will throw them.
