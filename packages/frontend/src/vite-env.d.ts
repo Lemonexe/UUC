@@ -9,6 +9,7 @@ declare global {
 		ps: PersistedState;
 		purge: () => void;
 	}
+	const __APP_VERSION__: string;
 }
 
 export {};

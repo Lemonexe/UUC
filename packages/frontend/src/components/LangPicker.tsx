@@ -7,8 +7,8 @@ export const LangPicker = () => {
 
 	return (
 		<div id="lang">
-			<img src={czFlag} onClick={() => setLang('cz')} title="Czech" />
-			<img src={enFlag} onClick={() => setLang('en')} title="English" />
+			<img alt="Czech" src={czFlag} onClick={() => setLang('cz')} title="Czech" />
+			<img alt="English" src={enFlag} onClick={() => setLang('en')} title="English" />
 		</div>
 	);
 };

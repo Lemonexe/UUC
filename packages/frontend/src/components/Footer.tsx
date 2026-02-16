@@ -4,6 +4,7 @@ import { Cz, En } from '../lang';
 export const Footer = () => (
 	<>
 		<div id="footer">
+			v{__APP_VERSION__},&nbsp;
 			<Cz>
 				Vytvořil <a href="https://jira.zby.cz/">Jiří Zbytovský</a> v letech 2017-2025 pod{' '}
 				<a href="https://github.com/Lemonexe/UUC/blob/master/LICENSE">licencí MIT</a>
@@ -15,7 +16,7 @@ export const Footer = () => (
 		</div>
 
 		<a id="githubLogo" href="https://github.com/Lemonexe/UUC" target="_blank" title="Github" rel="noreferrer">
-			<img src={githubLogo} />
+			<img alt="github" src={githubLogo} />
 		</a>
 	</>
 );
