@@ -106,6 +106,7 @@ export const units: Unit[] = [
 	{v: [1,0,0,0,0,0,0,0], id: 'yd', name: {cz: 'yard', en: 'yard'}, k:0.9144},
 	{v: [1,0,0,0,0,0,0,0], id: 'fur', name: {cz: 'furlong', en: 'furlong'}, k:201.168, prefix: 'all'},
 	{v: [1,0,0,0,0,0,0,0], id: 'mi', name: {cz: 'míle', en: 'mile'}, k:csts.mile},
+	{v: [1,0,0,0,0,0,0,0], id: 'fathom', name: {cz: 'fathom', en: 'fathom'}, k: 1.8288},
 	{v: [1,0,0,0,0,0,0,0], id: 'nmi', name: {cz: 'námořní míle', en: 'nautical mile'}, k:1852},
 	{v: [1,0,0,0,0,0,0,0], id: 'au', name: {cz: 'astronomická jednotka', en: 'astronomical unit'}, k:149597870700, prefix: '+'},
 	{v: [1,0,0,0,0,0,0,0], id: 'pc', name: {cz: 'parsek', en: 'parsec'}, k:3.08567758149137e16, prefix: '+'},
