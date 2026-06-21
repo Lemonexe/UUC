@@ -21,14 +21,18 @@ export const Reference = ({ currencyTimestamp }: ReferenceParams) => {
 			<p>
 				<Cz>
 					V databázi je {databaseCount} položek, z toho {filteredCount} je právě zobrazeno.
-					<br />
-					Kurzy měn byly aktualizovány v {currencyTimestamp}.
 				</Cz>
 				<En>
 					There are {databaseCount} items in database with {filteredCount} currently listed.
-					<br />
-					Currency exchange rates were updated at {currencyTimestamp}.
 				</En>
+				<br />
+				{currencyTimestamp && (
+					<>
+						<Cz>Kurzy měn byly aktualizovány v</Cz>
+						<En>Currency exchange rates were updated at</En>
+						&nbsp;{currencyTimestamp}.
+					</>
+				)}
 			</p>
 			<b>
 				<Cz>Vyhledat jednotky:</Cz>

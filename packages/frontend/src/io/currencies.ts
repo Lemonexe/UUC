@@ -2,25 +2,39 @@ import { populateCurrencies } from 'uuc-core';
 import { KEY_CACHE } from '../state';
 import type { Dispatch } from 'react';
 
-type Rates = Record<string, number>;
-// as per https://frankfurter.dev
-type CurrenciesResponse = {
-	amount: number;
-	base: string;
-	date: string;
-	rates: Rates;
+// as per https://frankfurter.dev/v2
+type FiatItem = {
+	quote: string; // currency identifier
+	rate: number;
+	base: 'USD'; // specified by request parameter
+	date: string; // unused, we use our own timestamp
 };
+type FiatResponse = FiatItem[];
+
 // as per https://docs.cdp.coinbase.com/coinbase-business/track-apis/prices#get-spot-price
 type BTCResponse = {
-	data: { amount: string; currency: string };
+	data: { amount: string; base: 'BTC'; currency: 'USD' };
 };
 
-const saveToCache = (data: CurrenciesResponse) => localStorage.setItem(KEY_CACHE, JSON.stringify(data));
+// the data representations that we work with
+type Rates = Record<string, number>; // [currency identifier]: how much of this currency is 1 USD (reciprocal unit.k)
+type PersistedData = {
+	date: string; // ISO string Date
+	rates: Rates;
+};
 
-export const loadFromCache = (): CurrenciesResponse | null => {
+const currenciesResponseToRates = (response: FiatResponse): Rates =>
+	response.reduce<Rates>((acc, item) => {
+		acc[item.quote] = item.rate;
+		return acc;
+	}, {});
+
+const saveToCache = (data: PersistedData) => localStorage.setItem(KEY_CACHE, JSON.stringify(data));
+
+const loadFromCache = (): PersistedData | null => {
 	try {
 		const data = localStorage.getItem(KEY_CACHE);
-		if (data) return JSON.parse(data) as CurrenciesResponse;
+		if (data) return JSON.parse(data) as PersistedData;
 	} catch (e) {
 		// Malformed data?
 		console.error('Failed to parse cached currencies, purging...', e);
@@ -29,20 +43,17 @@ export const loadFromCache = (): CurrenciesResponse | null => {
 	return null;
 };
 
-type LoadCurrenciesParams = {
-	setCurrencyTimestamp: Dispatch<string>;
-};
-
 let didStart = false;
 
-const fetchFiat = async (): Promise<CurrenciesResponse | null> => {
-	const res = await fetch('https://api.frankfurter.app/latest?base=USD');
+const fetchFiat = async (): Promise<FiatResponse | null> => {
+	const res = await fetch('https://api.frankfurter.dev/v2/rates?base=USD');
 	if (res.status !== 200) {
 		console.warn(`Failed to fetch fiat exchange rates from frankfurter: http ${res.status}`);
 		return null;
 	}
-	return (await res.json()) as CurrenciesResponse;
+	return (await res.json()) as FiatResponse;
 };
+
 const fetchBTC = async (): Promise<BTCResponse | null> => {
 	const res = await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
 	if (res.status !== 200) {
@@ -52,32 +63,36 @@ const fetchBTC = async (): Promise<BTCResponse | null> => {
 	return (await res.json()) as BTCResponse;
 };
 
-const composeWithCache = async (): Promise<CurrenciesResponse | null> => {
+const fetchAllWithCache = async (): Promise<PersistedData | null> => {
 	const cached = loadFromCache();
 	const addendum = cached ? ', but cache available :)' : '';
 
 	try {
-		const defaultRes: CurrenciesResponse = {
-			amount: 1.0, // we are always asking for exchange rates for 1 dollar unit...
-			date: cached?.date ?? new Date().toISOString(),
-			base: 'USD',
-			rates: {},
-		};
+		const date = cached?.date ?? new Date().toISOString();
+
 		const [fiatRes, btcRes] = await Promise.all([fetchFiat(), fetchBTC()]);
-		const rates: Rates = { ...cached?.rates, ...fiatRes?.rates };
+		const newRates: Rates = Array.isArray(fiatRes) ? currenciesResponseToRates(fiatRes) : {};
+		const rates: Rates = { ...cached?.rates, ...newRates };
+
 		const BTCRate = parseFloat(btcRes?.data?.amount as string); // returns NaN when nullish, that's okay
-		if (!isNaN(BTCRate)) rates.BTC = 1 / BTCRate;
-		return { ...defaultRes, ...fiatRes, rates };
+		if (!isNaN(BTCRate)) rates['BTC'] = 1 / BTCRate;
+
+		return { date, rates };
 	} catch (err) {
 		console.warn(`Failed to parse currencies${addendum}`, err);
 		return cached;
 	}
 };
 
+type LoadCurrenciesParams = {
+	setCurrencyTimestamp: Dispatch<string>;
+};
+
 export const loadCurrencies = async ({ setCurrencyTimestamp }: LoadCurrenciesParams) => {
 	if (didStart) return;
 	didStart = true;
-	const data = await composeWithCache();
+
+	const data = await fetchAllWithCache();
 	if (data === null) return;
 	const timestamp = new Date(data.date).toLocaleDateString();
 	populateCurrencies(data.rates);
