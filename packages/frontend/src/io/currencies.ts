@@ -66,10 +66,14 @@ const fetchBTC = async (): Promise<BTCResponse | null> => {
 const fetchAllWithCache = async (): Promise<PersistedData | null> => {
 	const cached = loadFromCache();
 	const addendum = cached ? ', but cache available :)' : '';
+	const today = new Date().toISOString().split('T')[0];
+	const cachedDate = cached?.date;
+	if (today === cachedDate) {
+		console.info('Not fetching currencies, cache is up-to-date.');
+		return cached;
+	}
 
 	try {
-		const date = cached?.date ?? new Date().toISOString();
-
 		const [fiatRes, btcRes] = await Promise.all([fetchFiat(), fetchBTC()]);
 		const newRates: Rates = Array.isArray(fiatRes) ? currenciesResponseToRates(fiatRes) : {};
 		const rates: Rates = { ...cached?.rates, ...newRates };
@@ -77,7 +81,8 @@ const fetchAllWithCache = async (): Promise<PersistedData | null> => {
 		const BTCRate = parseFloat(btcRes?.data?.amount as string); // returns NaN when nullish, that's okay
 		if (!isNaN(BTCRate)) rates['BTC'] = 1 / BTCRate;
 
-		return { date, rates };
+		console.info('Successfully fetched currencies (will be cached).');
+		return { date: today, rates };
 	} catch (err) {
 		console.warn(`Failed to parse currencies${addendum}`, err);
 		return cached;

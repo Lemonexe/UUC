@@ -1,7 +1,7 @@
 import type { PersistedState, Route } from './types';
 
 export const KEY_USERDATA = 'UUC_userdata';
-export const KEY_CACHE = 'UUC_currencies_cache';
+export const KEY_CACHE = 'UUC_currencies_cache_v2';
 
 export const initialRoute: Route = 'converter';
 
